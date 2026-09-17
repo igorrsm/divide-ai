@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Categoria {
+  ALUGUEL
+  CONTAS
+  MERCADO
+  LIMPEZA
+  MANUTENCAO
+  OUTROS
+}
+
+enum TipoDivisao {
+  IGUAL
+  VALOR
+  PERCENTUAL
+}
+
+model Republica {
+  id       Int      @id @default(autoincrement())
+  nome     String
+  criadaEm DateTime @default(now())
+
+  moradores  Morador[]
+  despesas   Despesa[]
+  pagamentos Pagamento[]
+}
+
+model Morador {
+  id          Int       @id @default(autoincrement())
+  nome        String
+  email       String    @unique
+  republicaId Int
+  republica   Republica @relation(fields: [republicaId], references: [id])
+
+  despesasPagas       Despesa[]
+  participacoes       Participacao[]
+  pagamentosFeitos    Pagamento[] @relation("PagamentosFeitos")
+  pagamentosRecebidos Pagamento[] @relation("PagamentosRecebidos")
+}
+
+model Despesa {
+  id            Int         @id @default(autoincrement())
+  descricao     String
+  valorCentavos Int
+  data          DateTime
+  categoria     Categoria
+  tipoDivisao   TipoDivisao @default(IGUAL)
+  criadaEm      DateTime    @default(now())
+
+  republicaId Int
+  republica   Republica @relation(fields: [republicaId], references: [id])
+  pagadorId   Int
+  pagador     Morador   @relation(fields: [pagadorId], references: [id])
+
+  participacoes Participacao[]
+  recorrente    DespesaRecorrente?
+
+  @@index([republicaId, data])
+}
+
+model Participacao {
+  despesaId     Int
+  moradorId     Int
+  valorCentavos Int
+
+  despesa Despesa @relation(fields: [despesaId], references: [id], onDelete: Cascade)
+  morador Morador @relation(fields: [moradorId], references: [id])
+
+  @@id([despesaId, moradorId])
+}
+
+model Pagamento {
+  id            Int      @id @default(autoincrement())
+  valorCentavos Int
+  data          DateTime @default(now())
+
+  republicaId Int
+  republica   Republica @relation(fields: [republicaId], references: [id])
+  pagadorId   Int
+  pagador     Morador   @relation("PagamentosFeitos", fields: [pagadorId], references: [id])
+  recebedorId Int
+  recebedor   Morador   @relation("PagamentosRecebidos", fields: [recebedorId], references: [id])
+}
+
+// Herança (tabela por subclasse): o id é PK e FK para Despesa ao mesmo tempo
+model DespesaRecorrente {
+  id            Int       @id
+  despesa       Despesa   @relation(fields: [id], references: [id], onDelete: Cascade)
+  diaDoMes      Int
+  ativa         Boolean   @default(true)
+  dataFim       DateTime?
+  ultimaGeracao DateTime?
+}

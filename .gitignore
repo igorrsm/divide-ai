@@ -141,3 +141,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+/generated/prisma
+
+# Prisma / banco local
+*.db
+*.db-journal
+src/generated/
