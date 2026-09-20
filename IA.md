@@ -23,6 +23,7 @@ Sessão de configuração inicial do Claude Code no projeto, em WSL/Ubuntu.
   restrições de commit.
 - Atualizar o `CLAUDE.md` com a decisão sobre pagador fora do rateio.
 - Redigir este arquivo.
+- Redigir o template de pull request.
 
 **O que a IA produziu**
 - `CLAUDE.md` inicial, a partir da leitura do repositório: estado do projeto
@@ -33,6 +34,8 @@ Sessão de configuração inicial do Claude Code no projeto, em WSL/Ubuntu.
 - Resposta sobre as regras de commit.
 - Nova regra no `CLAUDE.md` para o pagador fora do rateio.
 - Rascunho deste arquivo, mostrado ao humano antes de ser criado.
+- `.github/pull_request_template.md`, com as seções de contexto, checklist de
+  commits e declaração de uso de IA.
 
 **Revisão humana**
 - O conteúdo gerado pelo `/init` foi mantido. O humano acrescentou à mão as
@@ -49,6 +52,8 @@ Sessão de configuração inicial do Claude Code no projeto, em WSL/Ubuntu.
   resto inteiro vai para uma só pessoa foram propostos pela IA, tanto em sessão
   do Claude Code quanto em sessão de Cowork (esta última informada pelo humano,
   sem registro no repositório). O humano aceitou e registrou no `CLAUDE.md`.
+- O corpo do PR #3 foi preenchido à mão pelo humano, porque o
+  `gh pr create --fill` sobrescreve o template.
 
 **Observações**
 - A decisão sobre o pagador fora do rateio ainda será levada ao grupo; por ora
