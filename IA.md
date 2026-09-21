@@ -79,6 +79,8 @@ Cartão T1: Express, React + Vite e TypeScript, na branch `feat/esqueleto-projet
 - Verificações: `npm ci` limpo, `typecheck`, `lint`, `build`, e `npm run dev`
   (API responde 404 sem rotas; o Vite serve o HTML com `#root`).
 - Atualização do `CLAUDE.md` com os comandos novos e esta entrada.
+- Depois do registro: cartão T1 no Notion movido para "Em revisão (PR)", com o
+  link do PR #5, e comentário no PR #5 avisando a Thalita, ambos a pedido.
 
 **Revisão humana**
 - O Node existia só no Windows: o `npm` aparecia no WSL, mas o `node` não. A IA
