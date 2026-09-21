@@ -13,7 +13,7 @@ relato fiel do processo, inclusive dos erros.
   discussão de decisões de domínio e revisão. Não tem acesso ao repositório e
   não gera código do projeto.
 - **Conector do Notion** no Claude Code, para ler o quadro do TP1 (páginas e
-  bancos) e, em 21/09, escrever em dois cartões.
+  bancos) e, em 21/09, escrever em três cartões e na página principal.
 
 ## 2026-09-20 — Igor — Configuração inicial do Claude Code e do CLAUDE.md
 
@@ -77,6 +77,8 @@ do quadro do TP1 no Notion.
 - Ler a página principal do Notion, os dois bancos e os cartões B2, B4, D1 e D2.
 - Aplicar as correções recomendadas, inclusive nos cartões B4 e D1, sem esperar
   retorno do time.
+- Mover o cartão T7 para Finalizado e atualizar o espelho do DoD no Notion
+  conforme o PR #4, ainda em revisão.
 
 **O que a IA produziu**
 - Lista de divergências entre o DoD e o `CLAUDE.md` (sobra, 375 px, contagem das
@@ -84,6 +86,8 @@ do quadro do TP1 no Notion.
 - Edições em `docs/definition-of-done.md` e no `CLAUDE.md`.
 - Novos critérios de aceitação nos cartões B4 (pagador fora do rateio) e D1
   (teste com sobra maior que 1) do Notion.
+- Atualização do cartão T7 (status e link do PR #2) e do espelho do DoD na
+  página principal do Notion.
 - Esta entrada.
 
 **Revisão humana**
@@ -103,10 +107,12 @@ do quadro do TP1 no Notion.
 **Observações**
 - As mudanças nos cartões do Notion não passam por revisão de PR e ainda não
   foram comunicadas ao Lucas.
-- Pendentes: espelho do DoD no Notion (cita `DEFINITION_OF_DONE.md`, caminho
-  errado) e cartão T7; formato dos códigos dos cartões nos commits; campos de
-  tempo e veredito nas entradas deste arquivo; o README ainda diz que a
-  recorrência é automática.
+- Feitos depois do primeiro registro, ainda em 21/09: cartão T7 movido para
+  Finalizado e espelho do DoD no Notion atualizado conforme o PR #4 (em
+  revisão), com o caminho corrigido para `docs/definition-of-done.md`.
+- Pendentes: formato dos códigos dos cartões nos commits; campos de tempo e
+  veredito nas entradas deste arquivo; o README ainda diz que a recorrência é
+  automática; tirar o "(em revisão)" do espelho depois do merge do PR #4.
 - Tempo economizado ou perdido: não medido.
-- Nada commitado nesta sessão até este registro; as mudanças estão na branch
-  `docs/ajusta-definition-of-done`.
+- Este registro foi escrito antes dos commits; as mudanças foram commitadas na
+  branch `docs/ajusta-definition-of-done` e enviadas no PR #4.
