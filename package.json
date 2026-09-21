@@ -1,13 +1,16 @@
 {
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/express": "^5.0.6",
     "@types/node": "^24.13.6",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "eslint": "^10.11.0",
     "prisma": "^7.10.0",
     "tsx": "^4.23.13",
     "typescript": "~6.0.3",
+    "typescript-eslint": "^8.70.1",
     "vite": "^8.3.0"
   },
   "dependencies": {
@@ -22,6 +25,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p web/tsconfig.json",
     "dev:server": "tsx watch src/server.ts",
-    "dev:web": "vite web"
+    "dev:web": "vite web",
+    "lint": "eslint . --max-warnings 0"
   }
 }
