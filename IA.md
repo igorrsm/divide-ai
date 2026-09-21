@@ -62,3 +62,50 @@ Sessão de configuração inicial do Claude Code no projeto, em WSL/Ubuntu.
   adicionadas ou adicionadas + removidas. Apontado pela IA.
 - As respostas sobre sobra e commits vieram do contexto da sessão, não de
   código: o repositório ainda tem só schema Prisma e seed.
+
+## 2026-09-21 — Igor — Esqueleto do projeto (T1)
+
+Cartão T1: Express, React + Vite e TypeScript, na branch `feat/esqueleto-projeto`.
+
+**Pedido à IA**
+- Verificar se a Thalita tinha branch no remoto e apagar as branches mescladas.
+- Propor o plano do esqueleto e implementá-lo em commits com `Refs: T1`.
+- Preparar o ambiente (Node no WSL) e registrar a sessão neste arquivo, neste
+  mesmo PR.
+
+**O que a IA produziu**
+- Plano aprovado e cinco commits: TypeScript e Express, servidor, app React com
+  Vite e Router, ESLint, e `npm run dev` com `concurrently`.
+- Verificações: `npm ci` limpo, `typecheck`, `lint`, `build`, e `npm run dev`
+  (API responde 404 sem rotas; o Vite serve o HTML com `#root`).
+- Atualização do `CLAUDE.md` com os comandos novos e esta entrada.
+
+**Revisão humana**
+- O Node existia só no Windows: o `npm` aparecia no WSL, mas o `node` não. A IA
+  apontou; o humano instalou o nvm e o Node 24.21.0 no WSL. A sessão do Claude
+  Code, aberta antes disso, seguiu sem enxergar o Node, e a IA contornou
+  prefixando o PATH nos comandos.
+- O `typescript` mais recente (7.0.2) não é aceito pelo `typescript-eslint`
+  (`<6.1.0`). A IA fixou `~6.0.3` conferindo os peers, e a instalação passou sem
+  `ERESOLVE`.
+- O Vite avisou que o `vite.config.ts` usava ESM carregado como CommonJS. A IA
+  renomeou para `.mts`, sem mudar o `package.json` inteiro para ESM.
+- Ao encerrar o `npm run dev` com `kill`, a API e o Vite continuaram nas portas
+  3000 e 5173. A IA notou pela checagem de portas e encerrou os processos.
+- O humano mudou o plano: o commit de docs entra neste PR, e não depois do merge
+  do PR #4, porque o `CLAUDE.md` exige registro no mesmo dia e o template de PR
+  tem o item "O IA.md foi atualizado". A IA havia sugerido esperar o merge, por
+  causa do conflito no fim deste arquivo, que os dois PRs alteram.
+
+**Observações**
+- Conflito esperado neste arquivo (e possivelmente no `CLAUDE.md`) no PR que for
+  mesclado por último.
+- `npm audit` acusa 4 vulnerabilidades altas na cadeia `prisma` → `mysql2`;
+  `audit fix --force` rebaixaria o Prisma para 6.x, então não foi aplicado. O npm
+  11.19 também avisa sobre `allowScripts` (`better-sqlite3`, `esbuild`,
+  `prisma`); nada quebrou.
+- Sem testes no esqueleto. A página React foi verificada por `curl` e `build`,
+  não visualmente. `prisma/seed.ts` e `prisma.config.ts` só passam pelo lint.
+- Tempo economizado ou perdido: não medido.
+- Pendentes: healthcheck e proxy (T3); tirar o "(em revisão)" do espelho do DoD e
+  mover o cartão T1 depois do merge.
