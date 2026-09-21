@@ -53,7 +53,7 @@ npx prisma migrate dev      # cria o arquivo do banco e as tabelas
 npm run dev
 ```
 
-Pré-requisito: Node.js 20 ou superior.
+Pré-requisito: Node.js 24, conforme o `.nvmrc` (com o nvm, rode `nvm install` na pasta do projeto).
 
 > Após a migração para PostgreSQL, esta seção passa a incluir
 > `docker compose up -d` e a configuração do arquivo `.env`.

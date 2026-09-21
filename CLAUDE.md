@@ -10,7 +10,7 @@ Código, schema e mensagens de commit são em português; mantenha esse idioma e
 
 ## Comandos
 
-Node 24 (`.nvmrc`; o README pede 20+).
+Node 24 (`.nvmrc`; o README pede o mesmo).
 
 ```bash
 npm run dev         # Express (porta 3000) e Vite (porta 5173) juntos

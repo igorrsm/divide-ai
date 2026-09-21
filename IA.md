@@ -96,6 +96,9 @@ Cartão T1: Express, React + Vite e TypeScript, na branch `feat/esqueleto-projet
   do PR #4, porque o `CLAUDE.md` exige registro no mesmo dia e o template de PR
   tem o item "O IA.md foi atualizado". A IA havia sugerido esperar o merge, por
   causa do conflito no fim deste arquivo, que os dois PRs alteram.
+- O README pedia "Node.js 20 ou superior", mas o Vite 8 e o ESLint 10 exigem
+  Node 20.19 ou mais (o `.nvmrc` é 24). A IA apontou ao ler o cartão T1, e o
+  humano pediu para atualizar o README para Node 24.
 
 **Observações**
 - Conflito esperado neste arquivo (e possivelmente no `CLAUDE.md`) no PR que for
