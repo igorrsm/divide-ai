@@ -254,3 +254,42 @@ CORS e proxy do Vite resolvidos. Branch `feat/healthcheck`.
   do `StrictMode` do React; não acontece no build.
 - Sem testes automatizados (desconsiderados no TP1).
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-22 — Igor — CI no GitHub Actions (T4)
+
+Cartão T4: workflow que roda lint, typecheck e build em todo PR. Branch
+`chore/ci`, PR #14.
+
+**Pedido à IA**
+- Criar o workflow conforme o plano aprovado, simular o CI localmente, abrir o
+  PR e fazer o teste negativo no próprio PR.
+
+**O que a IA produziu**
+- `.github/workflows/ci.yml`: job `verificacoes` com `npm ci`, lint e build
+  (que inclui o typecheck), Node lido do `.nvmrc`. Sem passo de testes, porque
+  ainda não há testes; ele entra com o D1.
+- Simulação numa cópia limpa (sem `.env`, `node_modules` nem client do
+  Prisma): passou sem `prisma generate` nem `DATABASE_URL`, o que confirmou a
+  suposição do plano.
+- No PR #14: primeira execução verde (26 s); commit com variável sem uso,
+  check vermelho por `no-unused-vars` no passo de lint; revert, verde de novo.
+
+**Revisão humana**
+- O Igor repetiu a simulação na própria máquina, com teste negativo local
+  (lint com saída 1), e leu o workflow linha a linha antes do push.
+- O Igor escolheu pôr os três colegas como revisores do PR #14.
+
+**Observações**
+- Erro da IA: na primeira simulação, um `cp` falhou e, por causa do `;` no
+  encadeamento, o `npm ci` rodou na pasta do projeto em vez da cópia. O
+  `node_modules` foi reinstalado a partir do mesmo lock; a IA conferiu que o
+  `better-sqlite3` carrega e o Prisma CLI funciona, e refez a simulação com
+  `||` e `&&` em cada passo.
+- O `npm ci` avisa sobre `install-scripts` e sobre 4 vulnerabilidades altas
+  (já registradas em 21/09); nenhum dos dois quebra o CI.
+- A IA supôs que o login `Peluffo300` é o do Eduardo, por eliminação.
+- Esta entrada e a do PR #13 são acrescentadas ao fim do arquivo: o PR que
+  for mesclado por último terá conflito aqui.
+- Pendente depois do merge: tornar `verificacoes` obrigatório no ruleset
+  "Protege a Main".
+- Tempo economizado ou perdido: não medido.
