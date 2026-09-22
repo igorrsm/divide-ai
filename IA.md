@@ -12,6 +12,8 @@ relato fiel do processo, inclusive dos erros.
 - **Claude em modo Cowork** (interface de chat), usado para planejamento,
   discussão de decisões de domínio e revisão. Não tem acesso ao repositório e
   não gera código do projeto.
+- **Conector do Notion** no Claude Code, para ler o quadro do TP1 (páginas e
+  bancos) e, em 21/09, escrever em três cartões e na página principal.
 
 ## 2026-09-20 — Igor — Configuração inicial do Claude Code e do CLAUDE.md
 
@@ -62,3 +64,55 @@ Sessão de configuração inicial do Claude Code no projeto, em WSL/Ubuntu.
   adicionadas ou adicionadas + removidas. Apontado pela IA.
 - As respostas sobre sobra e commits vieram do contexto da sessão, não de
   código: o repositório ainda tem só schema Prisma e seed.
+
+## 2026-09-21 — Igor — Alinhamento do DoD e do CLAUDE.md com o Notion
+
+Retomada após o merge do PR #3: conferência da branch `feat/esqueleto-projeto`,
+análise do Definition of Done da Thalita (PR #2) contra o `CLAUDE.md` e leitura
+do quadro do TP1 no Notion.
+
+**Pedido à IA**
+- Verificar o repositório e atualizar a `feat/esqueleto-projeto` com `--ff-only`.
+- Avaliar se o DoD conflita com o `CLAUDE.md` e adaptá-lo.
+- Ler a página principal do Notion, os dois bancos e os cartões B2, B4, D1 e D2.
+- Aplicar as correções recomendadas, inclusive nos cartões B4 e D1, sem esperar
+  retorno do time.
+- Mover o cartão T7 para Finalizado e atualizar o espelho do DoD no Notion
+  conforme o PR #4, ainda em revisão.
+
+**O que a IA produziu**
+- Lista de divergências entre o DoD e o `CLAUDE.md` (sobra, 375 px, contagem das
+  100 linhas, escopo).
+- Edições em `docs/definition-of-done.md` e no `CLAUDE.md`.
+- Novos critérios de aceitação nos cartões B4 (pagador fora do rateio) e D1
+  (teste com sobra maior que 1) do Notion.
+- Atualização do cartão T7 (status e link do PR #2) e do espelho do DoD na
+  página principal do Notion.
+- Esta entrada.
+
+**Revisão humana**
+- A contagem das 100 linhas não foi discutida pelo grupo; o humano delegou a
+  escolha à IA, que definiu adicionadas + removidas, sem `package-lock.json`.
+- A IA acrescentou ao DoD um parêntese ("responsividade além disso está fora do
+  escopo do TP1") vindo do `CLAUDE.md`. O Notion mostrou que o 375 px é requisito
+  do time (DoD e cartão D2), e o parêntese foi revertido. Erro da IA: tratou uma
+  regra do `CLAUDE.md` como se fosse do time.
+- O `CLAUDE.md` dizia "geração mensal automática" para despesas recorrentes,
+  texto que a IA escreveu a partir do README e do schema. O Notion decide sem
+  agendador. Corrigido.
+- O critério da B4 dizia que a regra de sobra da B2 "continua valendo", o que não
+  cobre o pagador fora do rateio. A IA apontou a lacuna, e o humano autorizou a
+  alteração dos cartões da B4 (do Lucas) e da D1 sem aguardar o time.
+
+**Observações**
+- As mudanças nos cartões do Notion não passam por revisão de PR e ainda não
+  foram comunicadas ao Lucas.
+- Feitos depois do primeiro registro, ainda em 21/09: cartão T7 movido para
+  Finalizado e espelho do DoD no Notion atualizado conforme o PR #4 (em
+  revisão), com o caminho corrigido para `docs/definition-of-done.md`.
+- Pendentes: formato dos códigos dos cartões nos commits; campos de tempo e
+  veredito nas entradas deste arquivo; o README ainda diz que a recorrência é
+  automática; tirar o "(em revisão)" do espelho depois do merge do PR #4.
+- Tempo economizado ou perdido: não medido.
+- Este registro foi escrito antes dos commits; as mudanças foram commitadas na
+  branch `docs/ajusta-definition-of-done` e enviadas no PR #4.

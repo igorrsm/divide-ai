@@ -29,7 +29,7 @@ Prisma 7: o client vem de `src/generated/prisma/client` (não de `@prisma/client
 - **Valores monetários são `Int` em centavos** (`valorCentavos`), nunca float.
 - Uma `Despesa` tem um `pagadorId` e N `Participacao` (chave composta `despesaId + moradorId`), cada uma com o `valorCentavos` que aquele morador deve. O rateio já vem materializado por participante; `tipoDivisao` (`IGUAL`/`VALOR`/`PERCENTUAL`) só registra como foi calculado. Portanto, a soma das participações deve bater com o valor da despesa, e essa invariante não é garantida pelo banco — precisa ser garantida na camada de serviço.
 - Saldo de um morador não é armazenado: deve ser derivado de despesas pagas, participações e `Pagamento` (acertos entre dois moradores, com relações nomeadas `PagamentosFeitos`/`PagamentosRecebidos`).
-- `DespesaRecorrente` usa herança por tabela de subclasse: seu `id` é ao mesmo tempo PK e FK de `Despesa` (relação 1:1, `onDelete: Cascade`). Uma despesa é recorrente se tiver essa linha associada; `diaDoMes`, `ativa`, `dataFim` e `ultimaGeracao` controlam a geração mensal automática.
+- `DespesaRecorrente` usa herança por tabela de subclasse: seu `id` é ao mesmo tempo PK e FK de `Despesa` (relação 1:1, `onDelete: Cascade`). Uma despesa é recorrente se tiver essa linha associada; `diaDoMes`, `ativa`, `dataFim` e `ultimaGeracao` controlam a geração dos lançamentos do mês, que é disparada por ação explícita do morador (história C2 do Notion), não por agendador.
 - `Morador.email` é único globalmente e cada morador pertence a uma única `Republica`.
 
 ## Convenções (README)
@@ -88,6 +88,7 @@ Não implemente, não sugira e não deixe preparado:
 - envio de e-mail (o convite por e-mail das histórias é apenas o cadastro do endereço);
 - upload de comprovantes, anexos ou imagens;
 - notificações, push, integração com WhatsApp;
+- agendador automático (cron): a despesa recorrente é gerada por ação explícita do morador;
 - app mobile, PWA ou responsividade além do básico;
 - deploy, Docker, PostgreSQL (a migração está prevista, mas não é escopo desta entrega);
 - simplificação de dívidas (é a "possível extensão" do README — só se sobrar tempo).
@@ -104,6 +105,8 @@ O enunciado pede um projeto pequeno e bem-feito. Escopo a mais é risco, não m�
   outro membro.
 - Uma branch por história ou tarefa, nomeada `feat/saldo-consolidado`, `chore/ci`, etc.
 - Antes de abrir o PR, rode o que existir de teste e lint e relate o resultado.
+- A Definition of Done está em `docs/definition-of-done.md`, que é a fonte oficial; a
+  página do Notion é só um espelho. Uma história só termina quando cumpre todos os itens.
 
 ## Alterações no schema do Prisma
 
