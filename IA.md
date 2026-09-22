@@ -254,3 +254,47 @@ CORS e proxy do Vite resolvidos. Branch `feat/healthcheck`.
   do `StrictMode` do React; não acontece no build.
 - Sem testes automatizados (desconsiderados no TP1).
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-22 — Igor — Revisão do PR #6 e replanejamento do Sprint 2
+
+Revisão do T3 (PR #6, da Thalita), atualização do Notion e repasse do Sprint 1
+para o Sprint 2, com o relato em `docs/sprints.md`.
+
+**Pedido à IA**
+- Avaliar o PR #6, orientar o teste de tela e redigir o texto da revisão.
+- Mover o cartão T3 no Notion depois do merge.
+- Planejar e aplicar o repasse do Sprint 1 para o Sprint 2 e registrar as
+  dificuldades para começar a programar.
+
+**O que a IA produziu**
+- Avaliação do PR: typecheck, lint e build rodados numa cópia temporária da
+  branch e `GET /api/health` testado com `curl`; a tela não foi aberta pela IA.
+- Passo a passo do teste de tela e explicação do 304 que apareceu no lugar do
+  200 esperado (revalidação por ETag do Express).
+- Texto da aprovação, com cinco sugestões sobre o `IA.md` da Thalita.
+- No Notion: cartão T3 finalizado com o link do PR; seis cartões (A1, A2, A3,
+  B1, B2, B3) movidos para o Sprint 2 com nota de repasse; nota de
+  replanejamento na página principal; "(em revisão)" retirado do espelho da DoD.
+- `docs/sprints.md` e esta entrada.
+
+**Revisão humana**
+- O Igor abriu a tela, testou com e sem a API e conferiu os 375 px.
+- O Igor rodou typecheck, lint e build na própria máquina e fez um teste
+  negativo (erro de tipo proposital no `StatusApi`, detectado pelo `tsc`).
+- Decisões do Igor: repassar o Sprint 1 inteiro; manter 30 pontos com ordem de
+  corte (C1, depois B4); causas do atraso (agenda do time e dependência em
+  cadeia); registrar no Notion e no repositório; manter o T4 no Sprint 0.
+- A IA não encontrou registro da causa do atraso e perguntou em vez de supor.
+
+**Observações**
+- Fricção: até o PR #6, os resultados de typecheck e lint citados nos PRs
+  vinham da IA, sem que um humano os visse rodar. A partir desta revisão, o
+  revisor roda as verificações. O T4 (CI) resolve isso de forma automática.
+- Erro da IA: o plano dizia que as tarefas do Sprint 0 foram entregues no
+  prazo. Ao conferir as datas dos PRs, nenhum foi mesclado entre 12 e 15/09; o
+  texto foi corrigido antes do commit.
+- Erro da IA: a primeira avaliação do PR #6 não notou a contradição sobre quem
+  rodou typecheck e lint; o ponto só apareceu na revisão commit a commit.
+- As mudanças nos cartões do Eduardo, do Lucas e da Thalita ainda não foram
+  comunicadas a eles.
+- Tempo economizado ou perdido: não medido.
