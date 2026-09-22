@@ -4,13 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Estado do projeto
 
-Divide Aí é um sistema de despesas compartilhadas para repúblicas (projeto de faculdade, README em português). **Hoje o repositório contém apenas a camada de dados** (Prisma + SQLite): não há `src/` versionado, servidor Express, frontend React, scripts em `package.json` nem testes. O README descreve o stack planejado (React 18 + Vite no front, Express + TypeScript no back, API REST, migração futura para PostgreSQL via Docker Compose). O `npm run dev` citado no README ainda não existe.
+Divide Aí é um sistema de despesas compartilhadas para repúblicas (projeto de faculdade, README em português). **Hoje o repositório contém a camada de dados** (Prisma + SQLite) **e um esqueleto de aplicação** (T1): servidor Express mínimo em `src/server.ts` e app React 18 + Vite + React Router em `web/`. Ainda não há rotas de negócio, `/api/health` nem proxy do Vite (T3), e não há testes. O README descreve o stack planejado (API REST, migração futura para PostgreSQL via Docker Compose).
 
 Código, schema e mensagens de commit são em português; mantenha esse idioma e o padrão de nomes do domínio (`Republica`, `Morador`, `Despesa`, `Participacao`, `Pagamento`).
 
 ## Comandos
 
-Node 24 (`.nvmrc`; o README pede 20+).
+Node 24 (`.nvmrc`; o README pede o mesmo).
+
+```bash
+npm run dev         # Express (porta 3000) e Vite (porta 5173) juntos
+npm run dev:server  # só o backend: tsx watch src/server.ts
+npm run dev:web     # só o frontend: vite web
+npm run typecheck   # tsc no backend (tsconfig.json) e no frontend (web/tsconfig.json)
+npm run lint        # ESLint; falha com qualquer warning
+npm run build       # typecheck + vite build web
+```
+
+O backend fica em `src/` e o frontend em `web/`, cada um com seu `tsconfig.json`. O TypeScript está fixado em `~6.0.3` porque `typescript-eslint` só aceita `<6.1.0`; não suba a versão sem conferir. `web/vite.config.mts` e `eslint.config.mjs` usam extensão ESM para não exigir `"type": "module"` no `package.json`. O typecheck do backend cobre só `src/` (sem `src/generated/`); `prisma/seed.ts` e `prisma.config.ts` passam apenas pelo lint.
+
+Banco de dados (Prisma):
 
 ```bash
 npm install

@@ -116,3 +116,98 @@ do quadro do TP1 no Notion.
 - Tempo economizado ou perdido: não medido.
 - Este registro foi escrito antes dos commits; as mudanças foram commitadas na
   branch `docs/ajusta-definition-of-done` e enviadas no PR #4.
+
+## 2026-09-21 — Igor — Esqueleto do projeto (T1)
+
+Cartão T1: Express, React + Vite e TypeScript, na branch `feat/esqueleto-projeto`.
+
+**Pedido à IA**
+- Verificar se a Thalita tinha branch no remoto e apagar as branches mescladas.
+- Propor o plano do esqueleto e implementá-lo em commits com `Refs: T1`.
+- Preparar o ambiente (Node no WSL) e registrar a sessão neste arquivo, neste
+  mesmo PR.
+
+**O que a IA produziu**
+- Plano aprovado e cinco commits: TypeScript e Express, servidor, app React com
+  Vite e Router, ESLint, e `npm run dev` com `concurrently`.
+- Verificações: `npm ci` limpo, `typecheck`, `lint`, `build`, e `npm run dev`
+  (API responde 404 sem rotas; o Vite serve o HTML com `#root`).
+- Atualização do `CLAUDE.md` com os comandos novos e esta entrada.
+- Depois do registro: cartão T1 no Notion movido para "Em revisão (PR)", com o
+  link do PR #5, e comentário no PR #5 avisando a Thalita, ambos a pedido.
+
+**Revisão humana**
+- O Node existia só no Windows: o `npm` aparecia no WSL, mas o `node` não. A IA
+  apontou; o humano instalou o nvm e o Node 24.21.0 no WSL. A sessão do Claude
+  Code, aberta antes disso, seguiu sem enxergar o Node, e a IA contornou
+  prefixando o PATH nos comandos.
+- O `typescript` mais recente (7.0.2) não é aceito pelo `typescript-eslint`
+  (`<6.1.0`). A IA fixou `~6.0.3` conferindo os peers, e a instalação passou sem
+  `ERESOLVE`.
+- O Vite avisou que o `vite.config.ts` usava ESM carregado como CommonJS. A IA
+  renomeou para `.mts`, sem mudar o `package.json` inteiro para ESM.
+- Ao encerrar o `npm run dev` com `kill`, a API e o Vite continuaram nas portas
+  3000 e 5173. A IA notou pela checagem de portas e encerrou os processos.
+- O humano mudou o plano: o commit de docs entra neste PR, e não depois do merge
+  do PR #4, porque o `CLAUDE.md` exige registro no mesmo dia e o template de PR
+  tem o item "O IA.md foi atualizado". A IA havia sugerido esperar o merge, por
+  causa do conflito no fim deste arquivo, que os dois PRs alteram.
+- O README pedia "Node.js 20 ou superior", mas o Vite 8 e o ESLint 10 exigem
+  Node 20.19 ou mais (o `.nvmrc` é 24). A IA apontou ao ler o cartão T1, e o
+  humano pediu para atualizar o README para Node 24.
+
+**Observações**
+- Conflito esperado neste arquivo (e possivelmente no `CLAUDE.md`) no PR que for
+  mesclado por último.
+- `npm audit` acusa 4 vulnerabilidades altas na cadeia `prisma` → `mysql2`;
+  `audit fix --force` rebaixaria o Prisma para 6.x, então não foi aplicado. O npm
+  11.19 também avisa sobre `allowScripts` (`better-sqlite3`, `esbuild`,
+  `prisma`); nada quebrou.
+- Sem testes no esqueleto. A página React foi verificada por `curl` e `build`,
+  não visualmente. `prisma/seed.ts` e `prisma.config.ts` só passam pelo lint.
+- Tempo economizado ou perdido: não medido.
+- Pendentes: healthcheck e proxy (T3); tirar o "(em revisão)" do espelho do DoD e
+  mover o cartão T1 depois do merge.
+
+## 2026-09-22 — Igor — Resolução do conflito no IA.md (PR #5)
+
+O conflito previsto na sessão anterior se confirmou: o PR #4 foi mesclado antes
+do #5, e o `IA.md` (as duas entradas de 21/09) e o `CLAUDE.md` divergiram entre
+`feat/esqueleto-projeto` e a `main`.
+
+**Pedido à IA**
+- Trazer a `main` para a branch com `git merge` (explicitamente, não rebase) e
+  resolver o conflito no `IA.md` mantendo as duas entradas, em ordem
+  cronológica, já que nenhum lado apagou nada.
+- Mostrar o arquivo resolvido antes de commitar.
+- Commitar, dar push, conferir se o PR #5 fechou o conflito e avisar a Thalita
+  no PR.
+
+**O que a IA produziu**
+- `git fetch` + `git merge origin/main`: `CLAUDE.md` e
+  `docs/definition-of-done.md` mesclaram sozinhos; só o `IA.md` conflitou.
+- Ordem cronológica das duas entradas de 21/09 definida por `git log --date`
+  nos commits das branches `docs/ajusta-definition-of-done` (19:53–20:04) e
+  `feat/esqueleto-projeto` (20:34–20:59): a entrada do DoD vem antes da do
+  esqueleto (T1).
+- Arquivo resolvido mostrado ao humano antes do commit.
+- Commit de merge (`5dcec6c`) e push da branch.
+- Checagem do PR #5 via `gh pr view --json mergeable,mergeStateStatus`:
+  `MERGEABLE`, com `mergeStateStatus: BLOCKED` explicado como proteção de
+  branch (revisão/checks pendentes), não conflito.
+- Comentário no PR #5 avisando a Thalita (`@thalipires`) que o conflito foi
+  resolvido.
+
+**Revisão humana**
+- O humano pediu confirmação explícita antes de cada ação com efeito externo:
+  ver o arquivo resolvido antes do commit, aprovar o commit, aprovar o push e
+  só então pedir o aviso no PR. Nenhum passo foi automatizado sem esse aval.
+- A ordem cronológica das entradas não foi verificada pelo humano linha a
+  linha; a IA se baseou nos timestamps dos commits (`git log`), não em
+  suposição.
+
+**Observações**
+- Nenhum código foi alterado nesta sessão, só documentação e o merge em si.
+- Pendências seguem as mesmas da entrada anterior (healthcheck e proxy do T3,
+  tirar "(em revisão)" do espelho do DoD, mover o cartão T1 após o merge).
+- Tempo economizado ou perdido: não medido.
