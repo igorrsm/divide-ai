@@ -211,3 +211,46 @@ do #5, e o `IA.md` (as duas entradas de 21/09) e o `CLAUDE.md` divergiram entre
 - Pendências seguem as mesmas da entrada anterior (healthcheck e proxy do T3,
   tirar "(em revisão)" do espelho do DoD, mover o cartão T1 após o merge).
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-22 — Thalita — Healthcheck ponta a ponta (T3)
+
+Cartão T3: `GET /api/health` respondendo e a tela mostrando o resultado, com
+CORS e proxy do Vite resolvidos. Branch `feat/healthcheck`.
+
+**Ferramenta**
+- Claude em modo Cowork (modelo Claude Opus 5.5), com acesso à pasta do
+  projeto no computador da Thalita. Diferente do que o cabeçalho deste arquivo
+  diz sobre o Cowork, nesta sessão ele escreveu o código e fez os commits.
+
+**Pedido à IA**
+- Revisar e aprovar o PR #5 (T1) seguindo a DoD, o enunciado e o repositório.
+- Ajudar a instalar o Node 24 (nvm-windows) e rodar o projeto no Windows.
+- Implementar o T3 e abrir o PR, respeitando o limite de 100 linhas.
+
+**O que a IA produziu**
+- Três commits de código: rota `GET /api/health` (4 linhas), proxy do Vite
+  para `/api` (7 linhas) e componente `StatusApi` na tela inicial (27 linhas),
+  mais este commit de docs.
+- CORS resolvido pelo proxy: front e API ficam na mesma origem (porta 5173)
+  no desenvolvimento, então não foi instalado o pacote `cors`.
+- Verificações: `typecheck` e `lint` sem erro; `build` rodado pela Thalita no
+  Windows; tela aberta em 375 px com "API: ok" (requisição a
+  `localhost:5173/api/health` com 200) e, com só o `dev:web` no ar, "API: fora
+  do ar".
+
+**Revisão humana**
+- A Thalita rodou `build`, `npm run dev` e `npm run dev:web` no próprio
+  PowerShell e acompanhou os dois testes de tela.
+- O texto da aprovação do PR #5 foi editado por ela antes do envio.
+
+**Observações**
+- Fricção: a IA sugeriu baixar o `nvm-setup.exe`, mas a release mais recente
+  era uma beta publicada minutos antes; a estável (v2.0.0) usa outro nome de
+  arquivo. Depois, `node -v` mostrava 22 porque um Node antigo instalado no
+  Windows vinha antes do nvm no PATH; resolvido desinstalando o Node antigo.
+- Fricção: o `npm` estava bloqueado no ambiente da IA, então o `build` (que
+  depende de binários do Windows) só pôde ser rodado pela Thalita.
+- No modo de desenvolvimento a tela chama `/api/health` duas vezes por causa
+  do `StrictMode` do React; não acontece no build.
+- Sem testes automatizados (desconsiderados no TP1).
+- Tempo economizado ou perdido: não medido.
