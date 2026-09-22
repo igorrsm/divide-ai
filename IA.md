@@ -168,3 +168,46 @@ Cartão T1: Express, React + Vite e TypeScript, na branch `feat/esqueleto-projet
 - Tempo economizado ou perdido: não medido.
 - Pendentes: healthcheck e proxy (T3); tirar o "(em revisão)" do espelho do DoD e
   mover o cartão T1 depois do merge.
+
+## 2026-09-22 — Igor — Resolução do conflito no IA.md (PR #5)
+
+O conflito previsto na sessão anterior se confirmou: o PR #4 foi mesclado antes
+do #5, e o `IA.md` (as duas entradas de 21/09) e o `CLAUDE.md` divergiram entre
+`feat/esqueleto-projeto` e a `main`.
+
+**Pedido à IA**
+- Trazer a `main` para a branch com `git merge` (explicitamente, não rebase) e
+  resolver o conflito no `IA.md` mantendo as duas entradas, em ordem
+  cronológica, já que nenhum lado apagou nada.
+- Mostrar o arquivo resolvido antes de commitar.
+- Commitar, dar push, conferir se o PR #5 fechou o conflito e avisar a Thalita
+  no PR.
+
+**O que a IA produziu**
+- `git fetch` + `git merge origin/main`: `CLAUDE.md` e
+  `docs/definition-of-done.md` mesclaram sozinhos; só o `IA.md` conflitou.
+- Ordem cronológica das duas entradas de 21/09 definida por `git log --date`
+  nos commits das branches `docs/ajusta-definition-of-done` (19:53–20:04) e
+  `feat/esqueleto-projeto` (20:34–20:59): a entrada do DoD vem antes da do
+  esqueleto (T1).
+- Arquivo resolvido mostrado ao humano antes do commit.
+- Commit de merge (`5dcec6c`) e push da branch.
+- Checagem do PR #5 via `gh pr view --json mergeable,mergeStateStatus`:
+  `MERGEABLE`, com `mergeStateStatus: BLOCKED` explicado como proteção de
+  branch (revisão/checks pendentes), não conflito.
+- Comentário no PR #5 avisando a Thalita (`@thalipires`) que o conflito foi
+  resolvido.
+
+**Revisão humana**
+- O humano pediu confirmação explícita antes de cada ação com efeito externo:
+  ver o arquivo resolvido antes do commit, aprovar o commit, aprovar o push e
+  só então pedir o aviso no PR. Nenhum passo foi automatizado sem esse aval.
+- A ordem cronológica das entradas não foi verificada pelo humano linha a
+  linha; a IA se baseou nos timestamps dos commits (`git log`), não em
+  suposição.
+
+**Observações**
+- Nenhum código foi alterado nesta sessão, só documentação e o merge em si.
+- Pendências seguem as mesmas da entrada anterior (healthcheck e proxy do T3,
+  tirar "(em revisão)" do espelho do DoD, mover o cartão T1 após o merge).
+- Tempo economizado ou perdido: não medido.
