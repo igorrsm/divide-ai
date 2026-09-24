@@ -49,6 +49,16 @@ describe("interpretaData", () => {
     assert.throws(() => interpretaData("2026-09-24", HOJE), ErroDeValidacao);
   });
 
+  it("decide o futuro pelo calendário de São Paulo, não pelo UTC", () => {
+    // 01:00 UTC do dia 24 ainda são 22:00 do dia 23 em São Paulo.
+    const noiteBrasileira = new Date("2026-09-24T01:00:00.000Z");
+    assert.equal(
+      interpretaData("2026-09-23", noiteBrasileira).toISOString(),
+      "2026-09-23T00:00:00.000Z",
+    );
+    assert.throws(() => interpretaData("2026-09-24", noiteBrasileira), ErroDeValidacao);
+  });
+
   it("recusa data que não existe no calendário", () => {
     // O JavaScript aceitaria e deslizaria para 2 de março.
     assert.throws(() => interpretaData("2026-02-30", HOJE), ErroDeValidacao);

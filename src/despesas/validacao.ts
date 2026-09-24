@@ -5,6 +5,19 @@ import { ErroDeValidacao } from "../erros";
 const PADRAO_VALOR = /^(-?)(\d+)(?:[.,](\d{1,2}))?$/;
 const PADRAO_DATA = /^\d{4}-\d{2}-\d{2}$/;
 
+// A casa é no Brasil: é o calendário de São Paulo que decide o que é futuro.
+const FUSO_DA_CASA = "America/Sao_Paulo";
+
+/** Data de hoje no fuso da casa, no formato AAAA-MM-DD. */
+function hojeNaCasa(agora: Date): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: FUSO_DA_CASA,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(agora);
+}
+
 /**
  * Converte um valor em reais para centavos inteiros.
  *
@@ -28,16 +41,16 @@ export function reaisParaCentavos(entrada: string): number {
 /**
  * Interpreta uma data no formato AAAA-MM-DD e recusa datas futuras.
  *
- * A data é fixada na meia-noite UTC e a comparação é feita por dia, também em
- * UTC, para não depender do fuso de quem está usando o sistema. Lançar uma
- * despesa com a data de hoje é válido.
+ * A data é guardada na meia-noite UTC, mas "futuro" é decidido pelo calendário
+ * de São Paulo: comparar em UTC aceitaria a data de amanhã durante as três
+ * horas finais do dia no Brasil. Lançar uma despesa com a data de hoje vale.
  */
-export function interpretaData(entrada: string, hoje: Date = new Date()): Date {
-  if (!PADRAO_DATA.test(entrada.trim())) {
+export function interpretaData(entrada: string, agora: Date = new Date()): Date {
+  const texto = entrada.trim();
+  if (!PADRAO_DATA.test(texto)) {
     throw new ErroDeValidacao("Data inválida. Use o formato AAAA-MM-DD.");
   }
 
-  const texto = entrada.trim();
   const data = new Date(`${texto}T00:00:00.000Z`);
   // O JavaScript não rejeita 2026-02-30: ele desliza para 2 de março. A ida e
   // volta pelo ISO é o que pega uma data inexistente no calendário.
@@ -45,8 +58,9 @@ export function interpretaData(entrada: string, hoje: Date = new Date()): Date {
     throw new ErroDeValidacao("Data inexistente no calendário.");
   }
 
-  const inicioDeHoje = Date.UTC(hoje.getUTCFullYear(), hoje.getUTCMonth(), hoje.getUTCDate());
-  if (data.getTime() > inicioDeHoje) {
+  // AAAA-MM-DD ordena como texto na mesma ordem da data, então comparar as
+  // duas strings basta e não reintroduz fuso na conta.
+  if (texto > hojeNaCasa(agora)) {
     throw new ErroDeValidacao("Data futura não é aceita.");
   }
   return data;
