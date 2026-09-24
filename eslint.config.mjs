@@ -8,5 +8,10 @@ export default defineConfig([
   {
     files: ["**/*.{ts,tsx,mts}"],
     extends: [tseslint.configs.recommended],
+    rules: {
+      // O middleware de erro do Express só é reconhecido com os quatro
+      // parâmetros, mesmo quando o último não é usado.
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+    },
   },
 ]);
