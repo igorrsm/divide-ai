@@ -7,15 +7,6 @@ datasource db {
   provider = "sqlite"
 }
 
-enum Categoria {
-  ALUGUEL
-  CONTAS
-  MERCADO
-  LIMPEZA
-  MANUTENCAO
-  OUTROS
-}
-
 enum TipoDivisao {
   IGUAL
   VALOR
@@ -41,8 +32,8 @@ model Morador {
 
   despesasPagas       Despesa[]
   participacoes       Participacao[]
-  pagamentosFeitos    Pagamento[] @relation("PagamentosFeitos")
-  pagamentosRecebidos Pagamento[] @relation("PagamentosRecebidos")
+  pagamentosFeitos    Pagamento[]    @relation("PagamentosFeitos")
+  pagamentosRecebidos Pagamento[]    @relation("PagamentosRecebidos")
 }
 
 model Despesa {
@@ -50,7 +41,6 @@ model Despesa {
   descricao     String
   valorCentavos Int
   data          DateTime
-  categoria     Categoria
   tipoDivisao   TipoDivisao @default(IGUAL)
   criadaEm      DateTime    @default(now())
 

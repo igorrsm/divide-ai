@@ -32,7 +32,6 @@ async function main() {
       descricao: "Aluguel",
       valorCentavos: 240000, // R$ 2.400,00
       data: new Date("2026-09-05"),
-      categoria: "ALUGUEL",
       tipoDivisao: "IGUAL",
       republicaId: rep.id,
       pagadorId: ana.id,
@@ -53,7 +52,6 @@ async function main() {
       descricao: "Compra do mês no mercado",
       valorCentavos: 15000, // R$ 150,00
       data: new Date("2026-09-10"),
-      categoria: "MERCADO",
       tipoDivisao: "IGUAL",
       republicaId: rep.id,
       pagadorId: bruno.id,
