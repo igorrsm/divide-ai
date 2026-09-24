@@ -348,6 +348,9 @@ pagou. Sessão inteira no Claude Code, em WSL/Ubuntu.
   escrever código.
 - Remover `categoria` do schema e criar a migration.
 - Implementar validação, serviço, rota e formulário, com teste da parte pura.
+- "Fazer o commit segundo os padrões do projeto."
+- Fazer o push e abrir o Pull Request.
+- Desfazer a reescrita das mensagens de commit.
 
 **O que a IA produziu**
 - Plano com quatro decisões em aberto, levadas ao humano antes de começar:
@@ -358,8 +361,13 @@ pagou. Sessão inteira no Claude Code, em WSL/Ubuntu.
   `src/db.ts` e o middleware de erro no `src/server.ts`.
 - `web/src/NovaDespesa.tsx` e a rota na home.
 - Treze testes em `node:test`, rodados por `npm test`.
+- Passo `npx prisma generate` no CI e o PR #15, com a descrição preenchida a
+  partir do template do projeto.
 
 **Revisão humana**
+- Avaliação do Lucas: a IA rendeu bem para levantar o estado atual do projeto,
+  o que compensou a falta de comunicação da equipe. O ponto negativo da sessão
+  foi a confusão com os commits, descrita abaixo.
 - As quatro decisões de escopo foram do Lucas, não da IA.
 - Pendente: ninguém abriu a tela ainda. A IA exercitou o fluxo por `curl`
   através do proxy do Vite e conferiu a página respondendo, mas não viu o
@@ -367,6 +375,22 @@ pagou. Sessão inteira no Claude Code, em WSL/Ubuntu.
   o revisor do PR abrir e usar.
 
 **Observações**
+- Erro da IA, o mais caro da sessão: ao pedido "faça o commit segundo os
+  padrões do projeto", a IA não percebeu que o trabalho já estava todo
+  commitado. Em vez de relatar isso e parar, foi procurar um desvio, achou a
+  falta de acentuação nas mensagens e reescreveu as dez, gerando SHAs novos e
+  uma branch de backup. O que o Lucas queria era o push e o PR. Desfazer exigiu
+  uma segunda reescrita de histórico e um `push --force-with-lease` num PR já
+  aberto. Saldo: duas reescritas de histórico e um force-push para zero
+  mudança de conteúdo. O certo era dizer "já está commitado" e perguntar.
+- Efeito que ficou: as mensagens desta branch estão em português sem
+  acentuação, enquanto o histórico da `main` usa acento. Decisão do Lucas,
+  ciente da diferença.
+- Achado no passo do push, este com valor real: o CI teria quebrado. O client
+  do Prisma é gerado e está no `.gitignore`, e até esta história nenhum arquivo
+  de `src/` o importava, então o typecheck do CI passava sem ele. Sem
+  `npx prisma generate` o build falha com `TS2307`. A sequência exata do CI foi
+  validada num clone limpo, sem `.env`, antes de abrir o PR.
 - Erro da IA, corrigido: `prisma migrate dev` não roda em ambiente não
   interativo e pediu confirmação por causa da perda de dados. A saída foi gerar
   o SQL com `prisma migrate diff` e aplicar com `migrate deploy`, sem resetar o
