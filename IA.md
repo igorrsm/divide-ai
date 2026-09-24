@@ -337,3 +337,57 @@ Cartão T4: workflow que roda lint, typecheck e build em todo PR. Branch
 - Pendente depois do merge: tornar `verificacoes` obrigatório no ruleset
   "Protege a Main".
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-23 — Lucas — Lançar despesa (B1)
+
+História B1 do Sprint 2: lançar despesa com descrição, valor, data e quem
+pagou. Sessão inteira no Claude Code, em WSL/Ubuntu.
+
+**Pedido à IA**
+- Ler o `CLAUDE.md`, o DoD e o `docs/sprints.md` e propor um plano antes de
+  escrever código.
+- Remover `categoria` do schema e criar a migration.
+- Implementar validação, serviço, rota e formulário, com teste da parte pura.
+
+**O que a IA produziu**
+- Plano com quatro decisões em aberto, levadas ao humano antes de começar:
+  alteração do schema, rateio dentro ou fora de B1, como o front escolhe a
+  república, e se haveria teste.
+- Migration `remove_categoria_da_despesa` e ajuste do seed.
+- `src/despesas/validacao.ts`, `src/despesas/servico.ts`, `src/despesas/rotas.ts`,
+  `src/db.ts` e o middleware de erro no `src/server.ts`.
+- `web/src/NovaDespesa.tsx` e a rota na home.
+- Treze testes em `node:test`, rodados por `npm test`.
+
+**Revisão humana**
+- As quatro decisões de escopo foram do Lucas, não da IA.
+- Pendente: ninguém abriu a tela ainda. A IA exercitou o fluxo por `curl`
+  através do proxy do Vite e conferiu a página respondendo, mas não viu o
+  formulário renderizado. O item "funciona na tela" do DoD continua aberto até
+  o revisor do PR abrir e usar.
+
+**Observações**
+- Erro da IA, corrigido: `prisma migrate dev` não roda em ambiente não
+  interativo e pediu confirmação por causa da perda de dados. A saída foi gerar
+  o SQL com `prisma migrate diff` e aplicar com `migrate deploy`, sem resetar o
+  banco de ninguém.
+- Erro da IA, corrigido: um `sed` de limpeza de linhas em branco levantou
+  suspeita de ter apagado um comentário do schema. Era leitura errada da saída;
+  o arquivo estava intacto. A IA afirmou a perda antes de conferir.
+- Bug encontrado só porque a IA testou antes de escrever o teste: o JavaScript
+  não rejeita `2026-02-30`, ele desliza para 2 de março. A checagem de `NaN`
+  que a IA tinha escrito nunca disparava. Passou a validar por ida e volta no
+  ISO.
+- Mudança de decisão no meio do caminho: a comparação de data futura começou em
+  UTC e passou para o calendário de São Paulo. Em UTC, a data de amanhã era
+  aceita durante as três horas finais do dia no Brasil. Há teste fixando isso.
+- Achado por teste manual: o seed apaga e recria, então o autoincremento
+  avançava a cada execução e a república demo mudava de id. A constante do
+  front teria quebrado no segundo seed. Os ids do seed passaram a ser fixos.
+- O `node_modules` da máquina era anterior ao T1 e não tinha `tsc` nem
+  `eslint`; foi preciso `npm install` antes de qualquer verificação.
+- Sem cobertura automatizada: o serviço (que toca o banco) e o componente React
+  não têm teste. Só a validação pura tem.
+- A despesa nasce sem participações. Até B2 entrar, a soma das participações
+  não bate com o valor da despesa.
+- Tempo economizado ou perdido: não medido.
