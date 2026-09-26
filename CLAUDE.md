@@ -23,7 +23,7 @@ npm run build       # typecheck + vite build web
 
 O backend fica em `src/` e o frontend em `web/`, cada um com seu `tsconfig.json`. O TypeScript está fixado em `~6.0.3` porque `typescript-eslint` só aceita `<6.1.0`; não suba a versão sem conferir. `web/vite.config.mts` e `eslint.config.mjs` usam extensão ESM para não exigir `"type": "module"` no `package.json`. O typecheck do backend cobre só `src/` (sem `src/generated/`); `prisma/seed.ts` e `prisma.config.ts` passam apenas pelo lint.
 
-Front (`web/src/`): todas as telas são rotas filhas de `Layout.tsx` (cabeçalho e menu inferior). O visual é o "Mural" (protótipo C escolhido pelo grupo): cores, borda, sombra e fontes ficam em variáveis em `estilo.css`, e a classe `.cartao` é a base das listas. Use as variáveis em vez de repetir cores. Dinheiro chega da API em centavos e só vira texto com `formatarReais` (`R$ 1.234,56`).
+Front (`web/src/`): todas as telas são rotas filhas de `Layout.tsx` (cabeçalho e menu inferior). O visual é o "Mural" (protótipo C escolhido pelo grupo): cores, borda, sombra e fontes ficam em variáveis em `estilo.css`, e a classe `.cartao` é a base das listas. Use as variáveis em vez de repetir cores. Dinheiro chega da API em centavos e só vira texto com `formatarReais` (`R$ 1.234,56`). Rotas: `/` (início), `/despesas`, `/despesas/nova`, `/saldos`, `/moradores` e `/republicas/nova` (A1). O `ProvedorStatusApi` consulta `/api/health` a cada 10 s; use `useApiForaDoAr()` para desativar ações que dependem da API.
 
 Banco de dados (Prisma):
 

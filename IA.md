@@ -458,6 +458,13 @@ projeto e ao navegador do app (GitHub e Notion logados pela Thalita).
   aparece com a API fora do ar, no visual da página, em qualquer tela.
   Cabeçalho e menu passaram a acompanhar a coluna do conteúdo no computador,
   problema que ela notou numa captura de tela.
+- A pedido da Thalita: com a API fora do ar, lançar despesa fica bloqueado
+  (botões desativados, status consultado a cada 10 s e destrava sozinho); o
+  exemplo do campo de valor virou "0,00"; e há uma tela inicial com texto e
+  quatro atalhos (Despesas, Saldos, Moradores e Criar república, esta vazia
+  para a A1). Despesas passou para /despesas.
+- Achados nos testes da IA, corrigidos: botão desativado mais estreito que o
+  link ativo e aviso de erro duplicado no formulário com a API fora do ar.
 - O painel do navegador do app aparecia vazio para a Thalita enquanto a IA
   testava; ela acompanhou pelas capturas de tela enviadas no chat.
 - Tempo economizado ou perdido: não medido.
