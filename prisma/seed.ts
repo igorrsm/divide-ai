@@ -14,16 +14,20 @@ async function main() {
   await prisma.morador.deleteMany();
   await prisma.republica.deleteMany();
 
-  const rep = await prisma.republica.create({ data: { nome: "República Demo" } });
+  // Ids fixos: o seed apaga e recria, e sem isso o autoincremento avança a cada
+  // execução, quebrando qualquer referência fixa no front.
+  const rep = await prisma.republica.create({
+    data: { id: 1, nome: "República Demo" },
+  });
 
   const ana = await prisma.morador.create({
-    data: { nome: "Ana", email: "ana@exemplo.com", republicaId: rep.id },
+    data: { id: 1, nome: "Ana", email: "ana@exemplo.com", republicaId: rep.id },
   });
   const bruno = await prisma.morador.create({
-    data: { nome: "Bruno", email: "bruno@exemplo.com", republicaId: rep.id },
+    data: { id: 2, nome: "Bruno", email: "bruno@exemplo.com", republicaId: rep.id },
   });
   const carla = await prisma.morador.create({
-    data: { nome: "Carla", email: "carla@exemplo.com", republicaId: rep.id },
+    data: { id: 3, nome: "Carla", email: "carla@exemplo.com", republicaId: rep.id },
   });
 
   // Despesa 1: aluguel dividido por todos, marcada como recorrente
@@ -32,7 +36,6 @@ async function main() {
       descricao: "Aluguel",
       valorCentavos: 240000, // R$ 2.400,00
       data: new Date("2026-09-05"),
-      categoria: "ALUGUEL",
       tipoDivisao: "IGUAL",
       republicaId: rep.id,
       pagadorId: ana.id,
@@ -53,7 +56,6 @@ async function main() {
       descricao: "Compra do mês no mercado",
       valorCentavos: 15000, // R$ 150,00
       data: new Date("2026-09-10"),
-      categoria: "MERCADO",
       tipoDivisao: "IGUAL",
       republicaId: rep.id,
       pagadorId: bruno.id,
