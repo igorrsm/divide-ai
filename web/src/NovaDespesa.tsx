@@ -119,7 +119,8 @@ export default function NovaDespesa() {
         {foraDoAr ? "Servidor indisponível" : enviando ? "Lançando..." : "Lançar despesa"}
       </button>
 
-      {aviso && (
+      {/* Com a API fora do ar, o aviso do topo já explica o erro. */}
+      {aviso && !(foraDoAr && aviso.tipo === "erro") && (
         <p role="status" className={aviso.tipo === "erro" ? "aviso aviso-erro" : "aviso aviso-ok"}>
           {aviso.texto}
         </p>
