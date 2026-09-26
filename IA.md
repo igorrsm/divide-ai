@@ -454,6 +454,10 @@ projeto e ao navegador do app (GitHub e Notion logados pela Thalita).
 - A pedido da Thalita, o formulário da B1 (do Lucas) também passou para o
   visual Mural: só os estilos mudaram, a lógica ficou igual. Retestado em
   375 px (valor 0 recusado, 19,99 gravado como 1999).
+- A pedido da Thalita, o "API: ok" do T3 saiu da tela inicial: o aviso só
+  aparece com a API fora do ar, no visual da página, em qualquer tela.
+  Cabeçalho e menu passaram a acompanhar a coluna do conteúdo no computador,
+  problema que ela notou numa captura de tela.
 - O painel do navegador do app aparecia vazio para a Thalita enquanto a IA
   testava; ela acompanhou pelas capturas de tela enviadas no chat.
 - Tempo economizado ou perdido: não medido.
