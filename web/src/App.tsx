@@ -1,6 +1,8 @@
 import { Link, Route, Routes } from "react-router-dom";
 import Layout from "./Layout";
+import Moradores from "./Moradores";
 import NovaDespesa from "./NovaDespesa";
+import Saldos from "./Saldos";
 import StatusApi from "./StatusApi";
 
 function Inicio() {
@@ -32,6 +34,8 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<Inicio />} />
         <Route path="/despesas/nova" element={<PaginaNovaDespesa />} />
+        <Route path="/saldos" element={<Saldos />} />
+        <Route path="/moradores" element={<Moradores />} />
       </Route>
     </Routes>
   );
