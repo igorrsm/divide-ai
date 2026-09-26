@@ -2,6 +2,7 @@ import { Link, Route, Routes } from "react-router-dom";
 import Layout from "./Layout";
 import Moradores from "./Moradores";
 import NovaDespesa from "./NovaDespesa";
+import { ProvedorStatusApi } from "./StatusApi";
 import Saldos from "./Saldos";
 
 function Inicio() {
@@ -29,7 +30,13 @@ function PaginaNovaDespesa() {
 export default function App() {
   return (
     <Routes>
-      <Route element={<Layout />}>
+      <Route
+        element={
+          <ProvedorStatusApi>
+            <Layout />
+          </ProvedorStatusApi>
+        }
+      >
         <Route path="/" element={<Inicio />} />
         <Route path="/despesas/nova" element={<PaginaNovaDespesa />} />
         <Route path="/saldos" element={<Saldos />} />
