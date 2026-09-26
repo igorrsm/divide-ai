@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { useApiForaDoAr } from "./StatusApi";
 
 // Fixo até A1 (criar república) e A3 (escolher qual morador eu sou) entrarem.
 // É o id da república criada pelo seed.
@@ -19,8 +20,11 @@ export default function NovaDespesa() {
   const [pagadorId, setPagadorId] = useState("");
   const [aviso, setAviso] = useState<{ tipo: "erro" | "ok"; texto: string } | null>(null);
   const [enviando, setEnviando] = useState(false);
+  const foraDoAr = useApiForaDoAr();
 
+  // Carrega de novo quando a API volta, para o seletor não ficar vazio.
   useEffect(() => {
+    if (foraDoAr) return;
     fetch(`/api/republicas/${REPUBLICA_ID}/moradores`)
       .then((resposta) => {
         if (!resposta.ok) throw new Error();
@@ -28,13 +32,15 @@ export default function NovaDespesa() {
       })
       .then((lista) => {
         setMoradores(lista);
-        setPagadorId(String(lista[0]?.id ?? ""));
+        setAviso(null);
+        setPagadorId((atual) => atual || String(lista[0]?.id ?? ""));
       })
       .catch(() => setAviso({ tipo: "erro", texto: "Não foi possível carregar os moradores." }));
-  }, []);
+  }, [foraDoAr]);
 
   async function enviar(evento: FormEvent) {
     evento.preventDefault();
+    if (foraDoAr) return;
     setAviso(null);
     setEnviando(true);
     try {
@@ -109,8 +115,8 @@ export default function NovaDespesa() {
         </select>
       </label>
 
-      <button type="submit" disabled={enviando} className="botao-principal">
-        {enviando ? "Lançando..." : "Lançar despesa"}
+      <button type="submit" disabled={enviando || foraDoAr} className="botao-principal">
+        {foraDoAr ? "Servidor indisponível" : enviando ? "Lançando..." : "Lançar despesa"}
       </button>
 
       {aviso && (

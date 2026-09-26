@@ -2,16 +2,24 @@ import { Link, Route, Routes } from "react-router-dom";
 import Layout from "./Layout";
 import Moradores from "./Moradores";
 import NovaDespesa from "./NovaDespesa";
-import { ProvedorStatusApi } from "./StatusApi";
+import { ProvedorStatusApi, useApiForaDoAr } from "./StatusApi";
 import Saldos from "./Saldos";
 
 function Inicio() {
+  const foraDoAr = useApiForaDoAr();
+
   return (
     <>
       <h1>Despesas</h1>
-      <Link to="/despesas/nova" className="botao-principal">
-        Lançar despesa
-      </Link>
+      {foraDoAr ? (
+        <button type="button" className="botao-principal" disabled>
+          Lançar despesa
+        </button>
+      ) : (
+        <Link to="/despesas/nova" className="botao-principal">
+          Lançar despesa
+        </Link>
+      )}
     </>
   );
 }
