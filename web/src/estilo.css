@@ -187,11 +187,6 @@ a {
   margin-bottom: 16px;
 }
 
-.aviso code {
-  font-family: inherit;
-  font-weight: 700;
-}
-
 .aviso-ok {
   background: #d9f5e6;
 }

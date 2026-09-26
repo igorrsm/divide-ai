@@ -23,8 +23,7 @@ export default function StatusApi() {
 
   return (
     <p role="alert" className="aviso aviso-erro">
-      Não foi possível falar com o servidor. Confira se o <code>npm run dev</code>{" "}
-      está rodando e recarregue a página.
+      <strong>Servidor indisponível:</strong> Não foi possível acessar o servidor.
     </p>
   );
 }
