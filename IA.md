@@ -9,9 +9,10 @@ relato fiel do processo, inclusive dos erros.
 **Ferramentas**
 - **Claude Code** (CLI da Anthropic, modelo Claude Sonnet 5), em WSL/Ubuntu. É
   a ferramenta que atua no código e nos arquivos do repositório.
-- **Claude em modo Cowork** (interface de chat), usado para planejamento,
-  discussão de decisões de domínio e revisão. Não tem acesso ao repositório e
-  não gera código do projeto.
+- **Claude em modo Cowork** (interface de chat). O Igor usa para planejamento,
+  decisões de domínio e revisão, sem acesso ao repositório. A Thalita usa desde
+  22/09 com acesso à pasta do projeto: ele escreve código, faz commits e revisa
+  PRs (ver as entradas dela).
 - **Conector do Notion** no Claude Code, para ler o quadro do TP1 (páginas e
   bancos) e, em 21/09, escrever em três cartões e na página principal.
 
@@ -414,4 +415,57 @@ pagou. Sessão inteira no Claude Code, em WSL/Ubuntu.
   não têm teste. Só a validação pura tem.
 - A despesa nasce sem participações. Até B2 entrar, a soma das participações
   não bate com o valor da despesa.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-26 — Thalita — Revisão do PR #15, protótipos e layout base (T14)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do
+projeto e ao navegador do app (GitHub e Notion logados pela Thalita).
+
+**Pedido à IA**
+- Revisar o PR #15 (B1) e mostrar o comentário antes de aprovar.
+- Fazer protótipos do front para o grupo escolher (escolhido: C · Mural).
+- Criar a issue #16 e o cartão T14 e implementar o layout base.
+
+**O que a IA produziu**
+- Revisão do #15: leitura do diff, `npm test` e testes na tela em 375 px
+  (valor 0, -10, 19,99 → 1999, data futura, pagador de outra república).
+- Três protótipos (Caderno, Extrato, Mural), duas telas cada.
+- T14: fontes e cores em `estilo.css`, `Layout.tsx` com cabeçalho e menu
+  inferior, rotas provisórias de Saldos e Moradores e `formatarReais`.
+
+**Revisão humana**
+- A Thalita editou e aprovou o texto da revisão do #15 antes do envio, pediu
+  que o Igor também olhasse e decidiu esperar o merge do #15 antes do T14.
+- Plano do T14 aprovado por ela antes de qualquer código (regra do CLAUDE.md).
+- Ela rodou `build` e `npm run dev`; a IA conferiu as telas em 375 px (menu,
+  item ativo, formulário da B1 dentro do layout, sem rolagem lateral).
+
+**Observações**
+- Fricção: `.env` ausente e client do Prisma não gerado travaram o seed na
+  revisão do #15; a IA criou o `.env` e o `generate` resolveu.
+- Fricção: o git da pasta precisou de permissão para apagar arquivos
+  temporários de `.git`; sem ela ficava lixo em `.git/objects`.
+- Erro da IA, corrigido antes do push: um commit saiu como `style:`, que em
+  Conventional Commits é formatação de código; virou `feat:`.
+- `formatarReais` foi testado copiando a lógica para o Node puro, porque o
+  `tsx` da pasta tem binário do Windows e não roda no ambiente da IA. Não há
+  teste automatizado dele. Negativo sai como "-R$ 763,30".
+- A pedido da Thalita, o formulário da B1 (do Lucas) também passou para o
+  visual Mural: só os estilos mudaram, a lógica ficou igual. Retestado em
+  375 px (valor 0 recusado, 19,99 gravado como 1999).
+- A pedido da Thalita, o "API: ok" do T3 saiu da tela inicial: o aviso só
+  aparece com a API fora do ar, no visual da página, em qualquer tela.
+  Cabeçalho e menu passaram a acompanhar a coluna do conteúdo no computador,
+  problema que ela notou numa captura de tela.
+- A pedido da Thalita: com a API fora do ar, lançar despesa fica bloqueado
+  (botões desativados, status consultado a cada 10 s e destrava sozinho); o
+  exemplo do campo de valor virou "0,00"; e há uma tela inicial com texto e
+  quatro atalhos (Despesas, Saldos, Moradores e Criar república, esta vazia
+  para a A1). Despesas passou para /despesas.
+- Achados nos testes da IA, corrigidos: botão desativado mais estreito que o
+  link ativo e aviso de erro duplicado no formulário com a API fora do ar.
+- O painel do navegador do app aparecia vazio para a Thalita enquanto a IA
+  testava; ela acompanhou pelas capturas enviadas no chat e também testou
+  as telas na própria máquina.
 - Tempo economizado ou perdido: não medido.

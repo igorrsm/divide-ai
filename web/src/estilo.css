@@ -1,0 +1,240 @@
+/* Visual "Mural", o protótipo C escolhido pelo grupo (T14). As telas usam
+   estas variáveis em vez de repetir cores e medidas. */
+:root {
+  --cor-destaque: #ffd23f;
+  --cor-tinta: #141414;
+  --cor-fundo: #fffbef;
+  --cor-superficie: #ffffff;
+  --cor-receber: #1d4ed8;
+  --cor-pagar: #a3470a;
+  --borda: 2px solid var(--cor-tinta);
+  --sombra: 4px 4px 0 var(--cor-tinta);
+  --raio: 14px;
+  --fonte-titulo: "Bricolage Grotesque", system-ui, sans-serif;
+  --fonte-texto: "DM Sans", system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--cor-fundo);
+  color: var(--cor-tinta);
+  font-family: var(--fonte-texto);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+}
+
+a {
+  color: var(--cor-tinta);
+}
+
+:focus-visible {
+  outline: 3px solid var(--cor-receber);
+  outline-offset: 2px;
+}
+
+/* Cartão com borda e sombra marcada, a base visual das listas. */
+.cartao {
+  background: var(--cor-superficie);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  padding: 14px;
+}
+
+/* Layout: cabeçalho, conteúdo e menu inferior fixo. */
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.cabecalho {
+  background: var(--cor-destaque);
+  border-bottom: var(--borda);
+  padding: 20px max(16px, calc(50% - 304px)) 16px;
+}
+
+.cabecalho-topo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.marca {
+  font-family: var(--fonte-titulo);
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  text-decoration: none;
+}
+
+.republica {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.conteudo {
+  flex-grow: 1;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+.menu {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  /* Em tela larga os itens ficam na largura do conteúdo (640 px menos o
+     respiro de 16 px de cada lado); a faixa do menu continua de ponta a ponta. */
+  padding: 10px max(12px, calc(50% - 304px)) 16px;
+  background: var(--cor-fundo);
+  border-top: var(--borda);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.menu-item.ativo {
+  background: var(--cor-destaque);
+  border-color: var(--cor-tinta);
+  font-weight: 700;
+}
+
+/* Formulários: campos altos para o toque, botão principal preto e amarelo. */
+.formulario {
+  display: grid;
+  gap: 14px;
+  max-width: 28rem;
+}
+
+.campo {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: var(--borda);
+  border-radius: 12px;
+  background: var(--cor-superficie);
+  color: var(--cor-tinta);
+  font: inherit;
+  font-weight: 400;
+}
+
+.botao-principal {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 20px;
+  border: var(--borda);
+  border-radius: var(--raio);
+  background: var(--cor-tinta);
+  color: var(--cor-destaque);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.botao-principal:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.aviso {
+  margin: 0;
+  padding: 12px 14px;
+  border: var(--borda);
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.aviso-erro {
+  background: #ffe1d6;
+}
+
+/* Aviso de API fora do ar: fica acima do título da tela. */
+.conteudo > [role="alert"] {
+  margin-bottom: 16px;
+}
+
+.aviso-ok {
+  background: #d9f5e6;
+}
+
+/* Tela inicial: apresentação e atalhos em cartão (2 colunas em tela larga). */
+.apresentacao {
+  margin: 0 0 20px;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.atalhos {
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 560px) {
+  .atalhos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.atalho {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-height: 88px;
+  text-decoration: none;
+}
+
+.atalho strong {
+  font-family: var(--fonte-titulo);
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.atalho span {
+  font-size: 14px;
+}
+
+.atalho:hover {
+  background: var(--cor-destaque);
+}
+
+.atalho:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--cor-tinta);
+}
