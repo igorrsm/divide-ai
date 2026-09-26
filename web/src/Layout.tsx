@@ -1,4 +1,5 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
+import StatusApi from "./StatusApi";
 
 // Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
 const NOME_REPUBLICA = "República Demo";
@@ -30,6 +31,7 @@ export default function Layout() {
       </header>
 
       <main className="conteudo">
+        <StatusApi />
         <Outlet />
       </main>
 

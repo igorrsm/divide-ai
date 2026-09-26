@@ -3,13 +3,11 @@ import Layout from "./Layout";
 import Moradores from "./Moradores";
 import NovaDespesa from "./NovaDespesa";
 import Saldos from "./Saldos";
-import StatusApi from "./StatusApi";
 
 function Inicio() {
   return (
     <>
       <h1>Despesas</h1>
-      <StatusApi />
       <Link to="/despesas/nova" className="botao-principal">
         Lançar despesa
       </Link>

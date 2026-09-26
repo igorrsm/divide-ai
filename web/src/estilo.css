@@ -180,6 +180,16 @@ a {
   background: #ffe1d6;
 }
 
+/* Aviso de API fora do ar: fica acima do título da tela. */
+.conteudo > [role="alert"] {
+  margin-bottom: 16px;
+}
+
+.aviso code {
+  font-family: inherit;
+  font-weight: 700;
+}
+
 .aviso-ok {
   background: #d9f5e6;
 }
