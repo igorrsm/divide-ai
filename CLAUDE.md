@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Estado do projeto
 
-Divide Aí é um sistema de despesas compartilhadas para repúblicas (projeto de faculdade, README em português). **Hoje o repositório contém a camada de dados** (Prisma + SQLite) **e um esqueleto de aplicação** (T1): servidor Express mínimo em `src/server.ts` e app React 18 + Vite + React Router em `web/`. A única rota é `GET /api/health` (T3), que a página inicial consulta pelo proxy do Vite (`/api` → porta 3000, sem CORS); ainda não há rotas de negócio nem testes. O README descreve o stack planejado (API REST, migração futura para PostgreSQL via Docker Compose).
+Divide Aí é um sistema de despesas compartilhadas para repúblicas (projeto de faculdade, README em português). **Hoje o repositório contém a camada de dados** (Prisma + SQLite) **e um esqueleto de aplicação** (T1): servidor Express mínimo em `src/server.ts` e app React 18 + Vite + React Router em `web/`. A API tem `GET /api/health` (T3) e as rotas de despesa da B1, consultadas pelo proxy do Vite (`/api` → porta 3000, sem CORS); os testes (`npm test`) cobrem a validação da despesa. O README descreve o stack planejado (API REST, migração futura para PostgreSQL via Docker Compose).
 
 Código, schema e mensagens de commit são em português; mantenha esse idioma e o padrão de nomes do domínio (`Republica`, `Morador`, `Despesa`, `Participacao`, `Pagamento`).
 
@@ -22,6 +22,8 @@ npm run build       # typecheck + vite build web
 ```
 
 O backend fica em `src/` e o frontend em `web/`, cada um com seu `tsconfig.json`. O TypeScript está fixado em `~6.0.3` porque `typescript-eslint` só aceita `<6.1.0`; não suba a versão sem conferir. `web/vite.config.mts` e `eslint.config.mjs` usam extensão ESM para não exigir `"type": "module"` no `package.json`. O typecheck do backend cobre só `src/` (sem `src/generated/`); `prisma/seed.ts` e `prisma.config.ts` passam apenas pelo lint.
+
+Front (`web/src/`): todas as telas são rotas filhas de `Layout.tsx` (cabeçalho e menu inferior). O visual é o "Mural" (protótipo C escolhido pelo grupo): cores, borda, sombra e fontes ficam em variáveis em `estilo.css`, e a classe `.cartao` é a base das listas. Use as variáveis em vez de repetir cores. Dinheiro chega da API em centavos e só vira texto com `formatarReais` (`R$ 1.234,56`).
 
 Banco de dados (Prisma):
 
