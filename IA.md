@@ -466,5 +466,6 @@ projeto e ao navegador do app (GitHub e Notion logados pela Thalita).
 - Achados nos testes da IA, corrigidos: botão desativado mais estreito que o
   link ativo e aviso de erro duplicado no formulário com a API fora do ar.
 - O painel do navegador do app aparecia vazio para a Thalita enquanto a IA
-  testava; ela acompanhou pelas capturas de tela enviadas no chat.
+  testava; ela acompanhou pelas capturas enviadas no chat e também testou
+  as telas na própria máquina.
 - Tempo economizado ou perdido: não medido.
