@@ -1,0 +1,53 @@
+/* Visual "Mural", o protótipo C escolhido pelo grupo (T14). As telas usam
+   estas variáveis em vez de repetir cores e medidas. */
+:root {
+  --cor-destaque: #ffd23f;
+  --cor-tinta: #141414;
+  --cor-fundo: #fffbef;
+  --cor-superficie: #ffffff;
+  --cor-receber: #1d4ed8;
+  --cor-pagar: #a3470a;
+  --borda: 2px solid var(--cor-tinta);
+  --sombra: 4px 4px 0 var(--cor-tinta);
+  --raio: 14px;
+  --fonte-titulo: "Bricolage Grotesque", system-ui, sans-serif;
+  --fonte-texto: "DM Sans", system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--cor-fundo);
+  color: var(--cor-tinta);
+  font-family: var(--fonte-texto);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+}
+
+a {
+  color: var(--cor-tinta);
+}
+
+:focus-visible {
+  outline: 3px solid var(--cor-receber);
+  outline-offset: 2px;
+}
+
+/* Cartão com borda e sombra marcada, a base visual das listas. */
+.cartao {
+  background: var(--cor-superficie);
+  border: var(--borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  padding: 14px;
+}
