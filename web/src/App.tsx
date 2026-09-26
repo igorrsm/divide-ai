@@ -10,9 +10,9 @@ function Inicio() {
     <>
       <h1>Despesas</h1>
       <StatusApi />
-      <p>
-        <Link to="/despesas/nova">Lançar despesa</Link>
-      </p>
+      <Link to="/despesas/nova" className="botao-principal">
+        Lançar despesa
+      </Link>
     </>
   );
 }

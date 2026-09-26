@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
 // Fixo até A1 (criar república) e A3 (escolher qual morador eu sou) entrarem.
 // É o id da república criada pelo seed.
@@ -10,14 +10,6 @@ type Morador = { id: number; nome: string };
 function hoje(): string {
   return new Date().toLocaleDateString("en-CA");
 }
-
-const campo: CSSProperties = { display: "grid", gap: "0.25rem" };
-const entrada: CSSProperties = {
-  padding: "0.5rem",
-  fontSize: "1rem",
-  width: "100%",
-  boxSizing: "border-box",
-};
 
 export default function NovaDespesa() {
   const [moradores, setMoradores] = useState<Morador[]>([]);
@@ -67,13 +59,12 @@ export default function NovaDespesa() {
   }
 
   return (
-    <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem", maxWidth: "24rem" }}>
+    <form onSubmit={enviar} className="formulario">
       <h2>Nova despesa</h2>
 
-      <label style={campo}>
+      <label className="campo">
         Descrição
         <input
-          style={entrada}
           value={descricao}
           onChange={(e) => setDescricao(e.target.value)}
           placeholder="Conta de luz"
@@ -81,10 +72,9 @@ export default function NovaDespesa() {
         />
       </label>
 
-      <label style={campo}>
+      <label className="campo">
         Valor em reais
         <input
-          style={entrada}
           value={valor}
           onChange={(e) => setValor(e.target.value)}
           placeholder="189,90"
@@ -93,10 +83,9 @@ export default function NovaDespesa() {
         />
       </label>
 
-      <label style={campo}>
+      <label className="campo">
         Data
         <input
-          style={entrada}
           type="date"
           value={data}
           max={hoje()}
@@ -105,10 +94,9 @@ export default function NovaDespesa() {
         />
       </label>
 
-      <label style={campo}>
+      <label className="campo">
         Quem pagou
         <select
-          style={entrada}
           value={pagadorId}
           onChange={(e) => setPagadorId(e.target.value)}
           required
@@ -121,12 +109,12 @@ export default function NovaDespesa() {
         </select>
       </label>
 
-      <button type="submit" disabled={enviando} style={{ ...entrada, cursor: "pointer" }}>
+      <button type="submit" disabled={enviando} className="botao-principal">
         {enviando ? "Lançando..." : "Lançar despesa"}
       </button>
 
       {aviso && (
-        <p role="status" style={{ color: aviso.tipo === "erro" ? "#b00020" : "#046307" }}>
+        <p role="status" className={aviso.tipo === "erro" ? "aviso aviso-erro" : "aviso aviso-ok"}>
           {aviso.texto}
         </p>
       )}
