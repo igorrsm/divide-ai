@@ -451,5 +451,9 @@ projeto e ao navegador do app (GitHub e Notion logados pela Thalita).
 - `formatarReais` foi testado copiando a lógica para o Node puro, porque o
   `tsx` da pasta tem binário do Windows e não roda no ambiente da IA. Não há
   teste automatizado dele. Negativo sai como "-R$ 763,30".
-- Os campos do formulário da B1 ainda usam o estilo padrão do navegador.
+- A pedido da Thalita, o formulário da B1 (do Lucas) também passou para o
+  visual Mural: só os estilos mudaram, a lógica ficou igual. Retestado em
+  375 px (valor 0 recusado, 19,99 gravado como 1999).
+- O painel do navegador do app aparecia vazio para a Thalita enquanto a IA
+  testava; ela acompanhou pelas capturas de tela enviadas no chat.
 - Tempo economizado ou perdido: não medido.
