@@ -83,7 +83,7 @@ export default function NovaDespesa() {
         <input
           value={valor}
           onChange={(e) => setValor(e.target.value)}
-          placeholder="189,90"
+          placeholder="0,00"
           inputMode="decimal"
           required
         />
