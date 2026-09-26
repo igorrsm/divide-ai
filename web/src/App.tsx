@@ -1,5 +1,6 @@
 import { Link, Route, Routes } from "react-router-dom";
 import CriarRepublica from "./CriarRepublica";
+import Inicio from "./Inicio";
 import Layout from "./Layout";
 import Moradores from "./Moradores";
 import NovaDespesa from "./NovaDespesa";
@@ -46,6 +47,7 @@ export default function App() {
           </ProvedorStatusApi>
         }
       >
+        <Route path="/" element={<Inicio />} />
         <Route path="/despesas" element={<PaginaDespesas />} />
         <Route path="/despesas/nova" element={<PaginaNovaDespesa />} />
         <Route path="/saldos" element={<Saldos />} />

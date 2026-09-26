@@ -192,3 +192,49 @@ a {
 .aviso-ok {
   background: #d9f5e6;
 }
+
+/* Tela inicial: apresentação e atalhos em cartão (2 colunas em tela larga). */
+.apresentacao {
+  margin: 0 0 20px;
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.atalhos {
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 560px) {
+  .atalhos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.atalho {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-height: 88px;
+  text-decoration: none;
+}
+
+.atalho strong {
+  font-family: var(--fonte-titulo);
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.atalho span {
+  font-size: 14px;
+}
+
+.atalho:hover {
+  background: var(--cor-destaque);
+}
+
+.atalho:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--cor-tinta);
+}
