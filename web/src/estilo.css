@@ -51,3 +51,72 @@ a {
   box-shadow: var(--sombra);
   padding: 14px;
 }
+
+/* Layout: cabeçalho, conteúdo e menu inferior fixo. */
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.cabecalho {
+  background: var(--cor-destaque);
+  border-bottom: var(--borda);
+  padding: 20px 16px 16px;
+}
+
+.cabecalho-topo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.marca {
+  font-family: var(--fonte-titulo);
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.republica {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.conteudo {
+  flex-grow: 1;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+.menu {
+  position: sticky;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px 12px 16px;
+  background: var(--cor-fundo);
+  border-top: var(--borda);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.menu-item.ativo {
+  background: var(--cor-destaque);
+  border-color: var(--cor-tinta);
+  font-weight: 700;
+}
