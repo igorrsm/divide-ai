@@ -62,7 +62,7 @@ a {
 .cabecalho {
   background: var(--cor-destaque);
   border-bottom: var(--borda);
-  padding: 20px 16px 16px;
+  padding: 20px max(16px, calc(50% - 304px)) 16px;
 }
 
 .cabecalho-topo {
@@ -99,7 +99,9 @@ a {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
-  padding: 10px 12px 16px;
+  /* Em tela larga os itens ficam na largura do conteúdo (640 px menos o
+     respiro de 16 px de cada lado); a faixa do menu continua de ponta a ponta. */
+  padding: 10px max(12px, calc(50% - 304px)) 16px;
   background: var(--cor-fundo);
   border-top: var(--borda);
 }
