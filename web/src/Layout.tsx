@@ -5,14 +5,13 @@ import StatusApi from "./StatusApi";
 const NOME_REPUBLICA = "República Demo";
 
 const ITENS_MENU = [
-  { para: "/", rotulo: "Despesas" },
+  { para: "/despesas", rotulo: "Despesas" },
   { para: "/saldos", rotulo: "Saldos" },
   { para: "/moradores", rotulo: "Moradores" },
 ];
 
 /** "Despesas" fica marcado também em /despesas/nova. */
 function estaAtivo(para: string, caminho: string): boolean {
-  if (para === "/") return caminho === "/" || caminho.startsWith("/despesas");
   return caminho.startsWith(para);
 }
 
@@ -24,7 +23,9 @@ export default function Layout() {
     <div className="layout">
       <header className="cabecalho">
         <div className="cabecalho-topo">
-          <span className="marca">Divide Aí</span>
+          <Link to="/" className="marca">
+            Divide Aí
+          </Link>
           <span className="republica">{NOME_REPUBLICA}</span>
         </div>
         {/* O seletor "Quem é você?" entra aqui com a A3 (#9). */}
