@@ -120,3 +120,66 @@ a {
   border-color: var(--cor-tinta);
   font-weight: 700;
 }
+
+/* Formulários: campos altos para o toque, botão principal preto e amarelo. */
+.formulario {
+  display: grid;
+  gap: 14px;
+  max-width: 28rem;
+}
+
+.campo {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: var(--borda);
+  border-radius: 12px;
+  background: var(--cor-superficie);
+  color: var(--cor-tinta);
+  font: inherit;
+  font-weight: 400;
+}
+
+.botao-principal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 20px;
+  border: var(--borda);
+  border-radius: var(--raio);
+  background: var(--cor-tinta);
+  color: var(--cor-destaque);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.botao-principal:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.aviso {
+  margin: 0;
+  padding: 12px 14px;
+  border: var(--borda);
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.aviso-erro {
+  background: #ffe1d6;
+}
+
+.aviso-ok {
+  background: #d9f5e6;
+}
