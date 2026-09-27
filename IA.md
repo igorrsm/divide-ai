@@ -620,3 +620,29 @@ projeto e ao navegador do app.
 - A pedido da Thalita, levar para o início e travar a navegação com a API fora
   do ar fica para um PR separado, fora do escopo da #9.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-27 — Thalita — Início travado com a API fora do ar
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do
+projeto.
+
+**Pedido à IA**
+- Sugestão da Thalita: como nenhuma tela além do início funciona sem a API,
+  voltar para o início quando ela cair e não deixar sair de lá.
+
+**O que a IA produziu**
+- Levantamento de quais telas dependem da API (todas, menos o início).
+- `Layout.tsx` leva para `/` com a API fora do ar; menu inferior e atalhos do
+  início ficam apagados e sem link (classe `.desativado`).
+
+**Revisão humana**
+- Plano aprovado pela Thalita antes do código (regra do CLAUDE.md). Ela
+  decidiu fazer em PR separado da A3, para a #23 continuar focada na #9.
+- A Thalita testou na própria máquina: a tela volta para o início, o menu e
+  os atalhos travam e tudo destrava quando a API volta.
+
+**Observações**
+- Quem estiver preenchendo uma despesa quando a API cair perde o que digitou;
+  sem a API não daria para salvar de qualquer forma. A Thalita foi avisada.
+- Quando a API volta, a pessoa continua no início, sem voltar à tela anterior.
+- Tempo economizado ou perdido: não medido.
