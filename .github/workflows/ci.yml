@@ -19,5 +19,6 @@ jobs:
       # O client do Prisma é gerado e não vai para o repositório.
       - run: npx prisma generate
       - run: npm run lint
+      - run: npm test
       # O build roda o typecheck antes do vite build.
       - run: npm run build
