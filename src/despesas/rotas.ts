@@ -6,7 +6,7 @@ import { interpretaId } from "./validacao";
 export const rotasDespesas = Router();
 
 /** República inexistente é 404, separado dos 400 de regra de negócio. */
-async function idDaRepublica(bruto: unknown): Promise<number> {
+export async function idDaRepublica(bruto: unknown): Promise<number> {
   const id = interpretaId(bruto, "República");
   if (!(await buscaRepublica(id))) {
     throw new ErroNaoEncontrado("República não encontrada.");
