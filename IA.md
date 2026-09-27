@@ -721,3 +721,39 @@ projeto e ao navegador do app.
   arquivo servido pelo Vite, trocou a pasta para a branch e refez o teste.
 - Nenhuma despesa foi lançada no teste, para não mudar os números do seed.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-27 — Thalita — Painel de saldos (D2)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do
+projeto e ao navegador do app.
+
+**Pedido à IA**
+- Implementar a D2 (#26): painel com o saldo de todos os moradores, em cima da
+  rota `GET /api/republicas/:id/saldos` da D1 (PR #25, Igor).
+
+**O que a IA produziu**
+- `Saldos.tsx`: busca os saldos e mostra um cartão por morador, com inicial,
+  nome, valor com sinal ("+ R$", "− R$") e o rótulo `situacao` da API. Assim
+  positivo e negativo não dependem só da cor.
+- Resumo no topo para o morador escolhido em "Quem é você?" ("Ana, você tem a
+  receber R$ 1.600,00"), cartão dele em amarelo claro com "(você)"; sem
+  ninguém escolhido, uma dica para escolher.
+- Estilos do painel em `estilo.css`, no visual do protótipo C.
+
+**Revisão humana**
+- Plano aprovado pela Thalita antes do código; ela esperou o merge do #30.
+- A IA testou no navegador: valores do seed (Ana +1.600, Bruno −725, Carla
+  −875), destaque e resumo com o Bruno escolhido e 375 px sem rolagem lateral.
+- A Thalita testou na própria máquina: sem ninguém escolhido, escolhendo e
+  trocando de morador, e no modo celular.
+- Ela perguntou se "Criar república" deveria entrar no menu inferior; a IA
+  recomendou não (ação de uma vez só, protótipo com três itens, A1 ainda
+  vazia) e ela concordou.
+
+**Observações**
+- Mudança do plano: a busca e a lista ficaram num commit só, porque a busca
+  sozinha não mostrava nada.
+- O botão "Registrar pagamento" do protótipo fica para a D3 (Eduardo).
+- Até a B2 entrar, despesas lançadas pela tela não têm rateio e a soma dos
+  saldos deixa de dar zero; a tela não trata isso como erro.
+- Tempo economizado ou perdido: não medido.
