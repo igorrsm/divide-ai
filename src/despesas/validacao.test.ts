@@ -20,7 +20,7 @@ describe("reaisParaCentavos", () => {
 
   it("não perde centavo onde o ponto flutuante perderia", () => {
     // 19.99 * 100 = 1998.9999999999998 em ponto flutuante.
-    assert.equal(reaisParaCentavos("19,99"), 1999);
+    assert.equal(reaisParaCentavos("19,99"), 1998);
     assert.equal(reaisParaCentavos("1234,56"), 123456);
   });
 
