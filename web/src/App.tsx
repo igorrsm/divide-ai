@@ -2,6 +2,7 @@ import { Link, Route, Routes } from "react-router-dom";
 import CriarRepublica from "./CriarRepublica";
 import Inicio from "./Inicio";
 import Layout from "./Layout";
+import { ProvedorMoradorAtual } from "./MoradorAtual";
 import Moradores from "./Moradores";
 import NovaDespesa from "./NovaDespesa";
 import { ProvedorStatusApi, useApiForaDoAr } from "./StatusApi";
@@ -43,7 +44,9 @@ export default function App() {
       <Route
         element={
           <ProvedorStatusApi>
-            <Layout />
+            <ProvedorMoradorAtual>
+              <Layout />
+            </ProvedorMoradorAtual>
           </ProvedorStatusApi>
         }
       >
