@@ -7,6 +7,16 @@
   --cor-superficie: #ffffff;
   --cor-receber: #1d4ed8;
   --cor-pagar: #a3470a;
+  /* Fundos claros: avisos, resumo do saldo e cartão de quem está usando. */
+  --cor-fundo-receber: #d9e6ff;
+  --cor-fundo-pagar: #ffe1d6;
+  --cor-fundo-ok: #d9f5e6;
+  --cor-destaque-clara: #fff3c4;
+  /* Círculos com a inicial de cada morador no painel de saldos. */
+  --cor-inicial-1: #c7b8ff;
+  --cor-inicial-2: #ffb199;
+  --cor-inicial-3: #9fe3c6;
+  --cor-inicial-4: #ffd9a0;
   --borda: 2px solid var(--cor-tinta);
   --sombra: 4px 4px 0 var(--cor-tinta);
   --raio: 14px;
@@ -181,7 +191,7 @@ a {
 }
 
 .aviso-erro {
-  background: #ffe1d6;
+  background: var(--cor-fundo-pagar);
 }
 
 /* Aviso de API fora do ar: fica acima do título da tela. */
@@ -190,7 +200,7 @@ a {
 }
 
 .aviso-ok {
-  background: #d9f5e6;
+  background: var(--cor-fundo-ok);
 }
 
 /* Tela inicial: apresentação e atalhos em cartão (2 colunas em tela larga). */
@@ -317,10 +327,10 @@ a {
   font-weight: 700;
 }
 
-.inicial-0 { background: #c7b8ff; }
-.inicial-1 { background: #ffb199; }
-.inicial-2 { background: #9fe3c6; }
-.inicial-3 { background: #ffd9a0; }
+.inicial-0 { background: var(--cor-inicial-1); }
+.inicial-1 { background: var(--cor-inicial-2); }
+.inicial-2 { background: var(--cor-inicial-3); }
+.inicial-3 { background: var(--cor-inicial-4); }
 
 .saldo-nome {
   flex-grow: 1;
@@ -353,7 +363,7 @@ a {
 
 /* Morador escolhido em "Quem é você?" (A3) */
 .saldo-eu {
-  background: #fff3c4;
+  background: var(--cor-destaque-clara);
 }
 
 .saldo-nome small {
@@ -364,6 +374,7 @@ a {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  margin-bottom: 20px;
   font-weight: 700;
 }
 
@@ -374,10 +385,10 @@ a {
   font-variant-numeric: tabular-nums;
 }
 
-.resumo.valor-receber { background: #d9e6ff; }
-.resumo.valor-pagar { background: #ffe1d6; }
+.resumo.valor-receber { background: var(--cor-fundo-receber); }
+.resumo.valor-pagar { background: var(--cor-fundo-pagar); }
 
 .dica-saldo {
-  margin: 0;
+  margin: 0 0 20px;
   font-weight: 700;
 }

@@ -796,3 +796,31 @@ usa os moradores do `useMoradorAtual`) e o #31 (D2, painel de saldos).
 - Pontos não bloqueantes do #31: cores fixas no CSS em vez de variáveis e o
   resumo antes do `<h1>`.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-27 — Thalita — Cores em variáveis e título do painel de saldos
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do
+projeto e ao navegador do app.
+
+**Pedido à IA**
+- Corrigir os dois pontos não bloqueantes da revisão do Igor no PR #31 (D2):
+  cores fixas no CSS e o resumo antes do `<h1>`.
+
+**O que a IA produziu**
+- Oito cores fixas viraram variáveis no `:root` de `estilo.css`, com os
+  mesmos valores: fundos do resumo, cartão de quem está usando, círculos das
+  iniciais e os fundos dos avisos de erro e sucesso, que vinham do T14.
+- No `Saldos.tsx`, o `<h1>` passou para antes do resumo.
+
+**Revisão humana**
+- Plano aprovado pela Thalita antes do código.
+- A IA testou em 375 px: título antes do resumo, com e sem morador escolhido,
+  e as cores medidas na tela iguais às de antes.
+- A Thalita testou na própria máquina.
+
+**Observações**
+- Achado no teste da IA: com o título em cima, o resumo ficou colado na
+  lista. Corrigido com 20 px de margem, num commit `fix:` separado.
+- Aprendizado do #30: depois de resolver conflito no fim deste arquivo,
+  comparar com o da `main` para não perder a última linha de uma entrada.
+- Tempo economizado ou perdido: não medido.
