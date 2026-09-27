@@ -13,12 +13,15 @@ type Contexto = {
   moradores: Morador[];
   moradorId: number | null;
   escolher: (id: number) => void;
+  /** true quando a última busca da lista de moradores falhou. */
+  erro: boolean;
 };
 
 const ContextoMorador = createContext<Contexto>({
   moradores: [],
   moradorId: null,
   escolher: () => {},
+  erro: false,
 });
 
 /** Morador escolhido em "Quem é você?" e a lista de moradores da república. */
@@ -50,6 +53,7 @@ function salvar(id: number | null) {
 export function ProvedorMoradorAtual({ children }: { children: ReactNode }) {
   const [moradores, setMoradores] = useState<Morador[]>([]);
   const [moradorId, setMoradorId] = useState<number | null>(lerSalvo);
+  const [erro, setErro] = useState(false);
   const foraDoAr = useApiForaDoAr();
 
   // Carrega de novo quando a API volta, para o seletor não ficar vazio.
@@ -62,6 +66,7 @@ export function ProvedorMoradorAtual({ children }: { children: ReactNode }) {
       })
       .then((lista) => {
         setMoradores(lista);
+        setErro(false);
         // Se o morador salvo não existe mais (ex.: banco recriado), esquece.
         setMoradorId((atual) => {
           if (atual === null || lista.some((m) => m.id === atual)) return atual;
@@ -69,7 +74,10 @@ export function ProvedorMoradorAtual({ children }: { children: ReactNode }) {
           return null;
         });
       })
-      .catch(() => setMoradores([]));
+      .catch(() => {
+        setMoradores([]);
+        setErro(true);
+      });
   }, [foraDoAr]);
 
   function escolher(id: number) {
@@ -78,7 +86,7 @@ export function ProvedorMoradorAtual({ children }: { children: ReactNode }) {
   }
 
   return (
-    <ContextoMorador.Provider value={{ moradores, moradorId, escolher }}>
+    <ContextoMorador.Provider value={{ moradores, moradorId, escolher, erro }}>
       {children}
     </ContextoMorador.Provider>
   );
