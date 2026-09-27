@@ -230,13 +230,19 @@ a {
   font-size: 14px;
 }
 
-.atalho:hover {
+.atalho:not(.desativado):hover {
   background: var(--cor-destaque);
 }
 
-.atalho:active {
+.atalho:not(.desativado):active {
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 var(--cor-tinta);
+}
+
+/* Menu e atalhos travados com a API fora do ar. */
+.desativado {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 /* Seletor "Quem é você?" (A3) */
