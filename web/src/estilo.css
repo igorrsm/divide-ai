@@ -288,3 +288,96 @@ a {
 .seletor-dica {
   font-size: 13px;
 }
+
+/* Painel de saldos (D2) */
+.saldos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.saldo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.inicial {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--borda);
+  border-radius: 50%;
+  font-weight: 700;
+}
+
+.inicial-0 { background: #c7b8ff; }
+.inicial-1 { background: #ffb199; }
+.inicial-2 { background: #9fe3c6; }
+.inicial-3 { background: #ffd9a0; }
+
+.saldo-nome {
+  flex-grow: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.saldo-valor {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.saldo-valor strong {
+  font-size: 16px;
+}
+
+.saldo-valor small {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.valor-receber { color: var(--cor-receber); }
+.valor-pagar { color: var(--cor-pagar); }
+.valor-quitado { color: var(--cor-tinta); }
+
+/* Morador escolhido em "Quem é você?" (A3) */
+.saldo-eu {
+  background: #fff3c4;
+}
+
+.saldo-nome small {
+  font-weight: 400;
+}
+
+.resumo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 700;
+}
+
+.resumo strong {
+  font-family: var(--fonte-titulo);
+  font-size: 36px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.resumo.valor-receber { background: #d9e6ff; }
+.resumo.valor-pagar { background: #ffe1d6; }
+
+.dica-saldo {
+  margin: 0;
+  font-weight: 700;
+}
