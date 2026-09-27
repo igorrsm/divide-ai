@@ -238,3 +238,47 @@ a {
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 var(--cor-tinta);
 }
+
+/* Seletor "Quem é você?" (A3) */
+.seletor-morador {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.seletor-titulo {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.seletor-opcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.seletor-opcao {
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  min-height: 44px;
+  padding: 0 16px;
+  border: var(--borda);
+  border-radius: 22px;
+  background: var(--cor-fundo);
+  color: var(--cor-tinta);
+  cursor: pointer;
+}
+
+.seletor-opcao[aria-pressed="true"] {
+  font-weight: 700;
+  background: var(--cor-tinta);
+  color: var(--cor-destaque);
+}
+
+.seletor-dica {
+  font-size: 13px;
+}
