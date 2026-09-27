@@ -87,10 +87,14 @@ verificável.
   Decisão do Igor: fica silencioso, sem gerar estranhamento para quem lê o lançamento
   depois. Os testes de rateio devem cobrir esse caso, com resto maior que 1.
 - **Saldo de um morador** = (total que ele pagou em despesas) − (soma das participações
-  dele) + (acertos que recebeu) − (acertos que pagou). Saldo positivo significa que ele
-  tem a receber; negativo, que ele deve.
+  dele) + (acertos que pagou) − (acertos que recebeu). Saldo positivo significa que ele
+  tem a receber; negativo, que ele deve. Pagar um acerto funciona como pagar uma
+  despesa do outro: se Bruno deve R$ 725,00 e paga à Ana, ele fica quitado e o saldo
+  dela cai R$ 725,00. (Até 27/09 esta regra trazia os sinais dos acertos invertidos.)
 - **A soma dos saldos de uma república é sempre zero.** É a invariante que vale como
-  teste: qualquer bug de arredondamento ou de rateio aparece aqui.
+  teste: qualquer bug de arredondamento ou de rateio aparece aqui. Ela **não** detecta
+  sinal trocado nos acertos (cada acerto soma +v a um e −v ao outro com qualquer
+  sinal); para isso, teste que pagar a dívida inteira deixa o devedor quitado.
 - O saldo não é armazenado em nenhuma tabela. É sempre derivado.
 - Papéis: **morador** (cadastra despesas, registra acertos, vê o próprio saldo) e
   **organizador** (morador que criou a república e pode convidar outros).
