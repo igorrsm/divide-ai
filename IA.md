@@ -557,3 +557,35 @@ Thalita.
 - A partir daqui, nenhum PR com lint, teste, typecheck ou build quebrado pode
   ser mesclado na `main`.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-27 — Igor — Correção do sinal dos acertos na fórmula do saldo
+
+Início do planejamento da D1 (saldo do morador), interrompido para esperar a
+Thalita avançar na A3.
+
+**Pedido à IA**
+- Planejar a D1. Depois, avaliar se a Thalita dependia de outras pessoas para
+  a A3 e a B3. Por fim, corrigir só a fórmula do saldo, adiando o código da D1.
+
+**O que a IA produziu**
+- Ao escrever o cálculo, a IA notou que a fórmula do `CLAUDE.md` e do cartão
+  D1 tinha o sinal dos acertos invertido: "+ acertos que recebeu − acertos que
+  pagou". No seed, se Bruno (−R$ 725,00) paga o que deve à Ana, a fórmula
+  escrita o deixaria em −R$ 1.450,00, e não quitado.
+- Correção no `CLAUDE.md` e no critério do cartão D1 no Notion: "+ acertos
+  que pagou − acertos que recebeu". A regra também passa a avisar que a
+  invariante da soma zero não detecta esse erro.
+- Análise das dependências da Thalita: A3 e B3 dependem só de dados que já
+  existem (rota de moradores e B1 mescladas, seed com participações); a única
+  dependência que trava é a D2, que espera a rota de saldos da D1.
+
+**Revisão humana**
+- O Igor decidiu corrigir só a regra agora e começar a D1 depois da A3.
+
+**Observações**
+- A fórmula errada veio do início do projeto (entrada de 20/09) e passou pelas
+  revisões seguintes. Como o teste pedido era só a soma zero, que continua
+  valendo com o sinal errado, ela só apareceu quando o código foi escrito.
+- O rascunho de `src/saldos/calculo.ts`, com o sinal certo, ficou num
+  `git stash` da branch `feat/saldo-consolidado`, sem commit.
+- Tempo economizado ou perdido: não medido.
