@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { useMoradorAtual } from "./MoradorAtual";
 import { useApiForaDoAr } from "./StatusApi";
 
-// Fixo até A1 (criar república) e A3 (escolher qual morador eu sou) entrarem.
+// Fixo até a A1 (criar república) entrar.
 // É o id da república criada pelo seed.
 const REPUBLICA_ID = 1;
 
@@ -17,7 +18,9 @@ export default function NovaDespesa() {
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
   const [data, setData] = useState(hoje());
-  const [pagadorId, setPagadorId] = useState("");
+  // "Quem pagou" já vem com quem foi escolhido em "Quem é você?" (A3).
+  const { moradorId } = useMoradorAtual();
+  const [pagadorId, setPagadorId] = useState(moradorId ? String(moradorId) : "");
   const [aviso, setAviso] = useState<{ tipo: "erro" | "ok"; texto: string } | null>(null);
   const [enviando, setEnviando] = useState(false);
   const foraDoAr = useApiForaDoAr();
@@ -33,7 +36,9 @@ export default function NovaDespesa() {
       .then((lista) => {
         setMoradores(lista);
         setAviso(null);
-        setPagadorId((atual) => atual || String(lista[0]?.id ?? ""));
+        setPagadorId((atual) =>
+          lista.some((m) => String(m.id) === atual) ? atual : String(lista[0]?.id ?? ""),
+        );
       })
       .catch(() => setAviso({ tipo: "erro", texto: "Não foi possível carregar os moradores." }));
   }, [foraDoAr]);
