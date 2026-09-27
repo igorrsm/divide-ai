@@ -21,6 +21,12 @@ app.use((erro: unknown, _req: Request, res: Response, _proximo: NextFunction) =>
     res.status(404).json({ erro: erro.message });
     return;
   }
+  // JSON malformado no corpo: o express.json() marca o erro com esse type.
+  // É erro de quem chamou, não do servidor.
+  if (erro instanceof SyntaxError && "type" in erro && erro.type === "entity.parse.failed") {
+    res.status(400).json({ erro: "Corpo da requisição não é um JSON válido." });
+    return;
+  }
   console.error(erro);
   res.status(500).json({ erro: "Erro interno no servidor." });
 });
