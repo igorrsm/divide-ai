@@ -1,4 +1,5 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
+import SeletorMorador from "./SeletorMorador";
 import StatusApi from "./StatusApi";
 
 // Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
@@ -28,7 +29,7 @@ export default function Layout() {
           </Link>
           <span className="republica">{NOME_REPUBLICA}</span>
         </div>
-        {/* O seletor "Quem é você?" entra aqui com a A3 (#9). */}
+        <SeletorMorador />
       </header>
 
       <main className="conteudo">
