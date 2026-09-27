@@ -374,6 +374,7 @@ a {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  margin-bottom: 20px;
   font-weight: 700;
 }
 
@@ -388,6 +389,6 @@ a {
 .resumo.valor-pagar { background: var(--cor-fundo-pagar); }
 
 .dica-saldo {
-  margin: 0;
+  margin: 0 0 20px;
   font-weight: 700;
 }
