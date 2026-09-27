@@ -381,3 +381,31 @@ a {
   margin: 0;
   font-weight: 700;
 }
+
+/* Rateio mostrado depois de lançar a despesa (B2). */
+.rateio h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.rateio-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rateio-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.rateio-item strong {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
