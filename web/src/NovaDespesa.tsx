@@ -1,10 +1,17 @@
 import { useState, type FormEvent } from "react";
+import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
 import { useApiForaDoAr } from "./StatusApi";
 
 // Fixo até a A1 (criar república) entrar.
 // É o id da república criada pelo seed.
 const REPUBLICA_ID = 1;
+
+/** O rateio que a API devolveu ao criar a despesa (B2). */
+type Rateio = {
+  pagadorId: number;
+  participacoes: { moradorId: number; valorCentavos: number }[];
+};
 
 /** Hoje no fuso de quem está usando, no formato que o input date espera. */
 function hoje(): string {
@@ -24,13 +31,20 @@ export default function NovaDespesa() {
     ? pagadorEscolhido
     : String(moradores[0]?.id ?? "");
   const [aviso, setAviso] = useState<{ tipo: "erro" | "ok"; texto: string } | null>(null);
+  const [rateio, setRateio] = useState<Rateio | null>(null);
   const [enviando, setEnviando] = useState(false);
   const foraDoAr = useApiForaDoAr();
+
+  /** A lista de moradores já está no contexto: não busca a rota de novo. */
+  function nomeDe(id: number): string {
+    return moradores.find((morador) => morador.id === id)?.nome ?? `Morador ${id}`;
+  }
 
   async function enviar(evento: FormEvent) {
     evento.preventDefault();
     if (foraDoAr) return;
     setAviso(null);
+    setRateio(null);
     setEnviando(true);
     try {
       const resposta = await fetch(`/api/republicas/${REPUBLICA_ID}/despesas`, {
@@ -44,6 +58,7 @@ export default function NovaDespesa() {
         return;
       }
       setAviso({ tipo: "ok", texto: `Despesa "${corpo.descricao}" lançada.` });
+      setRateio({ pagadorId: corpo.pagadorId, participacoes: corpo.participacoes });
       setDescricao("");
       setValor("");
     } catch {
@@ -118,6 +133,26 @@ export default function NovaDespesa() {
         <p role="status" className={aviso.tipo === "erro" ? "aviso aviso-erro" : "aviso aviso-ok"}>
           {aviso.texto}
         </p>
+      )}
+
+      {rateio && (
+        <section className="rateio">
+          <h3>
+            Dividida por igual entre {rateio.participacoes.length}{" "}
+            {rateio.participacoes.length > 1 ? "moradores" : "morador"}
+          </h3>
+          <ul className="rateio-lista">
+            {rateio.participacoes.map((participacao) => (
+              <li key={participacao.moradorId} className="cartao rateio-item">
+                <span>
+                  {nomeDe(participacao.moradorId)}
+                  {participacao.moradorId === rateio.pagadorId && <small> (pagou)</small>}
+                </span>
+                <strong>{formatarReais(participacao.valorCentavos)}</strong>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
     </form>
   );
