@@ -491,12 +491,16 @@ dependem de navegador.
 - PR #18: `npm test` no CI, com teste negativo (teste quebrado de propósito
   deixou o check vermelho; o revert voltou ao verde).
 - Este PR: 400 para JSON malformado, reexecutando a bateria (18 de 18).
+- Resolução do conflito deste PR no `IA.md` com o #17 (`git merge` da `main`).
+- No Notion: T14 e B1 finalizados, com critérios e nota de fechamento; T4
+  devolvido de Finalizado para "Em revisão (PR)", apontando para o #18.
 
 **Revisão humana**
 - O Igor executou o roteiro de tela do #17 (rotas, menu, 375 px, API fora do
-  ar e de volta) e confirmou tudo como descrito.
+  ar e de volta) e confirmou tudo como descrito. Postou a aprovação com o
+  texto sugerido pela IA e mesclou o #17.
 - As decisões foram do Igor: corrigir ele mesmo num PR, com o Lucas como
-  revisor, e fechar o T4 nesta sessão.
+  revisor; finalizar T14 e B1; e voltar o T4 para "Em revisão".
 
 **Observações**
 - Erro da IA: supôs que valores acima de 2.147.483.647 centavos dariam 500,
@@ -506,6 +510,14 @@ dependem de navegador.
   `dotenv` não acha o `.env`; percebeu antes de rodar a bateria. Um `pkill`
   com padrão amplo derrubou o próprio shell; os processos passaram a ser
   encerrados pela porta.
+- Erro da IA, corrigido antes do commit: na resolução do conflito, a linha
+  "Tempo economizado ou perdido", igual no fim das duas entradas, ficou fora
+  do bloco de conflito e sumiu da entrada da Thalita. O `git diff` não acusava
+  remoção, porque a linha continuava no arquivo; a IA achou ao comparar as
+  primeiras 471 linhas com a `main` e recolocou a linha.
+- O T4 estava como Finalizado desde o merge do #14, mas o CI ainda não roda
+  `npm test` e o check não é obrigatório no ruleset. Volta a Finalizado depois
+  do merge do #18, da regra no ruleset e de um PR vermelho bloqueado.
 - Não corrigido: as mensagens genéricas da API usam sempre o masculino
   ("Descrição é obrigatório", "República inválido").
 - Sem teste automatizado: rotas HTTP, o serviço que toca o banco, os
