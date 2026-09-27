@@ -415,3 +415,45 @@ pagou. Sessão inteira no Claude Code, em WSL/Ubuntu.
 - A despesa nasce sem participações. Até B2 entrar, a soma das participações
   não bate com o valor da despesa.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-27 — Igor — Validação dos PRs #15 e #17, testes no CI e correção do JSON malformado
+
+Validação do B1 (PR #15, do Lucas, já mesclado) e do T14 (PR #17, da
+Thalita, aberto), com o Igor conduzindo e a IA executando os testes que não
+dependem de navegador.
+
+**Pedido à IA**
+- Ajudar a validar e testar os dois PRs, porque a fase de código de negócio
+  passou do que o Igor consegue revisar sozinho.
+- Corrigir num PR o que a validação confirmasse como bug, e fechar o T4.
+
+**O que a IA produziu**
+- Ambiente local (`.env`, migrations, client e seed) e, nas duas branches,
+  `npm test` (13 de 13), lint e build.
+- Bateria de 18 chamadas à API de despesas, com código HTTP esperado e
+  obtido. Achado: JSON malformado recebia 500 em vez de 400.
+- Contagem das linhas dos 21 commits do #17: todos até 100.
+- Roteiro de tela para o Igor e o texto da revisão do #17.
+- PR #18: `npm test` no CI, com teste negativo (teste quebrado de propósito
+  deixou o check vermelho; o revert voltou ao verde).
+- Este PR: 400 para JSON malformado, reexecutando a bateria (18 de 18).
+
+**Revisão humana**
+- O Igor executou o roteiro de tela do #17 (rotas, menu, 375 px, API fora do
+  ar e de volta) e confirmou tudo como descrito.
+- As decisões foram do Igor: corrigir ele mesmo num PR, com o Lucas como
+  revisor, e fechar o T4 nesta sessão.
+
+**Observações**
+- Erro da IA: supôs que valores acima de 2.147.483.647 centavos dariam 500,
+  pelo `Int` de 32 bits do Prisma. O teste mostrou que o SQLite com o adapter
+  grava e lê esses valores; a suspeita foi descartada antes de virar código.
+- Erro da IA: subiu o servidor de teste fora da pasta do projeto, onde o
+  `dotenv` não acha o `.env`; percebeu antes de rodar a bateria. Um `pkill`
+  com padrão amplo derrubou o próprio shell; os processos passaram a ser
+  encerrados pela porta.
+- Não corrigido: as mensagens genéricas da API usam sempre o masculino
+  ("Descrição é obrigatório", "República inválido").
+- Sem teste automatizado: rotas HTTP, o serviço que toca o banco, os
+  componentes React e `formatarReais`.
+- Tempo economizado ou perdido: não medido.
