@@ -1,4 +1,5 @@
-import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { useApiForaDoAr } from "./StatusApi";
 
 // Fixo até A1 (criar república) e A3 (escolher qual morador eu sou) entrarem.
 // É o id da república criada pelo seed.
@@ -11,14 +12,6 @@ function hoje(): string {
   return new Date().toLocaleDateString("en-CA");
 }
 
-const campo: CSSProperties = { display: "grid", gap: "0.25rem" };
-const entrada: CSSProperties = {
-  padding: "0.5rem",
-  fontSize: "1rem",
-  width: "100%",
-  boxSizing: "border-box",
-};
-
 export default function NovaDespesa() {
   const [moradores, setMoradores] = useState<Morador[]>([]);
   const [descricao, setDescricao] = useState("");
@@ -27,8 +20,11 @@ export default function NovaDespesa() {
   const [pagadorId, setPagadorId] = useState("");
   const [aviso, setAviso] = useState<{ tipo: "erro" | "ok"; texto: string } | null>(null);
   const [enviando, setEnviando] = useState(false);
+  const foraDoAr = useApiForaDoAr();
 
+  // Carrega de novo quando a API volta, para o seletor não ficar vazio.
   useEffect(() => {
+    if (foraDoAr) return;
     fetch(`/api/republicas/${REPUBLICA_ID}/moradores`)
       .then((resposta) => {
         if (!resposta.ok) throw new Error();
@@ -36,13 +32,15 @@ export default function NovaDespesa() {
       })
       .then((lista) => {
         setMoradores(lista);
-        setPagadorId(String(lista[0]?.id ?? ""));
+        setAviso(null);
+        setPagadorId((atual) => atual || String(lista[0]?.id ?? ""));
       })
       .catch(() => setAviso({ tipo: "erro", texto: "Não foi possível carregar os moradores." }));
-  }, []);
+  }, [foraDoAr]);
 
   async function enviar(evento: FormEvent) {
     evento.preventDefault();
+    if (foraDoAr) return;
     setAviso(null);
     setEnviando(true);
     try {
@@ -67,13 +65,12 @@ export default function NovaDespesa() {
   }
 
   return (
-    <form onSubmit={enviar} style={{ display: "grid", gap: "0.75rem", maxWidth: "24rem" }}>
+    <form onSubmit={enviar} className="formulario">
       <h2>Nova despesa</h2>
 
-      <label style={campo}>
+      <label className="campo">
         Descrição
         <input
-          style={entrada}
           value={descricao}
           onChange={(e) => setDescricao(e.target.value)}
           placeholder="Conta de luz"
@@ -81,22 +78,20 @@ export default function NovaDespesa() {
         />
       </label>
 
-      <label style={campo}>
+      <label className="campo">
         Valor em reais
         <input
-          style={entrada}
           value={valor}
           onChange={(e) => setValor(e.target.value)}
-          placeholder="189,90"
+          placeholder="0,00"
           inputMode="decimal"
           required
         />
       </label>
 
-      <label style={campo}>
+      <label className="campo">
         Data
         <input
-          style={entrada}
           type="date"
           value={data}
           max={hoje()}
@@ -105,10 +100,9 @@ export default function NovaDespesa() {
         />
       </label>
 
-      <label style={campo}>
+      <label className="campo">
         Quem pagou
         <select
-          style={entrada}
           value={pagadorId}
           onChange={(e) => setPagadorId(e.target.value)}
           required
@@ -121,12 +115,13 @@ export default function NovaDespesa() {
         </select>
       </label>
 
-      <button type="submit" disabled={enviando} style={{ ...entrada, cursor: "pointer" }}>
-        {enviando ? "Lançando..." : "Lançar despesa"}
+      <button type="submit" disabled={enviando || foraDoAr} className="botao-principal">
+        {foraDoAr ? "Servidor indisponível" : enviando ? "Lançando..." : "Lançar despesa"}
       </button>
 
-      {aviso && (
-        <p role="status" style={{ color: aviso.tipo === "erro" ? "#b00020" : "#046307" }}>
+      {/* Com a API fora do ar, o aviso do topo já explica o erro. */}
+      {aviso && !(foraDoAr && aviso.tipo === "erro") && (
+        <p role="status" className={aviso.tipo === "erro" ? "aviso aviso-erro" : "aviso aviso-ok"}>
           {aviso.texto}
         </p>
       )}

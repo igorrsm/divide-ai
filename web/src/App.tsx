@@ -1,38 +1,59 @@
 import { Link, Route, Routes } from "react-router-dom";
+import CriarRepublica from "./CriarRepublica";
+import Inicio from "./Inicio";
+import Layout from "./Layout";
+import Moradores from "./Moradores";
 import NovaDespesa from "./NovaDespesa";
-import StatusApi from "./StatusApi";
+import { ProvedorStatusApi, useApiForaDoAr } from "./StatusApi";
+import Saldos from "./Saldos";
 
-// Respiro nas laterais para o conteúdo não encostar na borda em 375 px.
-const pagina = { padding: "1rem", fontFamily: "system-ui, sans-serif" };
+function PaginaDespesas() {
+  const foraDoAr = useApiForaDoAr();
 
-function Inicio() {
   return (
-    <div style={pagina}>
-      <h1>Divide Aí</h1>
-      <StatusApi />
-      <p>
-        <Link to="/despesas/nova">Lançar despesa</Link>
-      </p>
-    </div>
+    <>
+      <h1>Despesas</h1>
+      {foraDoAr ? (
+        <button type="button" className="botao-principal" disabled>
+          Lançar despesa
+        </button>
+      ) : (
+        <Link to="/despesas/nova" className="botao-principal">
+          Lançar despesa
+        </Link>
+      )}
+    </>
   );
 }
 
 function PaginaNovaDespesa() {
   return (
-    <div style={pagina}>
+    <>
       <p>
-        <Link to="/">Voltar</Link>
+        <Link to="/despesas">Voltar</Link>
       </p>
       <NovaDespesa />
-    </div>
+    </>
   );
 }
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Inicio />} />
-      <Route path="/despesas/nova" element={<PaginaNovaDespesa />} />
+      <Route
+        element={
+          <ProvedorStatusApi>
+            <Layout />
+          </ProvedorStatusApi>
+        }
+      >
+        <Route path="/" element={<Inicio />} />
+        <Route path="/despesas" element={<PaginaDespesas />} />
+        <Route path="/despesas/nova" element={<PaginaNovaDespesa />} />
+        <Route path="/saldos" element={<Saldos />} />
+        <Route path="/moradores" element={<Moradores />} />
+        <Route path="/republicas/nova" element={<CriarRepublica />} />
+      </Route>
     </Routes>
   );
 }
