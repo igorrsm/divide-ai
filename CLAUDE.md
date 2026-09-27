@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Estado do projeto
 
-Divide Aí é um sistema de despesas compartilhadas para repúblicas (projeto de faculdade, README em português). **Hoje o repositório contém a camada de dados** (Prisma + SQLite) **e um esqueleto de aplicação** (T1): servidor Express mínimo em `src/server.ts` e app React 18 + Vite + React Router em `web/`. A API tem `GET /api/health` (T3) e as rotas de despesa da B1, consultadas pelo proxy do Vite (`/api` → porta 3000, sem CORS); os testes (`npm test`) cobrem a validação da despesa. O README descreve o stack planejado (API REST, migração futura para PostgreSQL via Docker Compose).
+Divide Aí é um sistema de despesas compartilhadas para repúblicas (projeto de faculdade, README em português). **Hoje o repositório contém a camada de dados** (Prisma + SQLite) **e um esqueleto de aplicação** (T1): servidor Express mínimo em `src/server.ts` e app React 18 + Vite + React Router em `web/`. A API tem `GET /api/health` (T3), as rotas de despesa da B1 e `GET /api/republicas/:id/saldos` (D1), consultadas pelo proxy do Vite (`/api` → porta 3000, sem CORS). O cálculo do saldo é a função pura `calcularSaldos` em `src/saldos/calculo.ts`; o serviço só busca os dados. Os testes (`npm test`) cobrem a validação da despesa e o cálculo do saldo. O README descreve o stack planejado (API REST, migração futura para PostgreSQL via Docker Compose).
 
 Código, schema e mensagens de commit são em português; mantenha esse idioma e o padrão de nomes do domínio (`Republica`, `Morador`, `Despesa`, `Participacao`, `Pagamento`).
 

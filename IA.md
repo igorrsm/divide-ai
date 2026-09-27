@@ -647,6 +647,47 @@ projeto.
 - Quando a API volta, a pessoa continua no início, sem voltar à tela anterior.
 - Tempo economizado ou perdido: não medido.
 
+## 2026-09-27 — Igor — Saldo do morador (D1)
+
+Cartão D1: cálculo do saldo e rota de saldos da república, na branch
+`feat/saldo-consolidado`. A tela fica para a D2, da Thalita.
+
+**Pedido à IA**
+- Replanejar a D1 depois da correção do sinal (PR #22) e da A3 (PR #23), e
+  implementá-la no formato de rota combinado com a Thalita.
+- No meio da sessão: pausar a D1 para validar, aprovar e mesclar o PR #24 da
+  Thalita, avaliando conflitos com a D1.
+
+**O que a IA produziu**
+- `calcularSaldos` (`src/saldos/calculo.ts`): função pura sobre despesas,
+  participações e acertos, com a situação "a receber", "a pagar" ou "quitado".
+  Veio de um rascunho guardado em `git stash`; na revisão, a IA notou que o
+  comentário ainda descrevia a fórmula antiga e o corrigiu.
+- 8 testes em `src/saldos/calculo.test.ts` (21 no total), um por critério do
+  cartão. Todos conferem a soma zero.
+- `GET /api/republicas/:id/saldos` (`servico.ts` e `rotas.ts`), reaproveitando
+  o `idDaRepublica` das rotas de despesa.
+- Validação do PR #24 numa cópia separada da branch, com a tabela de arquivos
+  tocados por ele e pela D1 (só o `IA.md` em comum).
+
+**Revisão humana**
+- O Igor pediu para repassar o plano antes de retomar o código e testou na
+  tela o PR #24 antes da aprovação e do merge.
+
+**Observações**
+- Teste negativo: com o sinal dos acertos invertido de propósito, só o teste
+  "pagar a dívida inteira deixa o devedor quitado" falhou (Ana 232500, Bruno
+  -145000); a checagem da soma zero continuou passando. Isso confirma que ela
+  sozinha não pegaria o erro corrigido no PR #22.
+- `curl` com o seed: Ana +160000, Bruno -72500, Carla -87500; república 999
+  dá 404 e "abc" dá 400.
+- Limitação confirmada pela API: despesa lançada pela tela antes da B2 não tem
+  participações, e a soma dos saldos deixa de ser zero (+R$ 100,00 à Carla no
+  teste). O cálculo está certo; falta o rateio.
+- Conflito evitado: o #24 foi mesclado primeiro e a `main` entrou na branch da
+  D1 antes deste registro, então esta entrada vem depois da dela sem conflito.
+- Sem teste automatizado: `buscaSaldos` e a rota, que tocam o banco.
+
 ## 2026-09-27 — Thalita — Nova despesa usa os moradores do contexto
 
 Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do
