@@ -83,8 +83,9 @@ export default function Saldos() {
 
   return (
     <>
-      <Resumo saldo={saldos.find((s) => s.moradorId === moradorId)} />
+      {/* O título vem antes do resumo, para leitor de tela anunciar a tela primeiro. */}
       <h1>Como está a casa</h1>
+      <Resumo saldo={saldos.find((s) => s.moradorId === moradorId)} />
       <ul className="saldos">
         {saldos.map((saldo) => {
           const eu = saldo.moradorId === moradorId;
