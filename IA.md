@@ -557,3 +557,34 @@ Thalita.
 - A partir daqui, nenhum PR com lint, teste, typecheck ou build quebrado pode
   ser mesclado na `main`.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-27 — Thalita — Seletor "Quem é você?" (A3)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do
+projeto e ao navegador do app.
+
+**Pedido à IA**
+- Implementar a A3 (#9): escolher qual morador está usando o app, sem login.
+
+**O que a IA produziu**
+- `MoradorAtual.tsx`: provedor e hook `useMoradorAtual` que carregam os
+  moradores da república e guardam a escolha no `localStorage` (em
+  `try/catch`; sem ele, a escolha vale até recarregar).
+- `SeletorMorador.tsx`: "Quem é você?" no cabeçalho, um botão por morador com
+  `aria-pressed`, no visual do protótipo C. Some com a API fora do ar.
+- Nova despesa (B1, do Lucas): "Quem pagou" já vem com o morador escolhido.
+
+**Revisão humana**
+- Plano aprovado pela Thalita antes de qualquer código (regra do CLAUDE.md).
+- A IA testou no navegador do app em 375 px e 1280 px: escolha mantida depois
+  de recarregar, troca de morador, "Quem pagou" preenchido e id salvo que não
+  existe mais (a escolha é apagada e volta "Escolha quem você é").
+- A Thalita repetiu os testes na própria máquina, inclusive com a API fora do
+  ar (aviso aparece, seletor some e volta sozinho quando a API sobe).
+
+**Observações**
+- Se o morador for trocado com a tela de nova despesa aberta, "Quem pagou" não
+  muda; vale a partir da próxima vez que o formulário abrir.
+- A pedido da Thalita, levar para o início e travar a navegação com a API fora
+  do ar fica para um PR separado, fora do escopo da #9.
+- Tempo economizado ou perdido: não medido.
