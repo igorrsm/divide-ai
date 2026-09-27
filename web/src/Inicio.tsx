@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useApiForaDoAr } from "./StatusApi";
 
 const ATALHOS = [
   { para: "/despesas", titulo: "Despesas", texto: "Lance e confira as contas da casa." },
@@ -9,6 +10,8 @@ const ATALHOS = [
 
 /** Tela inicial: apresentação curta e atalhos para as quatro áreas do app. */
 export default function Inicio() {
+  const foraDoAr = useApiForaDoAr();
+
   return (
     <>
       <h1>Divida as contas da casa sem confusão</h1>
@@ -19,12 +22,20 @@ export default function Inicio() {
       </p>
 
       <nav className="atalhos" aria-label="Atalhos">
-        {ATALHOS.map((atalho) => (
-          <Link key={atalho.para} to={atalho.para} className="cartao atalho">
-            <strong>{atalho.titulo}</strong>
-            <span>{atalho.texto}</span>
-          </Link>
-        ))}
+        {ATALHOS.map((atalho) =>
+          // Sem API os atalhos ficam apagados: todas as telas dependem dela.
+          foraDoAr ? (
+            <span key={atalho.para} className="cartao atalho desativado" aria-disabled="true">
+              <strong>{atalho.titulo}</strong>
+              <span>{atalho.texto}</span>
+            </span>
+          ) : (
+            <Link key={atalho.para} to={atalho.para} className="cartao atalho">
+              <strong>{atalho.titulo}</strong>
+              <span>{atalho.texto}</span>
+            </Link>
+          ),
+        )}
       </nav>
     </>
   );

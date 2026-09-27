@@ -1,6 +1,6 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
 import SeletorMorador from "./SeletorMorador";
-import StatusApi from "./StatusApi";
+import StatusApi, { useApiForaDoAr } from "./StatusApi";
 
 // Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
 const NOME_REPUBLICA = "República Demo";
@@ -19,6 +19,10 @@ function estaAtivo(para: string, caminho: string): boolean {
 /** Moldura de todas as telas: cabeçalho amarelo, conteúdo e menu inferior. */
 export default function Layout() {
   const { pathname } = useLocation();
+  const foraDoAr = useApiForaDoAr();
+
+  // Sem API nenhuma tela além do início funciona: volta para lá e trava o menu.
+  if (foraDoAr && pathname !== "/") return <Navigate to="/" replace />;
 
   return (
     <div className="layout">
@@ -40,6 +44,13 @@ export default function Layout() {
       <nav className="menu" aria-label="Principal">
         {ITENS_MENU.map((item) => {
           const ativo = estaAtivo(item.para, pathname);
+          if (foraDoAr) {
+            return (
+              <span key={item.para} className="menu-item desativado" aria-disabled="true">
+                {item.rotulo}
+              </span>
+            );
+          }
           return (
             <Link
               key={item.para}
