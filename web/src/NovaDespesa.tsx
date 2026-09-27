@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useMoradorAtual } from "./MoradorAtual";
 import { useApiForaDoAr } from "./StatusApi";
 
@@ -6,42 +6,26 @@ import { useApiForaDoAr } from "./StatusApi";
 // É o id da república criada pelo seed.
 const REPUBLICA_ID = 1;
 
-type Morador = { id: number; nome: string };
-
 /** Hoje no fuso de quem está usando, no formato que o input date espera. */
 function hoje(): string {
   return new Date().toLocaleDateString("en-CA");
 }
 
 export default function NovaDespesa() {
-  const [moradores, setMoradores] = useState<Morador[]>([]);
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
   const [data, setData] = useState(hoje());
-  // "Quem pagou" já vem com quem foi escolhido em "Quem é você?" (A3).
-  const { moradorId } = useMoradorAtual();
-  const [pagadorId, setPagadorId] = useState(moradorId ? String(moradorId) : "");
+  // A lista vem do useMoradorAtual (A3), sem buscar a rota de novo.
+  // "Quem pagou" começa com quem foi escolhido em "Quem é você?".
+  const { moradores, moradorId, erro: erroMoradores } = useMoradorAtual();
+  const [pagadorEscolhido, setPagadorId] = useState(moradorId ? String(moradorId) : "");
+  // Se o escolhido não está na lista, vale o primeiro morador.
+  const pagadorId = moradores.some((m) => String(m.id) === pagadorEscolhido)
+    ? pagadorEscolhido
+    : String(moradores[0]?.id ?? "");
   const [aviso, setAviso] = useState<{ tipo: "erro" | "ok"; texto: string } | null>(null);
   const [enviando, setEnviando] = useState(false);
   const foraDoAr = useApiForaDoAr();
-
-  // Carrega de novo quando a API volta, para o seletor não ficar vazio.
-  useEffect(() => {
-    if (foraDoAr) return;
-    fetch(`/api/republicas/${REPUBLICA_ID}/moradores`)
-      .then((resposta) => {
-        if (!resposta.ok) throw new Error();
-        return resposta.json() as Promise<Morador[]>;
-      })
-      .then((lista) => {
-        setMoradores(lista);
-        setAviso(null);
-        setPagadorId((atual) =>
-          lista.some((m) => String(m.id) === atual) ? atual : String(lista[0]?.id ?? ""),
-        );
-      })
-      .catch(() => setAviso({ tipo: "erro", texto: "Não foi possível carregar os moradores." }));
-  }, [foraDoAr]);
 
   async function enviar(evento: FormEvent) {
     evento.preventDefault();
@@ -125,6 +109,11 @@ export default function NovaDespesa() {
       </button>
 
       {/* Com a API fora do ar, o aviso do topo já explica o erro. */}
+      {erroMoradores && !foraDoAr && (
+        <p role="status" className="aviso aviso-erro">
+          Não foi possível carregar os moradores.
+        </p>
+      )}
       {aviso && !(foraDoAr && aviso.tipo === "erro") && (
         <p role="status" className={aviso.tipo === "erro" ? "aviso aviso-erro" : "aviso aviso-ok"}>
           {aviso.texto}

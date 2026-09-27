@@ -688,3 +688,36 @@ Cartão D1: cálculo do saldo e rota de saldos da república, na branch
   D1 antes deste registro, então esta entrada vem depois da dela sem conflito.
 - Sem teste automatizado: `buscaSaldos` e a rota, que tocam o banco.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-27 — Thalita — Nova despesa usa os moradores do contexto
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do
+projeto e ao navegador do app.
+
+**Pedido à IA**
+- Corrigir o que o Igor apontou na revisão do PR #23: o `NovaDespesa.tsx`
+  buscava a lista de moradores por conta própria, contra a regra do CLAUDE.md.
+
+**O que a IA produziu**
+- `NovaDespesa.tsx` passa a usar os `moradores` do `useMoradorAtual()`; saem o
+  `fetch`, o `useEffect` e o tipo `Morador` duplicado. "Quem pagou" é
+  calculado a partir da lista, sem efeito extra.
+- `MoradorAtual.tsx` expõe `erro`, para o formulário manter o aviso "Não foi
+  possível carregar os moradores.".
+
+**Revisão humana**
+- Plano aprovado pela Thalita antes do código; ela decidiu esperar o merge do
+  #24 para não repetir o conflito no IA.md.
+- A IA testou no navegador em 375 px: a tela de nova despesa passou de 4 para
+  2 chamadas a `/moradores` (as 2 restantes são o StrictMode do React em modo
+  dev, que roda o efeito duas vezes; em produção é 1). "Quem pagou" vem com o
+  morador escolhido, troca à mão continua funcionando e um id salvo que não
+  existe cai no primeiro morador.
+- A Thalita também testou na própria máquina antes do push.
+
+**Observações**
+- Erro da IA, percebido no teste: a Thalita tinha voltado para a `main`
+  depois do pull, e o primeiro teste rodou o código antigo. A IA conferiu o
+  arquivo servido pelo Vite, trocou a pasta para a branch e refez o teste.
+- Nenhuma despesa foi lançada no teste, para não mudar os números do seed.
+- Tempo economizado ou perdido: não medido.
