@@ -833,6 +833,7 @@ WSL/Ubuntu, começando por atualizar a máquina para a `main` (78 commits atrás
 **Pedido à IA**
 - Atualizar os arquivos locais para a `main`.
 - Implementar a B2, com plano antes do código.
+- Commitar as pastas de ferramental de IA que estavam sem rastrear.
 
 **O que a IA produziu**
 - Leitura do estado atual e plano, com uma decisão levada ao humano: como
@@ -872,4 +873,11 @@ WSL/Ubuntu, começando por atualizar a máquina para a `main` (78 commits atrás
   já tinha usado o app. Rodar `npx prisma db seed` de novo resolve.
 - Sem cobertura automatizada: o serviço (que toca o banco) e o componente React
   continuam sem teste. Só as funções puras têm.
+- Higiene de repositório na mesma sessão, no PR #35: as pastas de skills de IA
+  (`.agents`, `.claude`, `.windsurf`) passaram a ser ignoradas e só o
+  `skills-lock.json` foi versionado. A alternativa de versionar os 504 KB de
+  documentação de terceiros foi descartada: o conteúdo é regenerável pelo lock,
+  e as duas últimas pastas são só atalhos simbólicos, que ainda dão problema em
+  Windows nativo. A regra ignora apenas `skills/`, para um
+  `.claude/settings.json` compartilhado ainda poder entrar depois.
 - Tempo economizado ou perdido: não medido.
