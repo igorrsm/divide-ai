@@ -523,3 +523,37 @@ dependem de navegador.
 - Sem teste automatizado: rotas HTTP, o serviço que toca o banco, os
   componentes React e `formatarReais`.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-27 — Igor — Check obrigatório no ruleset (fecho do T4)
+
+Continuação da sessão anterior, depois do merge dos PRs #18 e #19 pela
+Thalita.
+
+**Pedido à IA**
+- Tornar o check do CI obrigatório na `main`, verificar o bloqueio e fechar o
+  cartão T4.
+
+**O que a IA produziu**
+- Regra `required_status_checks` no ruleset "Protege a Main", com o check
+  `verificacoes` do GitHub Actions, via `gh api`. As três regras anteriores
+  foram mantidas. A exigência de branch atualizada com a `main` ficou
+  desligada, para não forçar "Update branch" a cada merge.
+- PR #20, descartável: um teste quebrado deixou o check vermelho, marcado como
+  obrigatório (`isRequired: true`), e o merge ficou `BLOCKED`. Fechado sem
+  merge, com a branch apagada.
+- Cartão T4 finalizado no Notion, com os dois critérios e nota de fechamento
+  (PRs #14, #18 e #20).
+
+**Revisão humana**
+- O Igor autorizou a mudança no ruleset e o teste com o PR descartável.
+
+**Observações**
+- A IA tentou o merge do #20 pela API para listar as regras violadas; o
+  sistema de permissões do Claude Code negou a ação, e a IA não contornou.
+  A prova veio de consulta só de leitura (GraphQL), que mostra o check como
+  obrigatório.
+- Limite da verificação: o #20 também não tinha aprovação, o que por si só
+  bloqueia o merge. O que prova a regra nova é o `isRequired: true`.
+- A partir daqui, nenhum PR com lint, teste, typecheck ou build quebrado pode
+  ser mesclado na `main`.
+- Tempo economizado ou perdido: não medido.
