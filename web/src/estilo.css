@@ -350,3 +350,34 @@ a {
 .valor-receber { color: var(--cor-receber); }
 .valor-pagar { color: var(--cor-pagar); }
 .valor-quitado { color: var(--cor-tinta); }
+
+/* Morador escolhido em "Quem é você?" (A3) */
+.saldo-eu {
+  background: #fff3c4;
+}
+
+.saldo-nome small {
+  font-weight: 400;
+}
+
+.resumo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 700;
+}
+
+.resumo strong {
+  font-family: var(--fonte-titulo);
+  font-size: 36px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.resumo.valor-receber { background: #d9e6ff; }
+.resumo.valor-pagar { background: #ffe1d6; }
+
+.dica-saldo {
+  margin: 0;
+  font-weight: 700;
+}

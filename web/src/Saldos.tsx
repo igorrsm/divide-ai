@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { formatarReais } from "./formatarReais";
+import { useMoradorAtual } from "./MoradorAtual";
 
 // Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
 const REPUBLICA_ID = 1;
@@ -24,10 +25,34 @@ function valorComSinal(centavos: number): string {
   return sinal + formatarReais(Math.abs(centavos));
 }
 
+const FRASE_RESUMO = {
+  "a receber": "você tem a receber",
+  "a pagar": "você deve",
+  quitado: "você está em dia",
+} as const;
+
+/** Resumo do morador escolhido em "Quem é você?" (A3), no topo do painel. */
+function Resumo({ saldo }: { saldo: Saldo | undefined }) {
+  if (!saldo) {
+    return <p className="dica-saldo">Escolha quem você é no topo para ver o seu saldo.</p>;
+  }
+  return (
+    <div className={`cartao resumo ${CLASSE_VALOR[saldo.situacao]}`}>
+      <span>
+        {saldo.nome}, {FRASE_RESUMO[saldo.situacao]}
+      </span>
+      {saldo.situacao !== "quitado" && (
+        <strong>{formatarReais(Math.abs(saldo.saldoCentavos))}</strong>
+      )}
+    </div>
+  );
+}
+
 /** Painel de saldos (D2): quanto cada morador tem a receber ou deve. */
 export default function Saldos() {
   const [saldos, setSaldos] = useState<Saldo[] | null>(null);
   const [erro, setErro] = useState(false);
+  const { moradorId } = useMoradorAtual();
 
   useEffect(() => {
     let ativo = true;
@@ -58,20 +83,27 @@ export default function Saldos() {
 
   return (
     <>
+      <Resumo saldo={saldos.find((s) => s.moradorId === moradorId)} />
       <h1>Como está a casa</h1>
       <ul className="saldos">
-        {saldos.map((saldo) => (
-          <li key={saldo.moradorId} className="cartao saldo">
-            <span className={`inicial inicial-${saldo.moradorId % 4}`} aria-hidden="true">
-              {saldo.nome.charAt(0)}
-            </span>
-            <span className="saldo-nome">{saldo.nome}</span>
-            <span className={`saldo-valor ${CLASSE_VALOR[saldo.situacao]}`}>
-              <strong>{valorComSinal(saldo.saldoCentavos)}</strong>
-              <small>{saldo.situacao}</small>
-            </span>
-          </li>
-        ))}
+        {saldos.map((saldo) => {
+          const eu = saldo.moradorId === moradorId;
+          return (
+            <li key={saldo.moradorId} className={eu ? "cartao saldo saldo-eu" : "cartao saldo"}>
+              <span className={`inicial inicial-${saldo.moradorId % 4}`} aria-hidden="true">
+                {saldo.nome.charAt(0)}
+              </span>
+              <span className="saldo-nome">
+                {saldo.nome}
+                {eu && <small> (você)</small>}
+              </span>
+              <span className={`saldo-valor ${CLASSE_VALOR[saldo.situacao]}`}>
+                <strong>{valorComSinal(saldo.saldoCentavos)}</strong>
+                <small>{saldo.situacao}</small>
+              </span>
+            </li>
+          );
+        })}
       </ul>
     </>
   );
