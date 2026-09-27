@@ -687,6 +687,7 @@ Cartão D1: cálculo do saldo e rota de saldos da república, na branch
 - Conflito evitado: o #24 foi mesclado primeiro e a `main` entrou na branch da
   D1 antes deste registro, então esta entrada vem depois da dela sem conflito.
 - Sem teste automatizado: `buscaSaldos` e a rota, que tocam o banco.
+- Tempo economizado ou perdido: não medido.
 
 ## 2026-09-27 — Thalita — Nova despesa usa os moradores do contexto
 
