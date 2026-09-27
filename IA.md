@@ -757,3 +757,42 @@ projeto e ao navegador do app.
 - Até a B2 entrar, despesas lançadas pela tela não têm rateio e a soma dos
   saldos deixa de dar zero; a tela não trata isso como erro.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-27 — Igor — Revisão dos PRs #30 e #31 (refactor da B1 e D2)
+
+Revisão de dois PRs da Thalita depois do merge da D1: o #30 (nova despesa
+usa os moradores do `useMoradorAtual`) e o #31 (D2, painel de saldos).
+
+**Pedido à IA**
+- Avaliar os dois PRs, aprovar e mesclar depois do teste de tela do Igor, e
+  registrar a rodada neste arquivo.
+
+**O que a IA produziu**
+- Validação de cada PR numa cópia separada da branch (`git worktree`), para
+  não mexer no trabalho em andamento: lint, `npm test` (21 de 21), build,
+  tamanho dos commits e comparação do `IA.md` com o da `main`.
+- No #30: o GitHub mostrava +320 linhas porque a branch tinha incorporado a
+  `feat/saldo-consolidado`; o diff real contra a `main` era +56 −27. A
+  comparação achou que, no merge dessa branch, a linha "Tempo economizado ou
+  perdido" tinha sumido da entrada da D1 (a mesma armadilha dos PRs #19 e
+  #23). A IA recolocou a linha num commit na branch da Thalita.
+- No #31: conferência de que a tela segue o formato da rota da D1 (tipo,
+  `formatarReais(Math.abs(...))`, rótulo pela `situacao`, destaque pelo
+  `moradorId`) e de que as variáveis de cor usadas existem.
+- Textos das duas aprovações, postados pelo `gh` com o ok do Igor; cartões D2
+  finalizado e B1 com nota do refactor no Notion.
+
+**Revisão humana**
+- O Igor fez o teste de tela dos dois PRs antes de autorizar aprovação e
+  merge: no #30, contou as chamadas a `/moradores` no DevTools (2, antes 4),
+  com a IA explicando como filtrar; no #31, conferiu os valores do seed, o
+  resumo e o destaque ao trocar de morador, e os 375 px.
+
+**Observações**
+- É a terceira vez que um conflito no fim deste arquivo apaga a linha final
+  de uma entrada sem o diff acusar. A conferência que pega o erro é comparar
+  as primeiras linhas do arquivo com as da `main`; a sugestão foi deixada na
+  aprovação do #30.
+- Pontos não bloqueantes do #31: cores fixas no CSS em vez de variáveis e o
+  resumo antes do `<h1>`.
+- Tempo economizado ou perdido: não medido.
