@@ -671,6 +671,7 @@ projeto e ao navegador do app.
   dev, que roda o efeito duas vezes; em produção é 1). "Quem pagou" vem com o
   morador escolhido, troca à mão continua funcionando e um id salvo que não
   existe cai no primeiro morador.
+- A Thalita também testou na própria máquina antes do push.
 
 **Observações**
 - Erro da IA, percebido no teste: a Thalita tinha voltado para a `main`
