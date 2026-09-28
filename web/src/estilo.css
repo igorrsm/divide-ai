@@ -508,3 +508,17 @@ a {
 .voltar:hover {
   background: var(--cor-destaque-clara);
 }
+
+/* Linha de quem está usando o app no rateio: leva ao saldo dessa pessoa. */
+.rateio-eu {
+  background: var(--cor-destaque-clara);
+  text-decoration: none;
+}
+
+.rateio-eu strong {
+  margin-left: auto;
+}
+
+.rateio-eu:hover {
+  background: var(--cor-destaque);
+}
