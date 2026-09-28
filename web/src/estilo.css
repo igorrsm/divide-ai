@@ -707,3 +707,104 @@ a {
 .link-extrato {
   margin-top: 12px;
 }
+
+/* Filtros da lista de despesas (E2) */
+.botao-filtrar {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.filtros {
+  max-width: none;
+  margin-top: 12px;
+}
+
+/* De e Até lado a lado; em 375 px cada um fica com metade da largura. */
+.filtros-periodo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Campo de data que abre o calendário do site, com a cara dos outros campos. */
+.campo-data {
+  min-width: 0;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: var(--borda);
+  border-radius: 12px;
+  background: var(--cor-superficie);
+  color: var(--cor-tinta);
+  font: inherit;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+}
+
+.campo-data[aria-expanded="true"] {
+  background: var(--cor-destaque-clara);
+}
+
+.calendario {
+  display: grid;
+  gap: 12px;
+  box-shadow: none;
+}
+
+.calendario .navegacao-mes {
+  margin-bottom: 0;
+}
+
+.calendario-grade {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.calendario-semana {
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.calendario-dia {
+  min-height: 40px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: none;
+  color: var(--cor-tinta);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.calendario-dia:hover {
+  background: var(--cor-destaque-clara);
+}
+
+.calendario-hoje {
+  border-color: var(--cor-tinta);
+}
+
+.calendario-dia[aria-pressed="true"] {
+  background: var(--cor-tinta);
+  color: var(--cor-destaque);
+  font-weight: 700;
+}
+
+.botao-aplicar {
+  background: var(--cor-tinta);
+  color: var(--cor-destaque);
+}
+
+.botao-aplicar:hover {
+  background: var(--cor-tinta);
+  opacity: 0.9;
+}
+
+.resumo-filtro {
+  margin: 16px 0 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}

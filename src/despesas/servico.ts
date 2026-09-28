@@ -1,6 +1,7 @@
 import { prisma } from "../db";
 import { ErroNaoEncontrado, ErroSemPermissao } from "../erros";
 import { diaDa } from "./dia";
+import type { FiltrosDespesas } from "./filtros";
 import { montaDespesa, type EntradaDespesa } from "./montagem";
 import { interpretaId } from "./validacao";
 
@@ -8,11 +9,28 @@ export function buscaRepublica(id: number) {
   return prisma.republica.findUnique({ where: { id } });
 }
 
-/** Despesas da república, da mais recente para a mais antiga (B3). */
-export async function listaDespesas(republicaId: number) {
+/**
+ * Despesas da república, da mais recente para a mais antiga (B3), com os
+ * filtros opcionais da E2. O filtro de moradores pega o que algum deles
+ * pagou ou do que participa: tudo o que mexe no saldo de algum deles.
+ */
+export async function listaDespesas(republicaId: number, filtros: FiltrosDespesas = {}) {
+  const { desde, antesDe, moradorIds } = filtros;
   const despesas = await prisma.despesa.findMany({
-    // Despesa excluída (B6) some da lista.
-    where: { republicaId, excluidaEm: null },
+    where: {
+      republicaId,
+      // Despesa excluída (B6) some da lista.
+      excluidaEm: null,
+      ...(desde || antesDe ? { data: { gte: desde, lt: antesDe } } : {}),
+      ...(moradorIds
+        ? {
+            OR: [
+              { pagadorId: { in: moradorIds } },
+              { participacoes: { some: { moradorId: { in: moradorIds } } } },
+            ],
+          }
+        : {}),
+    },
     select: {
       id: true,
       descricao: true,
