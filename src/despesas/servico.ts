@@ -1,5 +1,6 @@
 import { prisma } from "../db";
 import { ErroDeValidacao } from "../erros";
+import { ratearIgualmente } from "./rateio";
 import {
   interpretaData,
   interpretaDescricao,
@@ -39,10 +40,14 @@ export function listaMoradores(republicaId: number) {
 }
 
 /**
- * Cria a despesa sem participações: o rateio é a história B2.
+ * Cria a despesa rateada igualmente entre todos os moradores da república.
+ * Quem pagou também participa, e a sobra de centavos fica com ele.
  *
- * Enquanto B2 não entra, a soma das participações não bate com o valor da
- * despesa. A invariante volta a valer quando o rateio for implementado.
+ * A despesa e as participações entram na mesma operação aninhada, que o Prisma
+ * resolve em transação: não fica despesa gravada sem rateio se algo falhar no
+ * meio.
+ *
+ * Escolher quem participa é a B4; dividir por valor ou percentual, a B5.
  */
 export async function criarDespesa(
   republicaId: number,
@@ -54,15 +59,38 @@ export async function criarDespesa(
   const data = interpretaData(comoTexto(entrada.data, "Data"), hoje);
   const pagadorId = interpretaId(entrada.pagadorId, "Quem pagou");
 
-  // Precisa ser morador desta república, não de outra.
-  const pagador = await prisma.morador.findFirst({
-    where: { id: pagadorId, republicaId },
+  // Uma consulta só: serve para validar quem pagou e para montar o rateio.
+  const moradores = await prisma.morador.findMany({
+    where: { republicaId },
+    select: { id: true },
+    orderBy: { id: "asc" },
   });
-  if (!pagador) {
+  // Precisa ser morador desta república, não de outra.
+  if (!moradores.some((morador) => morador.id === pagadorId)) {
     throw new ErroDeValidacao("Quem pagou precisa ser um morador desta república.");
   }
 
+  const participacoes = ratearIgualmente(
+    valorCentavos,
+    moradores.map((morador) => morador.id),
+    pagadorId,
+  );
+
   return prisma.despesa.create({
-    data: { descricao, valorCentavos, data, republicaId, pagadorId },
+    data: {
+      descricao,
+      valorCentavos,
+      data,
+      republicaId,
+      pagadorId,
+      tipoDivisao: "IGUAL",
+      participacoes: { create: participacoes },
+    },
+    include: {
+      participacoes: {
+        select: { moradorId: true, valorCentavos: true },
+        orderBy: { moradorId: "asc" },
+      },
+    },
   });
 }

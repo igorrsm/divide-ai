@@ -824,3 +824,60 @@ projeto e ao navegador do app.
 - Aprendizado do #30: depois de resolver conflito no fim deste arquivo,
   comparar com o da `main` para não perder a última linha de uma entrada.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-27 — Lucas — Dividir a despesa igualmente (B2)
+
+História B2 do Sprint 2, em cima da B1 já mesclada. Sessão no Claude Code, em
+WSL/Ubuntu, começando por atualizar a máquina para a `main` (78 commits atrás).
+
+**Pedido à IA**
+- Atualizar os arquivos locais para a `main`.
+- Implementar a B2, com plano antes do código.
+- Commitar as pastas de ferramental de IA que estavam sem rastrear.
+
+**O que a IA produziu**
+- Leitura do estado atual e plano, com uma decisão levada ao humano: como
+  tornar o rateio visível na tela, já que a listagem de despesas é a B3 e
+  ainda não existe.
+- `ratearIgualmente` em `src/despesas/rateio.ts`, função pura no mesmo desenho
+  do `calcularSaldos`.
+- Doze testes de unidade do rateio.
+- Serviço criando despesa e participações na mesma operação aninhada do Prisma.
+- Lista do rateio no formulário, com os estilos, e atualização do `CLAUDE.md`.
+
+**Revisão humana**
+- A decisão de mostrar o rateio na própria tela de lançamento foi do Lucas,
+  entre três alternativas que a IA apresentou.
+- Pendente: ninguém abriu a tela ainda. A IA exercitou o fluxo por `curl`
+  pelo proxy do Vite e conferiu que a página responde, mas não viu a lista
+  renderizada. O item "funciona na tela" do DoD depende da revisão do PR.
+
+**Observações**
+- Erro da IA, corrigido antes do push: o primeiro commit juntou a função e os
+  testes em 132 linhas, acima do limite de 100. Foi dividido em dois, seguindo
+  o que a `main` já faz com os testes do saldo. A IA só notou depois de
+  commitar, ao medir.
+- Escopo além do pedido, de propósito: a função também trata o pagador fora do
+  rateio, que é cenário da B4, porque o DoD exige teste desse caso com sobra
+  maior que 1 centavo. A B4 só vai passar uma lista diferente.
+- Verificação de ponta a ponta, não só por teste: R$ 100,00 entre três devolveu
+  3334 / 3333 / 3333; ao trocar quem pagou, a sobra acompanhou; e a soma dos
+  saldos da república continuou exatamente zero.
+- Decisão tomada na função: id repetido na lista de participantes é
+  desduplicado em vez de virar erro, porque a chave da `Participacao` é
+  `despesaId + moradorId` e o duplicado quebraria a gravação no banco.
+- Caso de borda fixado em teste: valor menor que o número de participantes
+  (R$ 0,02 entre três) gera participação de zero centavo para dois moradores.
+  Estranho de ler, mas a soma continua exata.
+- Despesas criadas antes desta mudança ficam sem participações no banco de quem
+  já tinha usado o app. Rodar `npx prisma db seed` de novo resolve.
+- Sem cobertura automatizada: o serviço (que toca o banco) e o componente React
+  continuam sem teste. Só as funções puras têm.
+- Higiene de repositório na mesma sessão, no PR #35: as pastas de skills de IA
+  (`.agents`, `.claude`, `.windsurf`) passaram a ser ignoradas e só o
+  `skills-lock.json` foi versionado. A alternativa de versionar os 504 KB de
+  documentação de terceiros foi descartada: o conteúdo é regenerável pelo lock,
+  e as duas últimas pastas são só atalhos simbólicos, que ainda dão problema em
+  Windows nativo. A regra ignora apenas `skills/`, para um
+  `.claude/settings.json` compartilhado ainda poder entrar depois.
+- Tempo economizado ou perdido: não medido.
