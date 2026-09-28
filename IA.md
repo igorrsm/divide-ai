@@ -1152,3 +1152,32 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
 - O arquivo da grade não se chama `calendario.ts` porque, no Windows, ele se
   confundiria com `Calendario.tsx` na hora de resolver o import.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Pendências pequenas (fix)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- A Thalita escolheu duas pendências anotadas nos PRs anteriores para um PR
+  de fix: a concordância de "República inválido." (anotada no #36) e o
+  "← Voltar" do detalhe, que sempre ia para /despesas (anotado no #42).
+
+**O que a IA produziu**
+- "Id da república inválido.", no padrão de "Id da despesa inválido.". A IA
+  achou mais uma frase do mesmo tipo, da B6, e a Thalita aprovou a troca:
+  "Id de quem está usando o app inválido.".
+- A lista de despesas e o extrato mandam a tela de origem (com filtros e mês)
+  no estado da navegação; o Voltar do detalhe usa essa origem e, sem ela,
+  continua indo para /despesas.
+
+**Revisão humana**
+- Plano aprovado pela Thalita antes do código.
+- A pedido dela, a IA entregou primeiro um diff sem commit. Ela rodou lint,
+  `npm test` (74 de 74) e build e testou na própria máquina: Voltar pelo
+  extrato, pela lista filtrada e por link colado, e a mensagem da API. Só
+  depois viraram commits.
+
+**Observações**
+- Feito em cima da branch da E2 (PR #44), porque mexe nas telas da B6, da E1
+  e da E2.
+- Tempo economizado ou perdido: não medido.
