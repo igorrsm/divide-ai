@@ -1133,8 +1133,22 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
   filtro de morador mostra o que ele pagou ou do que participa.
 - A IA rodou os testes puros com o Node do ambiente dela e checou os tipos
   dos arquivos novos; lint, build e a tela ficam com a Thalita.
+- A Thalita aplicou os patches, rodou lint, `npm test` (71 de 71) e build e
+  testou a tela na própria máquina. Depois pediu três ajustes: o botão
+  "Filtrar despesas", o calendário e a lista de moradores no estilo do site.
+- A IA explicou que o calendário e a lista do navegador não aceitam o CSS do
+  site e propôs componentes próprios; ela escolheu o calendário próprio em
+  vez de atalhos de período. Ao testar as pílulas, ela pediu para marcar mais
+  de um morador e decidiu que vale a despesa de qualquer um dos escolhidos.
+- Ela pediu para testar antes do commit: a IA entregou os ajustes como diff
+  sem commit (`git apply --3way`), e só depois do teste dela (lint, 74 testes,
+  build e tela) virou commits.
 
 **Observações**
 - Feita em cima da branch da E1 (PR #42), porque as duas mexem em
   `Despesas.tsx`.
+- A grade de dias (`diasDoMes`) não usa `Date`; a IA a comparou com o
+  calendário do JavaScript mês a mês de 1990 a 2110.
+- O arquivo da grade não se chama `calendario.ts` porque, no Windows, ele se
+  confundiria com `Calendario.tsx` na hora de resolver o import.
 - Tempo economizado ou perdido: não medido.
