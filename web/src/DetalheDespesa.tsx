@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { formatarPercentual } from "./divisao";
 import { formatarData } from "./formatarData";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
@@ -14,8 +15,18 @@ type Detalhe = {
   data: string;
   tipoDivisao: "IGUAL" | "VALOR" | "PERCENTUAL";
   pagador: { id: number; nome: string };
-  participacoes: { valorCentavos: number; morador: { id: number; nome: string } }[];
+  participacoes: {
+    valorCentavos: number;
+    percentualCentesimos: number | null;
+    morador: { id: number; nome: string };
+  }[];
 };
+
+const TITULO_DIVISAO = {
+  IGUAL: "Dividida por igual",
+  VALOR: "Dividida por valores",
+  PERCENTUAL: "Dividida por percentuais",
+} as const;
 
 /** Editar e excluir (B6): só aparecem para quem pagou a despesa. */
 function AcoesDespesa({ id, moradorId }: { id: string; moradorId: number }) {
@@ -160,11 +171,11 @@ export default function DetalheDespesa() {
           ) : (
             <section className="rateio">
               <h2>
-                {despesa.tipoDivisao === "IGUAL" ? "Dividida por igual" : "Dividida"} entre{" "}
+                {TITULO_DIVISAO[despesa.tipoDivisao]} entre{" "}
                 {quantos} {quantos > 1 ? "moradores" : "morador"}
               </h2>
               <ul className="rateio-lista">
-                {despesa.participacoes.map(({ morador, valorCentavos }) => {
+                {despesa.participacoes.map(({ morador, valorCentavos, percentualCentesimos }) => {
                   // "(você, pagou)" quando é a mesma pessoa, em vez de dois parênteses.
                   const marcas = [
                     morador.id === moradorId && "você",
@@ -177,6 +188,13 @@ export default function DetalheDespesa() {
                       <span>
                         {morador.nome}
                         {marcas && <small> ({marcas})</small>}
+                        {/* Na divisão por percentual (B5), o % ao lado do nome. */}
+                        {percentualCentesimos !== null && (
+                          <small className="rateio-percentual">
+                            {" "}
+                            · {formatarPercentual(percentualCentesimos)}%
+                          </small>
+                        )}
                       </span>
                       <strong>{formatarReais(valorCentavos)}</strong>
                     </>
