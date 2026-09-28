@@ -1025,7 +1025,8 @@ Sessão no Claude Code, em WSL/Ubuntu: atualização para a `main`, revisão do 
 - Formulário em `web/src/CriarRepublica.tsx` com validações no cliente e servidor, mensagens visíveis de erro, e redirecionamento para a tela da república ativa.
 
 **Revisão humana**
-- Eduardo aprovou a abordagem da Opção 1 (formulário pedindo nome da república e dados do criador, com campo organizador no banco e contexto de república ativa no frontend).
+- Avaliação do Eduardo: durante o processo da realização dessa task eu precisei do apoio do Antigravity, a ferramenta do Google para codar códigos; ele me auxiliou bastante permitindo que ele me guiasse durante toda a tarefa da task e permitindo concluir o objetivo. Para alguém que mexe na área eu considero altamente recomendável seu uso para facilitar e auxiliar nas construções de linha de código, além de ser uma ferramenta do próprio Google.
+- A proposta inicial da IA levantou as ambiguidades da história (como representar o organizador sem sistema de autenticação e para onde redirecionar o usuário). Eduardo avaliou as alternativas e escolheu a Opção 1 para ambas as questões.
 - A separação estrita dos commits foi mantida para respeitar a regra do DoD de até 100 linhas por commit.
 
 **Observações**
