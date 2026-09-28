@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { conferePartes, type TipoDivisao } from "./divisao";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
+import ParticipantesRateio from "./ParticipantesRateio";
 import { useApiForaDoAr } from "./StatusApi";
 
 // Fixo até a A1 (criar república) entrar.
@@ -11,6 +13,7 @@ const REPUBLICA_ID = 1;
 /** O rateio que a API devolveu ao criar a despesa (B2). */
 type Rateio = {
   pagadorId: number;
+  tipoDivisao: TipoDivisao;
   participacoes: { moradorId: number; valorCentavos: number }[];
 };
 
@@ -22,10 +25,19 @@ export type DespesaEmEdicao = {
   data: string;
   pagadorId: number;
   participantesIds: number[];
+  tipoDivisao: TipoDivisao;
+  /** Por valores ou percentuais (B5): o texto de cada participante. */
+  partes: Record<number, string>;
 };
 
+const TITULO_DIVISAO = {
+  IGUAL: "Dividida por igual",
+  VALOR: "Dividida por valores",
+  PERCENTUAL: "Dividida por percentuais",
+} as const;
+
 /** 12345 centavos vira "123,45", no formato que o campo de valor aceita. */
-function centavosParaTexto(centavos: number): string {
+export function centavosParaTexto(centavos: number): string {
   return `${Math.floor(centavos / 100)},${String(centavos % 100).padStart(2, "0")}`;
 }
 
@@ -68,6 +80,17 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
   const participantesIds = moradores
     .filter((morador) => !desmarcados.has(morador.id))
     .map((morador) => morador.id);
+  const [tipo, setTipo] = useState<TipoDivisao>(edicao?.tipoDivisao ?? "IGUAL");
+  const [partes, setPartes] = useState<Record<number, string>>(edicao?.partes ?? {});
+  // Só os marcados contam na soma (B5); a API confere de novo ao salvar.
+  const conferencia =
+    tipo === "IGUAL"
+      ? null
+      : conferePartes(
+          tipo,
+          valor,
+          participantesIds.map((id) => partes[id] ?? ""),
+        );
   const [aviso, setAviso] = useState<{ tipo: "erro" | "ok"; texto: string } | null>(null);
   const [rateio, setRateio] = useState<Rateio | null>(null);
   const [enviando, setEnviando] = useState(false);
@@ -98,7 +121,19 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
         method: edicao ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         // Na edição, moradorId diz quem está usando o app: só quem pagou edita.
-        body: JSON.stringify({ descricao, valor, data, pagadorId, participantesIds, moradorId }),
+        body: JSON.stringify({
+          descricao,
+          valor,
+          data,
+          pagadorId,
+          participantesIds,
+          tipoDivisao: tipo,
+          partes:
+            tipo === "IGUAL"
+              ? undefined
+              : participantesIds.map((id) => ({ moradorId: id, valor: partes[id] ?? "" })),
+          moradorId,
+        }),
       });
       const corpo = await resposta.json();
       if (edicao && resposta.ok) {
@@ -110,9 +145,14 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
         return;
       }
       setAviso({ tipo: "ok", texto: `Despesa "${corpo.descricao}" lançada.` });
-      setRateio({ pagadorId: corpo.pagadorId, participacoes: corpo.participacoes });
+      setRateio({
+        pagadorId: corpo.pagadorId,
+        tipoDivisao: corpo.tipoDivisao,
+        participacoes: corpo.participacoes,
+      });
       setDescricao("");
       setValor("");
+      setPartes({});
       // Volta ao padrão de todos participando: deixar uma exclusão valendo para
       // a próxima despesa é erro difícil de notar.
       setDesmarcados(new Set());
@@ -174,39 +214,30 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
         </select>
       </label>
 
-      <fieldset className="participantes">
-        <legend>Quem participa</legend>
-        <p className="participantes-resumo">
-          {participantesIds.length} de {moradores.length} participam. Desmarque quem não
-          entra nesta conta.
-        </p>
-        <ul className="participantes-lista">
-          {moradores.map((morador) => (
-            <li key={morador.id}>
-              <label className="cartao participante">
-                <input
-                  type="checkbox"
-                  checked={!desmarcados.has(morador.id)}
-                  onChange={() => alternar(morador.id)}
-                />
-                <span>
-                  {morador.nome}
-                  {String(morador.id) === pagadorId && <small> (pagou)</small>}
-                </span>
-              </label>
-            </li>
-          ))}
-        </ul>
-        {moradores.length > 0 && participantesIds.length === 0 && (
-          <p role="status" className="aviso aviso-erro">
-            Escolha ao menos um morador para dividir a despesa.
-          </p>
-        )}
-      </fieldset>
+      <ParticipantesRateio
+        moradores={moradores}
+        pagadorId={pagadorId}
+        desmarcados={desmarcados}
+        alternar={alternar}
+        tipo={tipo}
+        aoMudarTipo={(novo) => {
+          // Valores em R$ não servem como percentual, e vice-versa.
+          setTipo(novo);
+          setPartes({});
+        }}
+        partes={partes}
+        aoMudarParte={(id, texto) => setPartes((atual) => ({ ...atual, [id]: texto }))}
+        conferencia={conferencia}
+      />
 
       <button
         type="submit"
-        disabled={enviando || foraDoAr || participantesIds.length === 0}
+        disabled={
+          enviando ||
+          foraDoAr ||
+          participantesIds.length === 0 ||
+          (conferencia !== null && !conferencia.fecha)
+        }
         className="botao-principal"
       >
         {foraDoAr
@@ -235,7 +266,7 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
       {rateio && (
         <section className="rateio">
           <h3>
-            Dividida por igual entre {rateio.participacoes.length}{" "}
+            {TITULO_DIVISAO[rateio.tipoDivisao]} entre {rateio.participacoes.length}{" "}
             {rateio.participacoes.length > 1 ? "moradores" : "morador"}
           </h3>
           <ul className="rateio-lista">

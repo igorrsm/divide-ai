@@ -565,12 +565,21 @@ a {
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
+}
+
+/* A caixa e o nome; o campo da parte (B5) fica fora do rótulo. */
+.participante-rotulo {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
   cursor: pointer;
 }
 
 /* Fora de .campo de propósito: lá a regra dá largura total e 48 px de altura
    a qualquer campo, o que deformaria a caixa de seleção. */
-.participante input {
+.participante input[type="checkbox"] {
   flex-shrink: 0;
   width: 22px;
   height: 22px;
@@ -807,4 +816,39 @@ a {
   margin: 16px 0 0;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+}
+
+/* Divisão por valores ou percentuais (B5) */
+.parte {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.parte input {
+  width: 6.5rem;
+  min-height: 40px;
+  padding: 6px 10px;
+  border: var(--borda);
+  border-radius: 10px;
+  background: var(--cor-superficie);
+  color: var(--cor-tinta);
+  font: inherit;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.conta-divisao {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border: var(--borda);
+  border-radius: 12px;
+  background: var(--cor-fundo-pagar);
+  font-weight: 700;
+}
+
+.conta-divisao.fecha {
+  background: var(--cor-fundo-ok);
 }

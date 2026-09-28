@@ -60,7 +60,11 @@ export async function buscaDespesa(republicaId: number, despesaId: number) {
       tipoDivisao: true,
       pagador: { select: { id: true, nome: true } },
       participacoes: {
-        select: { valorCentavos: true, morador: { select: { id: true, nome: true } } },
+        select: {
+          valorCentavos: true,
+          percentualCentesimos: true,
+          morador: { select: { id: true, nome: true } },
+        },
         orderBy: { morador: { nome: "asc" } },
       },
     },
@@ -78,8 +82,9 @@ export function listaMoradores(republicaId: number) {
 }
 
 /**
- * Cria a despesa rateada igualmente entre os participantes escolhidos (B4).
- * Sem escolha, participam todos os moradores da república.
+ * Cria a despesa rateada entre os participantes escolhidos (B4): por igual,
+ * por valores ou por percentuais (B5). Sem escolha, participam todos os
+ * moradores da república.
  *
  * Quem pagou não é forçado dentro do rateio: dá para lançar uma despesa que
  * alguém pagou para os outros. Quando ele participa, a sobra de centavos fica
@@ -89,8 +94,6 @@ export function listaMoradores(republicaId: number) {
  * A despesa e as participações entram na mesma operação aninhada, que o Prisma
  * resolve em transação: não fica despesa gravada sem rateio se algo falhar no
  * meio.
- *
- * Dividir por valor ou percentual é a B5.
  */
 export async function criarDespesa(
   republicaId: number,
@@ -113,7 +116,6 @@ export async function criarDespesa(
     data: {
       ...campos,
       republicaId,
-      tipoDivisao: "IGUAL",
       participacoes: { create: participacoes },
     },
     include: {

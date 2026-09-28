@@ -1,7 +1,8 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useMoradorAtual } from "./MoradorAtual";
-import NovaDespesa, { type DespesaEmEdicao } from "./NovaDespesa";
+import { formatarPercentual, type TipoDivisao } from "./divisao";
+import NovaDespesa, { centavosParaTexto, type DespesaEmEdicao } from "./NovaDespesa";
 
 // Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
 const REPUBLICA_ID = 1;
@@ -12,8 +13,26 @@ type Detalhe = {
   valorCentavos: number;
   data: string;
   pagador: { id: number; nome: string };
-  participacoes: { morador: { id: number } }[];
+  tipoDivisao: TipoDivisao;
+  participacoes: {
+    valorCentavos: number;
+    percentualCentesimos: number | null;
+    morador: { id: number };
+  }[];
 };
+
+/** Os números de cada participante como a pessoa digitou (B5). */
+function partesDe(despesa: Detalhe): Record<number, string> {
+  if (despesa.tipoDivisao === "IGUAL") return {};
+  return Object.fromEntries(
+    despesa.participacoes.map((p) => [
+      p.morador.id,
+      despesa.tipoDivisao === "VALOR"
+        ? centavosParaTexto(p.valorCentavos)
+        : formatarPercentual(p.percentualCentesimos ?? 0),
+    ]),
+  );
+}
 
 /** Tela de editar despesa (B6): só quem pagou vê o formulário. */
 export default function EditarDespesa() {
@@ -67,6 +86,8 @@ export default function EditarDespesa() {
       data: despesa.data,
       pagadorId: despesa.pagador.id,
       participantesIds: despesa.participacoes.map((p) => p.morador.id),
+      tipoDivisao: despesa.tipoDivisao,
+      partes: partesDe(despesa),
     };
     conteudo = <NovaDespesa edicao={edicao} />;
   }
