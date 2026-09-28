@@ -1,7 +1,7 @@
 import express, { type NextFunction, type Request, type Response } from "express";
 import { rotasDespesas } from "./despesas/rotas";
 import { rotasSaldos } from "./saldos/rotas";
-import { ErroDeValidacao, ErroNaoEncontrado } from "./erros";
+import { ErroDeValidacao, ErroNaoEncontrado, ErroSemPermissao } from "./erros";
 
 const app = express();
 app.use(express.json());
@@ -21,6 +21,10 @@ app.use((erro: unknown, _req: Request, res: Response, _proximo: NextFunction) =>
   }
   if (erro instanceof ErroNaoEncontrado) {
     res.status(404).json({ erro: erro.message });
+    return;
+  }
+  if (erro instanceof ErroSemPermissao) {
+    res.status(403).json({ erro: erro.message });
     return;
   }
   // JSON malformado no corpo: o express.json() marca o erro com esse type.
