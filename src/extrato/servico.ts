@@ -1,4 +1,5 @@
 import { prisma } from "../db";
+import { DESPESA_ATIVA } from "../despesas/ativa";
 import { diaDa } from "../despesas/dia";
 import { montaExtrato } from "./calculo";
 import { intervaloDoMes } from "./mes";
@@ -13,7 +14,7 @@ export async function buscaExtrato(republicaId: number, mes: string) {
   });
   const despesas = await prisma.despesa.findMany({
     // Despesa excluída (B6) não entra no extrato.
-    where: { republicaId, excluidaEm: null, data: { gte: inicio, lt: fim } },
+    where: { republicaId, ...DESPESA_ATIVA, data: { gte: inicio, lt: fim } },
     select: {
       id: true,
       descricao: true,
