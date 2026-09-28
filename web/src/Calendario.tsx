@@ -1,4 +1,4 @@
-import { useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { diasDoMes, hojeNaCasa } from "./diasDoMes";
 import { formatarMes, mesVizinho } from "./mes";
 
@@ -21,6 +21,17 @@ const SEMANA_EXTENSO = ["domingo", "segunda", "terça", "quarta", "quinta", "sex
 export default function Calendario({ rotulo, valor, aoEscolher, aoFechar }: Props) {
   const hoje = hojeNaCasa();
   const [mes, setMes] = useState((valor || hoje).slice(0, 7));
+  const cartao = useRef<HTMLDivElement>(null);
+
+  // Ao abrir, o foco vai para o dia escolhido (ou hoje, ou o primeiro dia):
+  // assim o teclado já está dentro do calendário e o Esc funciona na hora.
+  useEffect(() => {
+    const dia =
+      cartao.current?.querySelector<HTMLButtonElement>('[aria-pressed="true"]') ??
+      cartao.current?.querySelector<HTMLButtonElement>(".calendario-hoje") ??
+      cartao.current?.querySelector<HTMLButtonElement>(".calendario-dia");
+    dia?.focus();
+  }, []);
 
   function teclar(evento: KeyboardEvent) {
     if (evento.key === "Escape") aoFechar();
@@ -28,6 +39,7 @@ export default function Calendario({ rotulo, valor, aoEscolher, aoFechar }: Prop
 
   return (
     <div
+      ref={cartao}
       className="cartao calendario"
       role="dialog"
       aria-label={`Escolher data: ${rotulo}`}
