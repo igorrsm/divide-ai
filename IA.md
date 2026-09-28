@@ -881,3 +881,45 @@ WSL/Ubuntu, começando por atualizar a máquina para a `main` (78 commits atrás
   Windows nativo. A regra ignora apenas `skills/`, para um
   `.claude/settings.json` compartilhado ainda poder entrar depois.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-27 — Thalita — Lista de despesas e detalhe com o rateio (B3)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do
+projeto e ao navegador do app.
+
+**Pedido à IA**
+- Implementar a B3 (#12) depois do merge da B2 (#34, Lucas): lista de
+  despesas e detalhe com o rateio por morador.
+
+**O que a IA produziu**
+- API: `GET /api/republicas/:id/despesas` (da mais recente para a mais
+  antiga; no mesmo dia, a última lançada primeiro) e
+  `GET /api/republicas/:id/despesas/:despesaId`, com as participações; 404
+  para despesa inexistente ou de outra república, 400 para id inválido.
+- Tela `Despesas.tsx` (cartões com inicial, descrição, "quem pagou · data" e
+  valor; lista vazia com mensagem) e `DetalheDespesa.tsx` (valor, quem pagou,
+  data e a divisão por morador, com os estilos de rateio da B2).
+- `formatarData`: a data é gravada à meia-noite UTC, então é mostrada só
+  reorganizando o texto AAAA-MM-DD, sem passar por `Date`, para o fuso não
+  mostrar o dia anterior.
+- A pedido da Thalita, o "Voltar" virou um botão em pílula "← Voltar", no
+  detalhe e no formulário de lançar despesa.
+
+**Revisão humana**
+- Plano aprovado pela Thalita antes do código; ela esperou a B2 do Lucas.
+- A IA testou em 375 px: ordem da lista, datas sem virar o dia, detalhe do
+  aluguel com o rateio, 404 para id inexistente e inválido, e a lista vazia
+  (simulada com a API devolvendo lista vazia).
+- A Thalita testou na própria máquina.
+
+**Observações**
+- Achado no teste da IA, corrigido antes do push: o id inválido devolvia
+  "Despesa inválido."; agora é "Id da despesa inválido.". A rota da república
+  tem o mesmo problema desde a B1 ("República inválido."), fora deste escopo.
+- Mudança do plano: a tela da lista ficou em dois commits, porque junto com a
+  remoção da página provisória do App.tsx passaria de 100 linhas.
+- Sem teste automatizado nas rotas, que acessam o banco, como as demais.
+- O total do mês ("Total da casa" do protótipo) é da E1 e ficou fora.
+- A Thalita perguntou por que o mercado do seed é dividido entre dois: vem do
+  seed; pela tela, escolher participantes é a B4 (Lucas, #28).
+- Tempo economizado ou perdido: não medido.
