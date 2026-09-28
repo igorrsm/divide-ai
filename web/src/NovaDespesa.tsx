@@ -1,7 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import CampoData from "./CampoData";
+import { hojeNaCasa } from "./diasDoMes";
 import { conferePartes, TITULO_DIVISAO, type TipoDivisao } from "./divisao";
 import { formatarReais } from "./formatarReais";
+import EscolhaMorador from "./EscolhaMorador";
 import { useMoradorAtual } from "./MoradorAtual";
 import ParticipantesRateio from "./ParticipantesRateio";
 import { useRepublicaAtual } from "./RepublicaAtual";
@@ -34,10 +37,6 @@ export function centavosParaTexto(centavos: number): string {
   return `${Math.floor(centavos / 100)},${String(centavos % 100).padStart(2, "0")}`;
 }
 
-/** Hoje no fuso de quem está usando, no formato que o input date espera. */
-function hoje(): string {
-  return new Date().toLocaleDateString("en-CA");
-}
 
 /**
  * Formulário de lançar despesa. Com `edicao`, abre preenchido e salva com PUT
@@ -49,7 +48,7 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
   const { republica } = useRepublicaAtual();
   const [descricao, setDescricao] = useState(edicao?.descricao ?? "");
   const [valor, setValor] = useState(edicao ? centavosParaTexto(edicao.valorCentavos) : "");
-  const [data, setData] = useState(edicao?.data ?? hoje());
+  const [data, setData] = useState(edicao?.data ?? hojeNaCasa());
   // A lista vem do useMoradorAtual (A3), sem buscar a rota de novo.
   // "Quem pagou" começa com quem foi escolhido em "Quem é você?".
   const { moradores, moradorId, erro: erroMoradores } = useMoradorAtual();
@@ -184,31 +183,14 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
         />
       </label>
 
-      <label className="campo">
-        Data
-        <input
-          type="date"
-          value={data}
-          max={hoje()}
-          onChange={(e) => setData(e.target.value)}
-          required
-        />
-      </label>
+      <CampoData rotulo="Data" valor={data} aoMudar={setData} max={hojeNaCasa()} />
 
-      <label className="campo">
-        Quem pagou
-        <select
-          value={pagadorId}
-          onChange={(e) => setPagadorId(e.target.value)}
-          required
-        >
-          {moradores.map((morador) => (
-            <option key={morador.id} value={morador.id}>
-              {morador.nome}
-            </option>
-          ))}
-        </select>
-      </label>
+      <EscolhaMorador
+        rotulo="Quem pagou"
+        moradores={moradores}
+        valor={pagadorId}
+        aoMudar={setPagadorId}
+      />
 
       <ParticipantesRateio
         moradores={moradores}
