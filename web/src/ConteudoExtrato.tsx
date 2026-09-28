@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { formatarData } from "./formatarData";
 import { formatarReais } from "./formatarReais";
 
@@ -24,6 +24,7 @@ type Props = { extrato: DadosExtrato; moradorId: number | null };
  * mês mexeu no saldo dele.
  */
 export default function ConteudoExtrato({ extrato, moradorId }: Props) {
+  const local = useLocation();
   return (
     <>
       <div className="cartao total-casa">
@@ -62,7 +63,12 @@ export default function ConteudoExtrato({ extrato, moradorId }: Props) {
         <ul className="despesas">
           {extrato.despesas.map((despesa) => (
             <li key={despesa.id}>
-              <Link to={`/despesas/${despesa.id}`} className="cartao despesa">
+              <Link
+                to={`/despesas/${despesa.id}`}
+                // O Voltar do detalhe volta para este mês do extrato.
+                state={{ voltarPara: local.pathname + local.search }}
+                className="cartao despesa"
+              >
                 <span className={`inicial inicial-${despesa.pagador.id % 4}`} aria-hidden="true">
                   {despesa.pagador.nome.charAt(0)}
                 </span>
