@@ -62,6 +62,9 @@ model Participacao {
   despesaId     Int
   moradorId     Int
   valorCentavos Int
+  /// Só na divisão por percentual (B5), em centésimos de ponto: 33,33% é 3333.
+  /// Guardado para a edição abrir com o percentual que a pessoa digitou.
+  percentualCentesimos Int?
 
   despesa Despesa @relation(fields: [despesaId], references: [id], onDelete: Cascade)
   morador Morador @relation(fields: [moradorId], references: [id])
