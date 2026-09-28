@@ -1341,9 +1341,19 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
   "Pagamento registrado." e a lista "Acertos registrados".
 
 **Revisão humana**
-- A Thalita rodou lint, `npm test` e build e testou a tela na própria
-  máquina antes dos commits. O endereço `/saldos/pagamento` (em vez de
-  `/pagamentos/novo`) foi proposto pela IA e aceito por ela.
+- A Thalita rodou lint, `npm test` (111 de 111) e build e testou os sete
+  cenários da tela na própria máquina. O endereço `/saldos/pagamento` (em
+  vez de `/pagamentos/novo`) foi proposto pela IA e aceito por ela.
+- A IA entendeu um "feito!" como aprovação e fez os commits antes dos
+  resultados dela; nada tinha ido para o GitHub. Os testes passaram, e a IA
+  corrigiu este registro antes do push.
+- Pedido da Thalita depois do teste: o calendário e a escolha de morador
+  iguais aos da página de despesas (E2). A IA criou `CampoData.tsx` (o
+  calendário do site, com dias futuros desativados e sem "Limpar") e
+  `EscolhaMorador.tsx` (pílulas de uma pessoa) e usou os dois no registrar
+  pagamento e, a pedido dela, também na nova despesa e na edição. "Para
+  quem" não mostra quem pagou. Entregue sem commit; ela testou a tela e
+  rodou lint, testes e build antes dos commits.
 
 **Observações**
 - O formulário tem mais de 100 linhas; entrou em três commits (campos e
