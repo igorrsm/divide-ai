@@ -30,10 +30,25 @@ export default function NovaDespesa() {
   const pagadorId = moradores.some((m) => String(m.id) === pagadorEscolhido)
     ? pagadorEscolhido
     : String(moradores[0]?.id ?? "");
+  // Guarda quem foi desmarcado, não quem está marcado: assim todo morador
+  // nasce participando, sem precisar sincronizar estado com a lista que chega
+  // de forma assíncrona do contexto.
+  const [desmarcados, setDesmarcados] = useState<Set<number>>(new Set());
+  const participantesIds = moradores
+    .filter((morador) => !desmarcados.has(morador.id))
+    .map((morador) => morador.id);
   const [aviso, setAviso] = useState<{ tipo: "erro" | "ok"; texto: string } | null>(null);
   const [rateio, setRateio] = useState<Rateio | null>(null);
   const [enviando, setEnviando] = useState(false);
   const foraDoAr = useApiForaDoAr();
+
+  function alternar(id: number) {
+    setDesmarcados((atual) => {
+      const novo = new Set(atual);
+      if (!novo.delete(id)) novo.add(id);
+      return novo;
+    });
+  }
 
   /** A lista de moradores já está no contexto: não busca a rota de novo. */
   function nomeDe(id: number): string {
@@ -50,7 +65,7 @@ export default function NovaDespesa() {
       const resposta = await fetch(`/api/republicas/${REPUBLICA_ID}/despesas`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ descricao, valor, data, pagadorId }),
+        body: JSON.stringify({ descricao, valor, data, pagadorId, participantesIds }),
       });
       const corpo = await resposta.json();
       if (!resposta.ok) {
@@ -61,6 +76,9 @@ export default function NovaDespesa() {
       setRateio({ pagadorId: corpo.pagadorId, participacoes: corpo.participacoes });
       setDescricao("");
       setValor("");
+      // Volta ao padrão de todos participando: deixar uma exclusão valendo para
+      // a próxima despesa é erro difícil de notar.
+      setDesmarcados(new Set());
     } catch {
       setAviso({ tipo: "erro", texto: "A API não respondeu." });
     } finally {
@@ -119,7 +137,41 @@ export default function NovaDespesa() {
         </select>
       </label>
 
-      <button type="submit" disabled={enviando || foraDoAr} className="botao-principal">
+      <fieldset className="participantes">
+        <legend>Quem participa</legend>
+        <p className="participantes-resumo">
+          {participantesIds.length} de {moradores.length} participam. Desmarque quem não
+          entra nesta conta.
+        </p>
+        <ul className="participantes-lista">
+          {moradores.map((morador) => (
+            <li key={morador.id}>
+              <label className="cartao participante">
+                <input
+                  type="checkbox"
+                  checked={!desmarcados.has(morador.id)}
+                  onChange={() => alternar(morador.id)}
+                />
+                <span>
+                  {morador.nome}
+                  {String(morador.id) === pagadorId && <small> (pagou)</small>}
+                </span>
+              </label>
+            </li>
+          ))}
+        </ul>
+        {moradores.length > 0 && participantesIds.length === 0 && (
+          <p role="status" className="aviso aviso-erro">
+            Escolha ao menos um morador para dividir a despesa.
+          </p>
+        )}
+      </fieldset>
+
+      <button
+        type="submit"
+        disabled={enviando || foraDoAr || participantesIds.length === 0}
+        className="botao-principal"
+      >
         {foraDoAr ? "Servidor indisponível" : enviando ? "Lançando..." : "Lançar despesa"}
       </button>
 
