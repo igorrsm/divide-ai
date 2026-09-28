@@ -2,6 +2,13 @@ import { formatarReais } from "./formatarReais";
 
 export type TipoDivisao = "IGUAL" | "VALOR" | "PERCENTUAL";
 
+/** Título do rateio, no formulário e no detalhe. */
+export const TITULO_DIVISAO = {
+  IGUAL: "Dividida por igual",
+  VALOR: "Dividida por valores",
+  PERCENTUAL: "Dividida por percentuais",
+} as const;
+
 // Mesmos formatos que a API aceita (reaisParaCentavos e percentualParaCentesimos).
 const PADRAO = /^(\d+)(?:[.,](\d{1,2}))?$/;
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import CartaoFiltros, { type Filtros } from "./CartaoFiltros";
 import { formatarData } from "./formatarData";
 import { formatarReais } from "./formatarReais";
@@ -37,9 +37,16 @@ export default function Despesas() {
   );
   const [erro, setErro] = useState<string | null>(null);
   const foraDoAr = useApiForaDoAr();
-  // Aviso deixado por outra tela, como "Despesa excluída." (B6).
+  // Aviso deixado por outra tela, como "Despesa excluída." (B6). Fica guardado
+  // aqui e sai do histórico, para não voltar ao recarregar ou ao voltar.
   const local = useLocation();
-  const aviso = (local.state as { aviso?: string } | null)?.aviso;
+  const navigate = useNavigate();
+  const [aviso] = useState((local.state as { aviso?: string } | null)?.aviso);
+  useEffect(() => {
+    if ((local.state as { aviso?: string } | null)?.aviso) {
+      navigate(local.pathname + local.search, { replace: true, state: null });
+    }
+  }, [local, navigate]);
 
   useEffect(() => {
     let ativo = true;

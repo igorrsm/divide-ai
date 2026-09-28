@@ -49,8 +49,8 @@ export default function App() {
         <Route path="/despesas" element={<TelaPrincipal><Despesas /></TelaPrincipal>} />
         <Route path="/despesas/nova" element={<PaginaNovaDespesa />} />
         <Route path="/despesas/:id" element={<DetalheDespesa />} />
-        <Route path="/extrato" element={<Extrato />} />
         <Route path="/despesas/:id/editar" element={<EditarDespesa />} />
+        <Route path="/extrato" element={<Extrato />} />
         <Route path="/saldos" element={<TelaPrincipal><Saldos /></TelaPrincipal>} />
         <Route path="/moradores" element={<TelaPrincipal><Moradores /></TelaPrincipal>} />
         <Route path="/republicas/nova" element={<TelaPrincipal><CriarRepublica /></TelaPrincipal>} />

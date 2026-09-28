@@ -13,10 +13,14 @@ export type FiltrosDespesas = {
   moradorIds?: number[];
 };
 
-/** Parâmetro ausente ou vazio vale como "sem filtro"; repetido é recusado. */
-function texto(bruto: unknown, campo: string): string | undefined {
+/**
+ * Parâmetro ausente ou vazio vale como "sem filtro"; repetido é recusado. A
+ * mensagem vem inteira de quem chama, para concordar com o campo ("Data
+ * inicial inválida.", "Morador inválido.").
+ */
+function texto(bruto: unknown, mensagem: string): string | undefined {
   if (bruto === undefined || bruto === "") return undefined;
-  if (typeof bruto !== "string") throw new ErroDeValidacao(`${campo} inválido.`);
+  if (typeof bruto !== "string") throw new ErroDeValidacao(mensagem);
   return bruto.trim() || undefined;
 }
 
@@ -45,9 +49,9 @@ export function interpretaFiltros(
   idsDaCasa: number[],
 ): FiltrosDespesas {
   const filtros: FiltrosDespesas = {};
-  const de = texto(consulta.de, "Data inicial");
-  const ate = texto(consulta.ate, "Data final");
-  const moradores = texto(consulta.moradores, "Morador");
+  const de = texto(consulta.de, "Data inicial inválida.");
+  const ate = texto(consulta.ate, "Data final inválida.");
+  const moradores = texto(consulta.moradores, "Morador inválido.");
 
   if (de) filtros.desde = dia(de, "Data inicial");
   if (ate) {

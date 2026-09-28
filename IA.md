@@ -1245,3 +1245,44 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
 **Observações**
 - Feito em cima da B5 (PR #47).
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Ajustes da revisão do Lucas (#40 a #48)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- O Lucas revisou todos os PRs abertos da Thalita e ela decidiu juntar as
+  correções num único PR de fix. Entrou também o comentário da aprovação do
+  #38 (testes de data rodando em UTC no CI).
+
+**O que a IA produziu**
+- `npm test` no fuso de São Paulo, por um arquivo carregado com `--import`
+  (a sugestão `TZ=... node` não funciona no `cmd` do Windows), com um teste
+  de guarda. A IA simulou a regressão: com o fuso, o teste de `formatarData`
+  falha; sem ele, passava.
+- `DESPESA_ATIVA` em toda leitura de despesa e um teste que lê o código de
+  `src` e acusa a consulta sem o filtro (conferido tirando o filtro do saldo).
+- Mensagens da API com a concordância certa; sem `moradorId`, a API pede
+  para escolher em "Quem é você?"; parte repetida na divisão dá 400.
+- Aviso "Despesa excluída." uma vez só; a origem do Voltar passa pela
+  edição; foco dentro do calendário ao abrir.
+- Simplificações: grade do calendário com `Date.UTC`, `hojeNaCasa` e
+  `TITULO_DIVISAO` num lugar só no front, ordem das rotas.
+
+**Revisão humana**
+- A IA separou os pontos em "corrigir", "só registrar" e "combinar com o
+  grupo"; a Thalita aprovou antes do código.
+- A IA rodou lint, tipos e testes na máquina dela. A Thalita rodou
+  `npm run lint`, `npm test` (94 de 94) e `npm run build` e testou na tela o
+  aviso de exclusão, a origem pela edição, o foco do calendário e o que não
+  podia mudar, antes dos commits.
+
+**Observações**
+- Ficaram só registrados: despesas sem participações no extrato (anotado no
+  CLAUDE.md), mês futuro pela URL, formatadores repetidos entre back e front
+  e o commit intermediário do #44.
+- Combinados: explicação de "A pagar" para a apresentação e mensagem ao
+  grupo sobre `migrate dev` + `generate` depois do merge da B5.
+- A permissão de apagar arquivos da IA caiu no meio dos commits e deixou
+  travas do git; ela pediu a permissão de novo e limpou as travas.
+- Tempo economizado ou perdido: não medido.

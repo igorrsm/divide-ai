@@ -103,6 +103,15 @@ describe("montaDespesa", () => {
     );
     assert.throws(() => montaDespesa({ ...base, partes: "50" }, CASA, HOJE), /Informe a parte/);
     assert.throws(
+      () =>
+        montaDespesa(
+          { ...base, partes: [{ moradorId: 1, valor: "100" }, { moradorId: 1, valor: "100" }] },
+          CASA,
+          HOJE,
+        ),
+      /A parte do morador 1 veio repetida/,
+    );
+    assert.throws(
       () => montaDespesa({ ...ENTRADA, tipoDivisao: "METADE" }, CASA, HOJE),
       /Tipo de divisão inválido/,
     );

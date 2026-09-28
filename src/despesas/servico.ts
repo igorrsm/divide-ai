@@ -1,5 +1,6 @@
 import { prisma } from "../db";
-import { ErroNaoEncontrado, ErroSemPermissao } from "../erros";
+import { ErroDeValidacao, ErroNaoEncontrado, ErroSemPermissao } from "../erros";
+import { DESPESA_ATIVA } from "./ativa";
 import { diaDa } from "./dia";
 import type { FiltrosDespesas } from "./filtros";
 import { montaDespesa, type EntradaDespesa } from "./montagem";
@@ -20,7 +21,7 @@ export async function listaDespesas(republicaId: number, filtros: FiltrosDespesa
     where: {
       republicaId,
       // Despesa excluída (B6) some da lista.
-      excluidaEm: null,
+      ...DESPESA_ATIVA,
       ...(desde || antesDe ? { data: { gte: desde, lt: antesDe } } : {}),
       ...(moradorIds
         ? {
@@ -51,7 +52,7 @@ export async function listaDespesas(republicaId: number, filtros: FiltrosDespesa
 export async function buscaDespesa(republicaId: number, despesaId: number) {
   const despesa = await prisma.despesa.findFirst({
     // Despesa excluída (B6) dá 404, como a que não existe.
-    where: { id: despesaId, republicaId, excluidaEm: null },
+    where: { id: despesaId, republicaId, ...DESPESA_ATIVA },
     select: {
       id: true,
       descricao: true,
@@ -134,10 +135,14 @@ export async function criarDespesa(
  */
 async function exigePagador(republicaId: number, despesaId: number, moradorId: unknown) {
   const despesa = await prisma.despesa.findFirst({
-    where: { id: despesaId, republicaId, excluidaEm: null },
+    where: { id: despesaId, republicaId, ...DESPESA_ATIVA },
     select: { pagadorId: true },
   });
   if (!despesa) throw new ErroNaoEncontrado("Despesa não encontrada.");
+  // Sem o campo, a pessoa não escolheu quem é: a frase diz o que fazer.
+  if (moradorId === undefined || moradorId === null || moradorId === "") {
+    throw new ErroDeValidacao('Escolha quem você é em "Quem é você?" antes de editar ou excluir.');
+  }
   if (interpretaId(moradorId, "Id de quem está usando o app") !== despesa.pagadorId) {
     throw new ErroSemPermissao("Só quem pagou pode editar ou excluir esta despesa.");
   }

@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { conferePartes, type TipoDivisao } from "./divisao";
+import { conferePartes, TITULO_DIVISAO, type TipoDivisao } from "./divisao";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
 import ParticipantesRateio from "./ParticipantesRateio";
@@ -28,13 +28,9 @@ export type DespesaEmEdicao = {
   tipoDivisao: TipoDivisao;
   /** Por valores ou percentuais (B5): o texto de cada participante. */
   partes: Record<number, string>;
+  /** Tela de onde a pessoa veio antes do detalhe, para o Voltar de lá. */
+  voltarPara?: string;
 };
-
-const TITULO_DIVISAO = {
-  IGUAL: "Dividida por igual",
-  VALOR: "Dividida por valores",
-  PERCENTUAL: "Dividida por percentuais",
-} as const;
 
 /** 12345 centavos vira "123,45", no formato que o campo de valor aceita. */
 export function centavosParaTexto(centavos: number): string {
@@ -137,7 +133,9 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
       });
       const corpo = await resposta.json();
       if (edicao && resposta.ok) {
-        navigate(`/despesas/${edicao.id}`);
+        navigate(`/despesas/${edicao.id}`, {
+          state: edicao.voltarPara ? { voltarPara: edicao.voltarPara } : undefined,
+        });
         return;
       }
       if (!resposta.ok) {

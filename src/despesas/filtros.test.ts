@@ -26,6 +26,11 @@ describe("interpretaFiltros", () => {
     for (const de of ["05/09/2026", "2026-02-30", "abc", ["2026-09-01"]]) {
       assert.throws(() => interpretaFiltros({ de }, CASA), /inválid/);
     }
+    // Parâmetro repetido na URL: a frase concorda com o campo.
+    assert.throws(
+      () => interpretaFiltros({ de: ["2026-09-01", "2026-09-02"] }, CASA),
+      /Data inicial inválida\./,
+    );
   });
 
   it("recusa início depois do fim", () => {
