@@ -1,7 +1,9 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import CampoData from "./CampoData";
 import { hojeNaCasa } from "./diasDoMes";
 import { textoParaInteiro } from "./divisao";
+import EscolhaMorador from "./EscolhaMorador";
 import { useMoradorAtual } from "./MoradorAtual";
 import { avisoDeValor } from "./pagamento";
 import { useRepublicaAtual } from "./RepublicaAtual";
@@ -40,10 +42,13 @@ export default function RegistrarPagamento() {
     };
   }, [republica.id]);
 
-  // Sem escolha, vale o primeiro morador; "para quem" começa em outra pessoa.
+  // Sem escolha, vale o primeiro morador. "Para quem" não mostra quem pagou
+  // e começa na primeira outra pessoa.
   const pagadorId = pagador || String(moradores[0]?.id ?? "");
-  const recebedorId =
-    recebedor || String(moradores.find((m) => String(m.id) !== pagadorId)?.id ?? "");
+  const outros = moradores.filter((m) => String(m.id) !== pagadorId);
+  const recebedorId = outros.some((m) => String(m.id) === recebedor)
+    ? recebedor
+    : String(outros[0]?.id ?? "");
   const mesmaPessoa = pagadorId !== "" && pagadorId === recebedorId;
   const nomePagador = moradores.find((m) => String(m.id) === pagadorId)?.nome ?? "";
   const aviso = avisoDeValor(textoParaInteiro(valor), saldos[Number(pagadorId)], nomePagador);
@@ -71,27 +76,21 @@ export default function RegistrarPagamento() {
     }
   }
 
-  const opcoes = moradores.map((morador) => (
-    <option key={morador.id} value={morador.id}>
-      {morador.nome}
-    </option>
-  ));
-
   return (
     <form onSubmit={enviar} className="formulario">
       <h1>Registrar pagamento</h1>
-      <label className="campo">
-        Quem pagou
-        <select value={pagadorId} onChange={(e) => setPagador(e.target.value)} required>
-          {opcoes}
-        </select>
-      </label>
-      <label className="campo">
-        Para quem
-        <select value={recebedorId} onChange={(e) => setRecebedor(e.target.value)} required>
-          {opcoes}
-        </select>
-      </label>
+      <EscolhaMorador
+        rotulo="Quem pagou"
+        moradores={moradores}
+        valor={pagadorId}
+        aoMudar={setPagador}
+      />
+      <EscolhaMorador
+        rotulo="Para quem"
+        moradores={outros}
+        valor={recebedorId}
+        aoMudar={setRecebedor}
+      />
       {mesmaPessoa && (
         <p role="alert" className="aviso aviso-erro">
           Quem pagou e quem recebeu precisam ser pessoas diferentes.
@@ -107,16 +106,7 @@ export default function RegistrarPagamento() {
           required
         />
       </label>
-      <label className="campo">
-        Data
-        <input
-          type="date"
-          value={data}
-          max={hojeNaCasa()}
-          onChange={(e) => setData(e.target.value)}
-          required
-        />
-      </label>
+      <CampoData rotulo="Data" valor={data} aoMudar={setData} max={hojeNaCasa()} />
       {aviso && (
         <p role="status" className="aviso aviso-alerta">
           {aviso}
