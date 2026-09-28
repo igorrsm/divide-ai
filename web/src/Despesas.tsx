@@ -24,7 +24,7 @@ export default function Despesas() {
   const filtros: Filtros = {
     de: parametros.get("de") ?? "",
     ate: parametros.get("ate") ?? "",
-    moradorId: parametros.get("moradorId") ?? "",
+    moradores: parametros.get("moradores") ?? "",
   };
   const consulta = new URLSearchParams(
     Object.entries(filtros).filter(([, valor]) => valor !== ""),
@@ -106,7 +106,7 @@ export default function Despesas() {
         <CartaoFiltros
           filtros={filtros}
           aoAplicar={aplicar}
-          aoLimpar={() => aplicar({ de: "", ate: "", moradorId: "" })}
+          aoLimpar={() => aplicar({ de: "", ate: "", moradores: "" })}
         />
       )}
       {ativos > 0 && despesas && despesas.length > 0 && (

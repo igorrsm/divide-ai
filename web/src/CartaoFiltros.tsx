@@ -3,8 +3,11 @@ import Calendario from "./Calendario";
 import { formatarData } from "./formatarData";
 import { useMoradorAtual } from "./MoradorAtual";
 
-/** Filtros da lista de despesas (E2), como ficam na URL. Vazio é "sem filtro". */
-export type Filtros = { de: string; ate: string; moradorId: string };
+/**
+ * Filtros da lista de despesas (E2), como ficam na URL. Vazio é "sem filtro";
+ * `moradores` é a lista de ids separada por vírgula, como "1,2".
+ */
+export type Filtros = { de: string; ate: string; moradores: string };
 
 type Props = {
   filtros: Filtros;
@@ -13,9 +16,9 @@ type Props = {
 };
 
 /**
- * Cartão com período e morador. Só muda a lista ao clicar em "Aplicar", para
- * não buscar a cada data digitada. O morador filtra o que ele pagou ou do que
- * participa (decisão da Thalita).
+ * Cartão com período e moradores. Só muda a lista ao clicar em "Aplicar",
+ * para não buscar a cada escolha. Com vários moradores, aparece o que algum
+ * deles pagou ou do que participa (decisões da Thalita).
  */
 export default function CartaoFiltros({ filtros, aoAplicar, aoLimpar }: Props) {
   const { moradores } = useMoradorAtual();
@@ -27,6 +30,17 @@ export default function CartaoFiltros({ filtros, aoAplicar, aoLimpar }: Props) {
   function mudar(campo: keyof Filtros, valor: string) {
     setRascunho((atual) => ({ ...atual, [campo]: valor }));
     setErro(null);
+  }
+
+  const escolhidos = rascunho.moradores ? rascunho.moradores.split(",") : [];
+
+  /** Liga ou desliga um morador; "Todos" (id vazio) desmarca todo mundo. */
+  function alternar(id: string) {
+    if (id === "") return mudar("moradores", "");
+    const novos = escolhidos.includes(id)
+      ? escolhidos.filter((outro) => outro !== id)
+      : [...escolhidos, id];
+    mudar("moradores", novos.join(","));
   }
 
   /** Botão que abre o calendário, mostrando a data escolhida. */
@@ -80,17 +94,25 @@ export default function CartaoFiltros({ filtros, aoAplicar, aoLimpar }: Props) {
         />
       )}
 
-      <label className="campo">
-        Morador
-        <select value={rascunho.moradorId} onChange={(e) => mudar("moradorId", e.target.value)}>
-          <option value="">Todos</option>
-          {moradores.map((morador) => (
-            <option key={morador.id} value={morador.id}>
+      {/* Pílulas como as do "Quem é você?"; dá para marcar mais de uma. */}
+      <div className="campo" role="group" aria-labelledby="rotulo-morador">
+        <span id="rotulo-morador">Moradores</span>
+        <div className="seletor-opcoes">
+          {[{ id: "", nome: "Todos" }, ...moradores].map((morador) => (
+            <button
+              key={morador.id}
+              type="button"
+              className="seletor-opcao"
+              aria-pressed={
+                morador.id === "" ? escolhidos.length === 0 : escolhidos.includes(String(morador.id))
+              }
+              onClick={() => alternar(String(morador.id))}
+            >
               {morador.nome}
-            </option>
+            </button>
           ))}
-        </select>
-      </label>
+        </div>
+      </div>
 
       {erro && (
         <p role="alert" className="aviso aviso-erro">
