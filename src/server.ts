@@ -1,8 +1,9 @@
 import express, { type NextFunction, type Request, type Response } from "express";
 import { rotasDespesas } from "./despesas/rotas";
+import { rotasExtrato } from "./extrato/rotas";
 import { rotasRepublicas } from "./republicas/rotas";
 import { rotasSaldos } from "./saldos/rotas";
-import { ErroDeValidacao, ErroNaoEncontrado } from "./erros";
+import { ErroDeValidacao, ErroNaoEncontrado, ErroSemPermissao } from "./erros";
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,7 @@ app.get("/api/health", (_req, res) => {
 app.use("/api", rotasDespesas);
 app.use("/api", rotasRepublicas);
 app.use("/api", rotasSaldos);
+app.use("/api", rotasExtrato);
 
 // O Express 5 encaminha rejeição de handler async para cá.
 app.use((erro: unknown, _req: Request, res: Response, _proximo: NextFunction) => {
@@ -23,6 +25,10 @@ app.use((erro: unknown, _req: Request, res: Response, _proximo: NextFunction) =>
   }
   if (erro instanceof ErroNaoEncontrado) {
     res.status(404).json({ erro: erro.message });
+    return;
+  }
+  if (erro instanceof ErroSemPermissao) {
+    res.status(403).json({ erro: erro.message });
     return;
   }
   // JSON malformado no corpo: o express.json() marca o erro com esse type.

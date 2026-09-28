@@ -1000,6 +1000,293 @@ Sessão no Claude Code, em WSL/Ubuntu: atualização para a `main`, revisão do 
   continuam sem teste. Só as funções puras têm.
 - Tempo economizado ou perdido: não medido.
 
+## 2026-09-28 — Thalita — Ajustes da revisão do PR #36 (B3)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- Atender as quatro sugestões não bloqueantes deixadas na revisão do PR #36,
+  que já estava mesclado.
+
+**O que a IA produziu**
+- `diaDa` foi para `src/despesas/dia.ts`, com teste, inclusive do acoplamento
+  com `interpretaData`; `formatarData` ganhou teste com a virada de ano. O
+  `npm test` passou a rodar também `web/src/**/*.test.ts`, e o tsconfig da
+  raiz checa esses testes com os tipos do Node.
+- No rateio, "Ana (você, pagou)" em vez de "(você) (pagou)".
+- `:active` nos cartões da lista de despesas e no botão Voltar, como os
+  atalhos da tela inicial.
+- A rota `/despesas/:id` entrou na lista de rotas do CLAUDE.md.
+
+**Revisão humana**
+- Plano aprovado pela Thalita antes do código.
+- A IA não conseguiu rodar typecheck, lint nem testes (sem shell no PC e
+  sem npm no ambiente dela); a Thalita rodou build, lint e `npm test` no PC
+  dela antes do push e testou a tela.
+
+**Observações**
+- A Thalita trocou de computador. Nele a ponte não tinha shell, então a IA
+  fez os commits num clone próprio e entregou como patches (`git am`), com o
+  mesmo autor e as mesmas mensagens; ela aplicou e subiu a branch.
+- Nesse PC o PowerShell bloqueia scripts; `npm.cmd` e `npx.cmd` funcionam
+  sem mudar a configuração do Windows.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Editar e excluir despesa (B6)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- Implementar a B6 (#39), puxada do Backlog pela Thalita. O cartão pede
+  exclusão lógica, para não furar o histórico de acertos.
+
+**O que a IA produziu**
+- Migration `despesa_excluida_em` (campo `excluidaEm`); lista, detalhe e saldo
+  passam a ignorar despesa excluída (o filtro do saldo mexe no serviço da D1).
+- `montaDespesa`: validação e rateio separados do banco, usados em lançar e
+  editar, com testes.
+- `PUT` e `DELETE` em `/api/republicas/:id/despesas/:despesaId`; só quem pagou
+  (novo 403, `ErroSemPermissao`).
+- Formulário de lançar reaproveitado para editar, tela `/despesas/:id/editar`,
+  botões "Editar" e "Excluir" no detalhe com confirmação na própria tela.
+
+**Revisão humana**
+- Plano aprovado pela Thalita antes do código; ela decidiu que só quem pagou
+  edita ou exclui.
+- O texto da confirmação foi pedido dela: "Tem certeza que quer excluir esta
+  despesa? Ela sumirá da lista de despesas e do saldo dos moradores
+  envolvidos."
+- A IA não conseguiu rodar typecheck, lint nem testes (PC do trabalho sem
+  shell para a IA e sem npm no ambiente dela). A Thalita aplicou os patches,
+  rodou a migration, `prisma generate`, lint, `npm test` (51 de 51) e build, e
+  testou a tela na própria máquina: editar, excluir e os botões escondidos
+  para quem não pagou.
+
+**Observações**
+- Sem login, "quem pagou" depende de "Quem é você?": é trava de uso, não de
+  segurança.
+- A D5 (menor número de transferências) ficou fora: pela regra do próprio
+  cartão, só entraria com D1, D2 e D3 finalizadas até 27/09.
+- A B6 foi feita em cima da branch da revisão da B3 (PR #38), que mexe nos
+  mesmos arquivos; o PR da B6 mostra aqueles commits até o #38 entrar.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Extrato do mês (E1)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- Implementar a E1, puxada do Backlog pela Thalita logo depois da B6. O
+  cartão não tinha critérios; a IA propôs os critérios e a Thalita aprovou.
+
+**O que a IA produziu**
+- `montaExtrato` (função pura, com testes): total da casa e, por morador,
+  "A pagar" (a parte dele) e "Pago" (o que adiantou). Acertos ficam fora.
+- `interpretaMes` e `intervaloDoMes` (com testes): mês AAAA-MM, o atual no
+  fuso de São Paulo quando não vem; `hojeNaCasa` passou a ser exportada.
+- `GET /api/republicas/:id/extrato?mes=AAAA-MM`, ignorando despesa excluída.
+- Tela `/extrato`: setas de mês (o mês fica na URL e não passa do atual),
+  cartão "Total da casa", um cartão por morador com o destaque de quem está
+  usando e as despesas do mês. `formatarMes` e `mesVizinho` no front, com
+  testes. Botão "Ver extrato do mês" na lista de despesas.
+
+**Revisão humana**
+- Plano e critérios aprovados pela Thalita antes do código. Ela decidiu
+  mostrar as duas informações por morador e escolheu os nomes "A pagar" e
+  "Pago".
+- A IA rodou os testes puros (cálculo, mês e `web/src/mes.ts`) com o Node do
+  ambiente dela e checou os tipos dos arquivos novos; não conseguiu rodar
+  lint, build nem a tela (sem as dependências do projeto).
+- A Thalita aplicou os patches no PC dela, rodou lint (sem avisos),
+  `npm test` (64 de 64) e build, e testou a tela na própria máquina: meses,
+  total, "A pagar" e "Pago", destaque de quem está usando, despesa excluída
+  e 375 px.
+- Depois do teste, ela pediu dois ajustes: "Ver extrato do mês" no mesmo
+  estilo de "Lançar despesa", e "A pagar" e "Pago" alinhados à direita e mais
+  afastados dos valores, que grudavam acima de R$ 1.000,00.
+
+**Observações**
+- Issue #41. Feita em cima da branch da B6 (PR #40), por causa do filtro
+  `excluidaEm`.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Filtros da lista de despesas (E2)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- Implementar a E2 (#43), puxada do Backlog pela Thalita depois da E1. O
+  cartão não tinha critérios; a IA propôs e a Thalita aprovou. O filtro por
+  categoria ficou fora, porque a categoria saiu do TP1.
+
+**O que a IA produziu**
+- `interpretaFiltros` (com testes): de, até (inclusive, aceita futuro) e
+  morador; início depois do fim e morador de outra casa dão 400.
+- `GET /api/republicas/:id/despesas` com `?de`, `?ate` e `?moradorId`; sem
+  parâmetros, a lista da B3 continua igual.
+- Tela: botão "Filtrar" com a contagem de filtros ativos, `CartaoFiltros`
+  (De, Até, Morador, "Aplicar" e "Limpar filtros"), filtros na URL, resumo
+  "N despesas · R$ X" e "Nenhuma despesa com esses filtros.".
+
+**Revisão humana**
+- Plano e critérios aprovados pela Thalita antes do código. Ela decidiu que o
+  filtro de morador mostra o que ele pagou ou do que participa.
+- A IA rodou os testes puros com o Node do ambiente dela e checou os tipos
+  dos arquivos novos; lint, build e a tela ficam com a Thalita.
+- A Thalita aplicou os patches, rodou lint, `npm test` (71 de 71) e build e
+  testou a tela na própria máquina. Depois pediu três ajustes: o botão
+  "Filtrar despesas", o calendário e a lista de moradores no estilo do site.
+- A IA explicou que o calendário e a lista do navegador não aceitam o CSS do
+  site e propôs componentes próprios; ela escolheu o calendário próprio em
+  vez de atalhos de período. Ao testar as pílulas, ela pediu para marcar mais
+  de um morador e decidiu que vale a despesa de qualquer um dos escolhidos.
+- Ela pediu para testar antes do commit: a IA entregou os ajustes como diff
+  sem commit (`git apply --3way`), e só depois do teste dela (lint, 74 testes,
+  build e tela) virou commits.
+
+**Observações**
+- Feita em cima da branch da E1 (PR #42), porque as duas mexem em
+  `Despesas.tsx`.
+- A grade de dias (`diasDoMes`) não usa `Date`; a IA a comparou com o
+  calendário do JavaScript mês a mês de 1990 a 2110.
+- O arquivo da grade não se chama `calendario.ts` porque, no Windows, ele se
+  confundiria com `Calendario.tsx` na hora de resolver o import.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Pendências pequenas (fix)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- A Thalita escolheu duas pendências anotadas nos PRs anteriores para um PR
+  de fix: a concordância de "República inválido." (anotada no #36) e o
+  "← Voltar" do detalhe, que sempre ia para /despesas (anotado no #42).
+
+**O que a IA produziu**
+- "Id da república inválido.", no padrão de "Id da despesa inválido.". A IA
+  achou mais uma frase do mesmo tipo, da B6, e a Thalita aprovou a troca:
+  "Id de quem está usando o app inválido.".
+- A lista de despesas e o extrato mandam a tela de origem (com filtros e mês)
+  no estado da navegação; o Voltar do detalhe usa essa origem e, sem ela,
+  continua indo para /despesas.
+
+**Revisão humana**
+- Plano aprovado pela Thalita antes do código.
+- A pedido dela, a IA entregou primeiro um diff sem commit. Ela rodou lint,
+  `npm test` (74 de 74) e build e testou na própria máquina: Voltar pelo
+  extrato, pela lista filtrada e por link colado, e a mensagem da API. Só
+  depois viraram commits.
+
+**Observações**
+- Feito em cima da branch da E2 (PR #44), porque mexe nas telas da B6, da E1
+  e da E2.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Divisão por valores ou percentuais (B5)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- A Thalita pediu sugestões do Backlog e escolheu a B5 (#46). O cartão tinha
+  um critério (soma errada recusada com mensagem visível); a IA propôs os
+  demais e a Thalita aprovou.
+
+**O que a IA produziu**
+- `ratearPorValores` e `ratearPorPercentuais` (funções puras, com testes):
+  soma dos valores igual ao total, soma dos percentuais igual a 100%, sobra
+  de centavos pela regra da B2.
+- `montaDespesa` aceita `tipoDivisao` e `partes`; migration com
+  `Participacao.percentualCentesimos`, para a edição abrir com o % digitado.
+- Formulário: "Como dividir?" em pílulas, campo em R$ ou % ao lado de cada
+  marcado, conta ao vivo ("Faltam R$ 30,00") e salvar só quando fecha.
+  Detalhe com o modo e o % de cada um; editar abre com os números originais.
+
+**Revisão humana**
+- Plano aprovado pela Thalita antes do código. A IA tinha proposto que campo
+  em branco significasse "não participa"; a Thalita preferiu manter as
+  caixas de marcar nos três modos, com a pergunta "Quem participará do rateio
+  desta despesa?".
+- A IA rodou lint, a checagem de tipos do front e os testes puros no PC da
+  Thalita. Ela aplicou a migration, rodou lint, `npm test` (92 de 92) e build
+  e testou a tela na própria máquina antes dos commits.
+
+**Observações**
+- No primeiro teste deu "Erro interno no servidor": o passo a passo da IA
+  dizia que o `migrate dev` regenerava o cliente do Prisma, mas no Prisma 7
+  não regenera. Com `npx prisma generate` funcionou; o passo entrou no
+  CLAUDE.md.
+- No PC de casa, o terminal da IA não alcança o GitHub nem apagava os
+  arquivos de trava do git (um `index.lock` ficou para trás e a Thalita
+  apagou). Ela buscou as branches e a IA fez os commits depois de ganhar
+  permissão para apagar arquivos na pasta.
+- Feita em cima do PR das pendências pequenas, que está em cima da E2.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Voltar para a tela inicial nas telas principais
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- A Thalita pediu o botão "← Voltar" em todas as telas, levando para a tela
+  inicial.
+
+**O que a IA produziu**
+- Componente `Voltar.tsx`, que substituiu o trecho repetido nas telas
+  internas (Lançar despesa, Detalhe, Editar e Extrato), sem mudar o destino.
+- Despesas, Saldos, Moradores e Criar república ganharam o Voltar para a
+  tela inicial, colocado na rota (`TelaPrincipal` em `App.tsx`).
+
+**Revisão humana**
+- A IA propôs manter o Voltar das telas internas indo para a tela anterior,
+  para não perder o caminho; a Thalita aprovou o plano antes do código.
+- A IA rodou lint e a checagem de tipos do front. A Thalita testou todas as
+  telas na própria máquina, inclusive em 375 px, antes dos commits.
+
+**Observações**
+- Feito em cima da B5 (PR #47).
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Ajustes da revisão do Lucas (#40 a #48)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- O Lucas revisou todos os PRs abertos da Thalita e ela decidiu juntar as
+  correções num único PR de fix. Entrou também o comentário da aprovação do
+  #38 (testes de data rodando em UTC no CI).
+
+**O que a IA produziu**
+- `npm test` no fuso de São Paulo, por um arquivo carregado com `--import`
+  (a sugestão `TZ=... node` não funciona no `cmd` do Windows), com um teste
+  de guarda. A IA simulou a regressão: com o fuso, o teste de `formatarData`
+  falha; sem ele, passava.
+- `DESPESA_ATIVA` em toda leitura de despesa e um teste que lê o código de
+  `src` e acusa a consulta sem o filtro (conferido tirando o filtro do saldo).
+- Mensagens da API com a concordância certa; sem `moradorId`, a API pede
+  para escolher em "Quem é você?"; parte repetida na divisão dá 400.
+- Aviso "Despesa excluída." uma vez só; a origem do Voltar passa pela
+  edição; foco dentro do calendário ao abrir.
+- Simplificações: grade do calendário com `Date.UTC`, `hojeNaCasa` e
+  `TITULO_DIVISAO` num lugar só no front, ordem das rotas.
+
+**Revisão humana**
+- A IA separou os pontos em "corrigir", "só registrar" e "combinar com o
+  grupo"; a Thalita aprovou antes do código.
+- A IA rodou lint, tipos e testes na máquina dela. A Thalita rodou
+  `npm run lint`, `npm test` (94 de 94) e `npm run build` e testou na tela o
+  aviso de exclusão, a origem pela edição, o foco do calendário e o que não
+  podia mudar, antes dos commits.
+
+**Observações**
+- Ficaram só registrados: despesas sem participações no extrato (anotado no
+  CLAUDE.md), mês futuro pela URL, formatadores repetidos entre back e front
+  e o commit intermediário do #44.
+- Combinados: explicação de "A pagar" para a apresentação e mensagem ao
+  grupo sobre `migrate dev` + `generate` depois do merge da B5.
+- A permissão de apagar arquivos da IA caiu no meio dos commits e deixou
+  travas do git; ela pediu a permissão de novo e limpou as travas.
+- Tempo economizado ou perdido: não medido.
+
 ## 2026-09-28 — Eduardo — Criar república com organizador (A1)
 
 **Contexto da tarefa**

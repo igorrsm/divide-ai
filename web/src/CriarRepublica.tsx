@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMoradorAtual } from "./MoradorAtual";
 import { useRepublicaAtual } from "./RepublicaAtual";
 import { useApiForaDoAr } from "./StatusApi";
@@ -50,7 +50,6 @@ export default function CriarRepublica() {
 
   return (
     <>
-      <Link to="/" className="voltar"><span aria-hidden="true">←</span> Voltar</Link>
       <h1>Criar república</h1>
       <form onSubmit={enviar} className="formulario">
         {avisoErro && <p role="alert" className="aviso aviso-erro">{avisoErro}</p>}

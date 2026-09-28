@@ -13,3 +13,11 @@ export class ErroNaoEncontrado extends Error {
     this.name = "ErroNaoEncontrado";
   }
 }
+
+/** Ação que só outro morador pode fazer: vira HTTP 403 na camada de rotas. */
+export class ErroSemPermissao extends Error {
+  constructor(mensagem: string) {
+    super(mensagem);
+    this.name = "ErroSemPermissao";
+  }
+}

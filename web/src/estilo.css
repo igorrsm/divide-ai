@@ -442,6 +442,12 @@ a {
   background: var(--cor-destaque-clara);
 }
 
+/* Afunda ao tocar, como os atalhos da tela inicial. */
+.despesa:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--cor-tinta);
+}
+
 .despesa-texto {
   flex-grow: 1;
   min-width: 0;
@@ -509,6 +515,10 @@ a {
   background: var(--cor-destaque-clara);
 }
 
+.voltar:active {
+  transform: translate(1px, 1px);
+}
+
 /* Linha de quem está usando o app no rateio: leva ao saldo dessa pessoa. */
 .rateio-eu {
   background: var(--cor-destaque-clara);
@@ -555,15 +565,290 @@ a {
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
+}
+
+/* A caixa e o nome; o campo da parte (B5) fica fora do rótulo. */
+.participante-rotulo {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
   cursor: pointer;
 }
 
 /* Fora de .campo de propósito: lá a regra dá largura total e 48 px de altura
    a qualquer campo, o que deformaria a caixa de seleção. */
-.participante input {
+.participante input[type="checkbox"] {
   flex-shrink: 0;
   width: 22px;
   height: 22px;
   accent-color: var(--cor-tinta);
   cursor: pointer;
+}
+
+/* Editar e excluir no detalhe da despesa (B6). */
+.acoes-despesa {
+  margin-top: 24px;
+}
+
+.acoes-botoes {
+  display: flex;
+  gap: 10px;
+}
+
+.botao-secundario {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 16px;
+  border: var(--borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+  color: var(--cor-tinta);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.botao-secundario:hover {
+  background: var(--cor-destaque-clara);
+}
+
+.botao-secundario:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.botao-perigo {
+  color: var(--cor-pagar);
+}
+
+.confirmacao {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--cor-fundo-pagar);
+}
+
+.confirmacao p {
+  margin: 0;
+  font-weight: 700;
+}
+
+/* Extrato do mês (E1) */
+.navegacao-mes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.navegacao-mes strong {
+  font-family: var(--fonte-titulo);
+  font-size: 20px;
+  text-align: center;
+}
+
+/* Mesma pílula do Voltar, redonda e com área de toque de 44 px. */
+.seta-mes {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: var(--borda);
+  border-radius: 50%;
+  background: var(--cor-superficie);
+  font-size: 24px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.seta-mes:hover { background: var(--cor-destaque-clara); }
+.seta-mes:active { transform: translate(1px, 1px); }
+.seta-desativada { opacity: 0.3; }
+
+.total-casa {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--cor-destaque);
+  font-weight: 700;
+}
+
+.total-casa strong {
+  font-family: var(--fonte-titulo);
+  font-size: 36px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.extrato-valores {
+  display: grid;
+  grid-template-columns: auto auto;
+  /* 16 px para o rótulo não grudar em valores acima de R$ 1.000,00. */
+  gap: 2px 16px;
+  margin: 0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.extrato-valores dt {
+  text-align: right;
+  font-size: 12px;
+  font-weight: 700;
+  align-self: center;
+}
+
+.extrato-valores dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 700;
+}
+
+/* Link para o extrato na lista de despesas. */
+.link-extrato {
+  margin-top: 12px;
+}
+
+/* Filtros da lista de despesas (E2) */
+.botao-filtrar {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.filtros {
+  max-width: none;
+  margin-top: 12px;
+}
+
+/* De e Até lado a lado; em 375 px cada um fica com metade da largura. */
+.filtros-periodo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Campo de data que abre o calendário do site, com a cara dos outros campos. */
+.campo-data {
+  min-width: 0;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: var(--borda);
+  border-radius: 12px;
+  background: var(--cor-superficie);
+  color: var(--cor-tinta);
+  font: inherit;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+}
+
+.campo-data[aria-expanded="true"] {
+  background: var(--cor-destaque-clara);
+}
+
+.calendario {
+  display: grid;
+  gap: 12px;
+  box-shadow: none;
+}
+
+.calendario .navegacao-mes {
+  margin-bottom: 0;
+}
+
+.calendario-grade {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.calendario-semana {
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.calendario-dia {
+  min-height: 40px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: none;
+  color: var(--cor-tinta);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.calendario-dia:hover {
+  background: var(--cor-destaque-clara);
+}
+
+.calendario-hoje {
+  border-color: var(--cor-tinta);
+}
+
+.calendario-dia[aria-pressed="true"] {
+  background: var(--cor-tinta);
+  color: var(--cor-destaque);
+  font-weight: 700;
+}
+
+.botao-aplicar {
+  background: var(--cor-tinta);
+  color: var(--cor-destaque);
+}
+
+.botao-aplicar:hover {
+  background: var(--cor-tinta);
+  opacity: 0.9;
+}
+
+.resumo-filtro {
+  margin: 16px 0 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Divisão por valores ou percentuais (B5) */
+.parte {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.parte input {
+  width: 6.5rem;
+  min-height: 40px;
+  padding: 6px 10px;
+  border: var(--borda);
+  border-radius: 10px;
+  background: var(--cor-superficie);
+  color: var(--cor-tinta);
+  font: inherit;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.conta-divisao {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border: var(--borda);
+  border-radius: 12px;
+  background: var(--cor-fundo-pagar);
+  font-weight: 700;
+}
+
+.conta-divisao.fecha {
+  background: var(--cor-fundo-ok);
 }

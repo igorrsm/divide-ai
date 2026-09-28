@@ -1,4 +1,5 @@
 import { prisma } from "../db";
+import { DESPESA_ATIVA } from "../despesas/ativa";
 import { calcularSaldos } from "./calculo";
 
 /**
@@ -13,7 +14,8 @@ export async function buscaSaldos(republicaId: number) {
     orderBy: { nome: "asc" },
   });
   const despesas = await prisma.despesa.findMany({
-    where: { republicaId },
+    // Despesa excluída (B6) não entra no saldo.
+    where: { republicaId, ...DESPESA_ATIVA },
     select: {
       pagadorId: true,
       valorCentavos: true,
