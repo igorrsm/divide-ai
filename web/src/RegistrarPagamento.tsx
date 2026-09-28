@@ -77,7 +77,7 @@ export default function RegistrarPagamento() {
   }
 
   return (
-    <form onSubmit={enviar} className="formulario">
+    <form onSubmit={enviar} className="cartao formulario">
       <h1>Registrar pagamento</h1>
       <EscolhaMorador
         rotulo="Quem pagou"

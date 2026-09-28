@@ -51,7 +51,7 @@ export default function CriarRepublica() {
   return (
     <>
       <h1>Criar república</h1>
-      <form onSubmit={enviar} className="formulario">
+      <form onSubmit={enviar} className="cartao formulario">
         {avisoErro && <p role="alert" className="aviso aviso-erro">{avisoErro}</p>}
 
         <label className="campo">
