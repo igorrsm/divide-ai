@@ -4,10 +4,8 @@ import ConteudoExtrato, { type DadosExtrato } from "./ConteudoExtrato";
 import { hojeNaCasa } from "./diasDoMes";
 import { formatarMes, mesVizinho } from "./mes";
 import { useMoradorAtual } from "./MoradorAtual";
+import { useRepublicaAtual } from "./RepublicaAtual";
 import Voltar from "./Voltar";
-
-// Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
-const REPUBLICA_ID = 1;
 
 const PADRAO_MES = /^\d{4}-(0[1-9]|1[0-2])$/;
 
@@ -22,10 +20,11 @@ export default function Extrato() {
   const [extrato, setExtrato] = useState<DadosExtrato | null>(null);
   const [erro, setErro] = useState(false);
   const { moradorId } = useMoradorAtual();
+  const { republica } = useRepublicaAtual();
 
   useEffect(() => {
     let ativo = true;
-    fetch(`/api/republicas/${REPUBLICA_ID}/extrato?mes=${mes}`)
+    fetch(`/api/republicas/${republica.id}/extrato?mes=${mes}`)
       .then((resposta) => {
         if (!resposta.ok) throw new Error();
         return resposta.json() as Promise<DadosExtrato>;
@@ -42,7 +41,7 @@ export default function Extrato() {
     return () => {
       ativo = false;
     };
-  }, [mes]);
+  }, [republica.id, mes]);
 
   // Enquanto o mês novo não chega, não mostra os números do mês anterior.
   const doMes = extrato?.mes === mes ? extrato : null;

@@ -1286,3 +1286,37 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
 - A permissão de apagar arquivos da IA caiu no meio dos commits e deixou
   travas do git; ela pediu a permissão de novo e limpou as travas.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Eduardo — Criar república com organizador (A1)
+
+**Contexto da tarefa**
+- História A1: "Como organizador, quero criar uma república com um nome, para reunir as contas da casa em um só lugar".
+- Critérios de aceitação:
+  - [x] Informo um nome e a república é criada
+  - [x] Nome vazio é recusado com mensagem visível na tela
+  - [x] Quem criou a república fica marcado como organizador
+  - [x] Depois de criar, caio na tela da república
+
+**O que foi pedido à IA**
+- Ler o contexto além do IA.md e relatar o entendimento do projeto.
+- Implementar a história A1 conforme os critérios de aceitação.
+
+**O que ela gerou**
+- Leitura crítica do repositório, identificando que não havia campo de organizador no schema e que as telas usavam ID de república fixo.
+- Proposição de plano antes de codificar: identificou a necessidade de alinhamento sobre como representar o organizador sem autenticação prévia (solicitando nome e e-mail no formulário e persistindo em transação) e sobre o destino da navegação.
+- Migration Prisma adicionando `organizador Boolean @default(false)` no modelo `Morador`, atualizando o seed para marcar a Ana como organizadora.
+- Funções puras de validação (`src/republicas/validacao.ts`) para nome da república, nome do organizador e e-mail, acompanhadas de suíte de testes com 8 casos novos em `src/republicas/validacao.test.ts`.
+- Serviço (`src/republicas/servico.ts`) com `criarRepublica` em transação aninhada e `buscaRepublica`.
+- Rotas HTTP (`src/republicas/rotas.ts`) expostas em `/api/republicas` e `/api/republicas/:id`, integradas em `src/server.ts`.
+- Contexto de república ativa no frontend (`web/src/RepublicaAtual.tsx`), permitindo que todas as telas (`Despesas`, `Saldos`, `MoradorAtual`, etc.) reajam à república selecionada sem ficar presas ao ID fixo 1.
+- Formulário em `web/src/CriarRepublica.tsx` com validações no cliente e servidor, mensagens visíveis de erro, e redirecionamento para a tela da república ativa.
+
+**Revisão humana**
+- Avaliação do Eduardo: durante o processo da realização dessa task eu precisei do apoio do Antigravity, a ferramenta do Google para codar códigos; ele me auxiliou bastante permitindo que ele me guiasse durante toda a tarefa da task e permitindo concluir o objetivo. Para alguém que mexe na área eu considero altamente recomendável seu uso para facilitar e auxiliar nas construções de linha de código, além de ser uma ferramenta do próprio Google.
+- A proposta inicial da IA levantou as ambiguidades da história (como representar o organizador sem sistema de autenticação e para onde redirecionar o usuário). Eduardo avaliou as alternativas e escolheu a Opção 1 para ambas as questões.
+- A separação estrita dos commits foi mantida para respeitar a regra do DoD de até 100 linhas por commit.
+
+**Observações**
+- Decisão de arquitetura: `Morador.organizador` como booleano com default `false` evitou dependência circular de chaves estrangeiras entre `Republica` e `Morador` no SQLite.
+- Transação aninhada: A criação da república e do organizador ocorre em uma única operação do Prisma, garantindo que não exista república sem organizador nem morador órfão.
+- As funções de validação puras possuem 100% de cobertura de testes. Rotas e componentes React foram validados via build e script de teste funcional.

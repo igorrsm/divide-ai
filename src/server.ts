@@ -1,6 +1,7 @@
 import express, { type NextFunction, type Request, type Response } from "express";
 import { rotasDespesas } from "./despesas/rotas";
 import { rotasExtrato } from "./extrato/rotas";
+import { rotasRepublicas } from "./republicas/rotas";
 import { rotasSaldos } from "./saldos/rotas";
 import { ErroDeValidacao, ErroNaoEncontrado, ErroSemPermissao } from "./erros";
 
@@ -12,6 +13,7 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/api", rotasDespesas);
+app.use("/api", rotasRepublicas);
 app.use("/api", rotasSaldos);
 app.use("/api", rotasExtrato);
 

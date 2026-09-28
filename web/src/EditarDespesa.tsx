@@ -1,12 +1,10 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useParams } from "react-router-dom";
 import { useMoradorAtual } from "./MoradorAtual";
+import { useRepublicaAtual } from "./RepublicaAtual";
 import { formatarPercentual, type TipoDivisao } from "./divisao";
 import NovaDespesa, { centavosParaTexto, type DespesaEmEdicao } from "./NovaDespesa";
 import Voltar, { useOrigem } from "./Voltar";
-
-// Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
-const REPUBLICA_ID = 1;
 
 /** O que o formulário precisa do detalhe da despesa. */
 type Detalhe = {
@@ -38,6 +36,7 @@ function partesDe(despesa: Detalhe): Record<number, string> {
 /** Tela de editar despesa (B6): só quem pagou vê o formulário. */
 export default function EditarDespesa() {
   const { id } = useParams();
+  const { republica } = useRepublicaAtual();
   const [despesa, setDespesa] = useState<Detalhe | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const { moradores, moradorId } = useMoradorAtual();
@@ -46,7 +45,7 @@ export default function EditarDespesa() {
 
   useEffect(() => {
     let ativo = true;
-    fetch(`/api/republicas/${REPUBLICA_ID}/despesas/${id}`)
+    fetch(`/api/republicas/${republica.id}/despesas/${id}`)
       .then((resposta) => {
         if (resposta.status === 404 || resposta.status === 400) {
           throw new Error("Despesa não encontrada.");
@@ -63,7 +62,7 @@ export default function EditarDespesa() {
     return () => {
       ativo = false;
     };
-  }, [id]);
+  }, [republica.id, id]);
 
   let conteudo: ReactNode;
   if (erro) {

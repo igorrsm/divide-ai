@@ -4,10 +4,8 @@ import { formatarPercentual, TITULO_DIVISAO } from "./divisao";
 import { formatarData } from "./formatarData";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
+import { useRepublicaAtual } from "./RepublicaAtual";
 import Voltar, { useOrigem } from "./Voltar";
-
-// Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
-const REPUBLICA_ID = 1;
 
 /** Resposta de GET /api/republicas/:id/despesas/:despesaId. */
 type Detalhe = {
@@ -28,6 +26,7 @@ type PropsAcoes = { id: string; moradorId: number; origem: string | null };
 
 function AcoesDespesa({ id, moradorId, origem }: PropsAcoes) {
   const navigate = useNavigate();
+  const { republica } = useRepublicaAtual();
   const [confirmando, setConfirmando] = useState(false);
   const [excluindo, setExcluindo] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -36,7 +35,7 @@ function AcoesDespesa({ id, moradorId, origem }: PropsAcoes) {
     setExcluindo(true);
     setErro(null);
     try {
-      const resposta = await fetch(`/api/republicas/${REPUBLICA_ID}/despesas/${id}`, {
+      const resposta = await fetch(`/api/republicas/${republica.id}/despesas/${id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ moradorId }),
@@ -112,6 +111,7 @@ function AcoesDespesa({ id, moradorId, origem }: PropsAcoes) {
 /** Uma despesa com o rateio por morador (B3). */
 export default function DetalheDespesa() {
   const { id } = useParams();
+  const { republica } = useRepublicaAtual();
   const [despesa, setDespesa] = useState<Detalhe | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const { moradorId } = useMoradorAtual();
@@ -122,7 +122,7 @@ export default function DetalheDespesa() {
 
   useEffect(() => {
     let ativo = true;
-    fetch(`/api/republicas/${REPUBLICA_ID}/despesas/${id}`)
+    fetch(`/api/republicas/${republica.id}/despesas/${id}`)
       .then(async (resposta) => {
         if (resposta.status === 404 || resposta.status === 400) {
           throw new Error("Despesa não encontrada.");
@@ -139,7 +139,7 @@ export default function DetalheDespesa() {
     return () => {
       ativo = false;
     };
-  }, [id]);
+  }, [republica.id, id]);
 
   const quantos = despesa?.participacoes.length ?? 0;
 

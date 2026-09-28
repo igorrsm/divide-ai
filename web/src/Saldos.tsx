@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
-
-// Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
-const REPUBLICA_ID = 1;
+import { useRepublicaAtual } from "./RepublicaAtual";
 
 /** Uma linha de GET /api/republicas/:id/saldos (D1). */
 type Saldo = {
@@ -50,13 +48,14 @@ function Resumo({ saldo }: { saldo: Saldo | undefined }) {
 
 /** Painel de saldos (D2): quanto cada morador tem a receber ou deve. */
 export default function Saldos() {
+  const { republica } = useRepublicaAtual();
   const [saldos, setSaldos] = useState<Saldo[] | null>(null);
   const [erro, setErro] = useState(false);
   const { moradorId } = useMoradorAtual();
 
   useEffect(() => {
     let ativo = true;
-    fetch(`/api/republicas/${REPUBLICA_ID}/saldos`)
+    fetch(`/api/republicas/${republica.id}/saldos`)
       .then((resposta) => {
         if (!resposta.ok) throw new Error();
         return resposta.json() as Promise<Saldo[]>;
@@ -70,7 +69,7 @@ export default function Saldos() {
     return () => {
       ativo = false;
     };
-  }, []);
+  }, [republica.id]);
 
   if (erro) {
     return (

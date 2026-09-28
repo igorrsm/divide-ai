@@ -3,10 +3,8 @@ import { Link, useLocation, useNavigate, useSearchParams } from "react-router-do
 import CartaoFiltros, { type Filtros } from "./CartaoFiltros";
 import { formatarData } from "./formatarData";
 import { formatarReais } from "./formatarReais";
+import { useRepublicaAtual } from "./RepublicaAtual";
 import { useApiForaDoAr } from "./StatusApi";
-
-// Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
-const REPUBLICA_ID = 1;
 
 /** Uma linha de GET /api/republicas/:id/despesas. */
 type ItemDespesa = {
@@ -19,6 +17,7 @@ type ItemDespesa = {
 
 /** Lista de despesas da república (B3), da mais recente para a mais antiga. */
 export default function Despesas() {
+  const { republica } = useRepublicaAtual();
   // Os filtros (E2) ficam na URL: recarregar ou voltar mantém a escolha.
   const [parametros, setParametros] = useSearchParams();
   const filtros: Filtros = {
@@ -31,8 +30,10 @@ export default function Despesas() {
   ).toString();
   const ativos = consulta === "" ? 0 : consulta.split("&").length;
   const [abertos, setAbertos] = useState(false);
-  // A lista guarda de qual consulta veio, para não mostrar a anterior.
-  const [resultado, setResultado] = useState<{ consulta: string; lista: ItemDespesa[] } | null>(
+  // A lista guarda de qual república e consulta veio, para não mostrar a
+  // anterior enquanto a nova carrega.
+  const chave = `${republica.id}?${consulta}`;
+  const [resultado, setResultado] = useState<{ chave: string; lista: ItemDespesa[] } | null>(
     null,
   );
   const [erro, setErro] = useState<string | null>(null);
@@ -50,7 +51,7 @@ export default function Despesas() {
 
   useEffect(() => {
     let ativo = true;
-    fetch(`/api/republicas/${REPUBLICA_ID}/despesas${consulta ? `?${consulta}` : ""}`)
+    fetch(`/api/republicas/${republica.id}/despesas${consulta ? `?${consulta}` : ""}`)
       .then(async (resposta) => {
         if (!resposta.ok) {
           const corpo = await resposta.json().catch(() => ({}));
@@ -60,7 +61,7 @@ export default function Despesas() {
       })
       .then((lista) => {
         if (ativo) {
-          setResultado({ consulta, lista });
+          setResultado({ chave, lista });
           setErro(null);
         }
       })
@@ -70,9 +71,9 @@ export default function Despesas() {
     return () => {
       ativo = false;
     };
-  }, [consulta]);
+  }, [republica.id, consulta, chave]);
 
-  const despesas = resultado?.consulta === consulta ? resultado.lista : null;
+  const despesas = resultado?.chave === chave ? resultado.lista : null;
   const total = despesas?.reduce((soma, despesa) => soma + despesa.valorCentavos, 0) ?? 0;
 
   function aplicar(novos: Filtros) {

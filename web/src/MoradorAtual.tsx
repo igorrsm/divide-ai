@@ -1,8 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useRepublicaAtual } from "./RepublicaAtual";
 import { useApiForaDoAr } from "./StatusApi";
-
-// Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
-const REPUBLICA_ID = 1;
 
 // Chave do navegador onde fica guardado quem está usando o app.
 const CHAVE = "divide-ai:morador";
@@ -51,15 +49,16 @@ function salvar(id: number | null) {
 
 /** Carrega os moradores e lembra quem está usando o app neste navegador. */
 export function ProvedorMoradorAtual({ children }: { children: ReactNode }) {
+  const { republica } = useRepublicaAtual();
   const [moradores, setMoradores] = useState<Morador[]>([]);
   const [moradorId, setMoradorId] = useState<number | null>(lerSalvo);
   const [erro, setErro] = useState(false);
   const foraDoAr = useApiForaDoAr();
 
-  // Carrega de novo quando a API volta, para o seletor não ficar vazio.
+  // Carrega de novo quando a API volta ou a república muda, para o seletor atualizar.
   useEffect(() => {
     if (foraDoAr) return;
-    fetch(`/api/republicas/${REPUBLICA_ID}/moradores`)
+    fetch(`/api/republicas/${republica.id}/moradores`)
       .then((resposta) => {
         if (!resposta.ok) throw new Error();
         return resposta.json() as Promise<Morador[]>;
@@ -78,7 +77,7 @@ export function ProvedorMoradorAtual({ children }: { children: ReactNode }) {
         setMoradores([]);
         setErro(true);
       });
-  }, [foraDoAr]);
+  }, [republica.id, foraDoAr]);
 
   function escolher(id: number) {
     setMoradorId(id);

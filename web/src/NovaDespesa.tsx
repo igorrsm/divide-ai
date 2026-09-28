@@ -4,11 +4,8 @@ import { conferePartes, TITULO_DIVISAO, type TipoDivisao } from "./divisao";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
 import ParticipantesRateio from "./ParticipantesRateio";
+import { useRepublicaAtual } from "./RepublicaAtual";
 import { useApiForaDoAr } from "./StatusApi";
-
-// Fixo até a A1 (criar república) entrar.
-// É o id da república criada pelo seed.
-const REPUBLICA_ID = 1;
 
 /** O rateio que a API devolveu ao criar a despesa (B2). */
 type Rateio = {
@@ -49,6 +46,7 @@ function hoje(): string {
  */
 export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
   const navigate = useNavigate();
+  const { republica } = useRepublicaAtual();
   const [descricao, setDescricao] = useState(edicao?.descricao ?? "");
   const [valor, setValor] = useState(edicao ? centavosParaTexto(edicao.valorCentavos) : "");
   const [data, setData] = useState(edicao?.data ?? hoje());
@@ -112,7 +110,7 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
     setRateio(null);
     setEnviando(true);
     try {
-      const url = `/api/republicas/${REPUBLICA_ID}/despesas${edicao ? `/${edicao.id}` : ""}`;
+      const url = `/api/republicas/${republica.id}/despesas${edicao ? `/${edicao.id}` : ""}`;
       const resposta = await fetch(url, {
         method: edicao ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
