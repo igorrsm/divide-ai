@@ -11,6 +11,6 @@
     "isolatedModules": true,
     "skipLibCheck": true
   },
-  "include": ["src"],
+  "include": ["src", "web/src/**/*.test.ts"],
   "exclude": ["src/generated"]
 }

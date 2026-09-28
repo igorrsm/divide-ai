@@ -11,5 +11,6 @@
     "isolatedModules": true,
     "skipLibCheck": true
   },
-  "include": ["src", "vite.config.mts"]
+  "include": ["src", "vite.config.mts"],
+  "exclude": ["src/**/*.test.ts"]
 }
