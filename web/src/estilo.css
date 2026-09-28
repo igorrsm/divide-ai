@@ -469,3 +469,23 @@ a {
   margin: 20px 0 0;
   font-weight: 700;
 }
+
+/* Detalhe da despesa (B3) */
+.detalhe-despesa {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.detalhe-despesa strong {
+  font-family: var(--fonte-titulo);
+  font-size: 32px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.rateio h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
