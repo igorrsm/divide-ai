@@ -4,6 +4,7 @@ import Inicio from "./Inicio";
 import Despesas from "./Despesas";
 import DetalheDespesa from "./DetalheDespesa";
 import EditarDespesa from "./EditarDespesa";
+import Extrato from "./Extrato";
 import Layout from "./Layout";
 import { ProvedorMoradorAtual } from "./MoradorAtual";
 import Moradores from "./Moradores";
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/despesas" element={<Despesas />} />
         <Route path="/despesas/nova" element={<PaginaNovaDespesa />} />
         <Route path="/despesas/:id" element={<DetalheDespesa />} />
+        <Route path="/extrato" element={<Extrato />} />
         <Route path="/despesas/:id/editar" element={<EditarDespesa />} />
         <Route path="/saldos" element={<Saldos />} />
         <Route path="/moradores" element={<Moradores />} />
