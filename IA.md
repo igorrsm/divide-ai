@@ -1221,3 +1221,27 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
   permissão para apagar arquivos na pasta.
 - Feita em cima do PR das pendências pequenas, que está em cima da E2.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Voltar para a tela inicial nas telas principais
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- A Thalita pediu o botão "← Voltar" em todas as telas, levando para a tela
+  inicial.
+
+**O que a IA produziu**
+- Componente `Voltar.tsx`, que substituiu o trecho repetido nas telas
+  internas (Lançar despesa, Detalhe, Editar e Extrato), sem mudar o destino.
+- Despesas, Saldos, Moradores e Criar república ganharam o Voltar para a
+  tela inicial, colocado na rota (`TelaPrincipal` em `App.tsx`).
+
+**Revisão humana**
+- A IA propôs manter o Voltar das telas internas indo para a tela anterior,
+  para não perder o caminho; a Thalita aprovou o plano antes do código.
+- A IA rodou lint e a checagem de tipos do front. A Thalita testou todas as
+  telas na própria máquina, inclusive em 375 px, antes dos commits.
+
+**Observações**
+- Feito em cima da B5 (PR #47).
+- Tempo economizado ou perdido: não medido.
