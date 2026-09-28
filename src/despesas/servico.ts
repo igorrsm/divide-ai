@@ -1,5 +1,6 @@
 import { prisma } from "../db";
 import { ErroDeValidacao, ErroNaoEncontrado } from "../erros";
+import { diaDa } from "./dia";
 import { ratearIgualmente } from "./rateio";
 import {
   interpretaData,
@@ -32,15 +33,6 @@ function comoTexto(valor: unknown, campo: string): string {
 
 export function buscaRepublica(id: number) {
   return prisma.republica.findUnique({ where: { id } });
-}
-
-/**
- * A data é gravada à meia-noite UTC do dia escolhido (ver interpretaData),
- * então o dia certo é o prefixo do ISO. Converter para o fuso local mostraria
- * o dia anterior no Brasil.
- */
-function diaDa(data: Date): string {
-  return data.toISOString().slice(0, 10);
 }
 
 /** Despesas da república, da mais recente para a mais antiga (B3). */

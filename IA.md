@@ -999,3 +999,35 @@ Sessão no Claude Code, em WSL/Ubuntu: atualização para a `main`, revisão do 
 - Sem cobertura automatizada: o serviço (que toca o banco) e o componente React
   continuam sem teste. Só as funções puras têm.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Ajustes da revisão do PR #36 (B3)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- Atender as quatro sugestões não bloqueantes deixadas na revisão do PR #36,
+  que já estava mesclado.
+
+**O que a IA produziu**
+- `diaDa` foi para `src/despesas/dia.ts`, com teste, inclusive do acoplamento
+  com `interpretaData`; `formatarData` ganhou teste com a virada de ano. O
+  `npm test` passou a rodar também `web/src/**/*.test.ts`, e o tsconfig da
+  raiz checa esses testes com os tipos do Node.
+- No rateio, "Ana (você, pagou)" em vez de "(você) (pagou)".
+- `:active` nos cartões da lista de despesas e no botão Voltar, como os
+  atalhos da tela inicial.
+- A rota `/despesas/:id` entrou na lista de rotas do CLAUDE.md.
+
+**Revisão humana**
+- Plano aprovado pela Thalita antes do código.
+- A IA não conseguiu rodar typecheck, lint nem testes (sem shell no PC e
+  sem npm no ambiente dela); a Thalita rodou build, lint e `npm test` no PC
+  dela antes do push e testou a tela.
+
+**Observações**
+- A Thalita trocou de computador. Nele a ponte não tinha shell, então a IA
+  fez os commits num clone próprio e entregou como patches (`git am`), com o
+  mesmo autor e as mesmas mensagens; ela aplicou e subiu a branch.
+- Nesse PC o PowerShell bloqueia scripts; `npm.cmd` e `npx.cmd` funcionam
+  sem mudar a configuração do Windows.
+- Tempo economizado ou perdido: não medido.
