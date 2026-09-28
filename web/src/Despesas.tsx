@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
+import CartaoFiltros, { type Filtros } from "./CartaoFiltros";
 import { formatarData } from "./formatarData";
 import { formatarReais } from "./formatarReais";
 import { useApiForaDoAr } from "./StatusApi";
@@ -18,29 +19,58 @@ type ItemDespesa = {
 
 /** Lista de despesas da república (B3), da mais recente para a mais antiga. */
 export default function Despesas() {
-  const [despesas, setDespesas] = useState<ItemDespesa[] | null>(null);
-  const [erro, setErro] = useState(false);
+  // Os filtros (E2) ficam na URL: recarregar ou voltar mantém a escolha.
+  const [parametros, setParametros] = useSearchParams();
+  const filtros: Filtros = {
+    de: parametros.get("de") ?? "",
+    ate: parametros.get("ate") ?? "",
+    moradorId: parametros.get("moradorId") ?? "",
+  };
+  const consulta = new URLSearchParams(
+    Object.entries(filtros).filter(([, valor]) => valor !== ""),
+  ).toString();
+  const ativos = consulta === "" ? 0 : consulta.split("&").length;
+  const [abertos, setAbertos] = useState(false);
+  // A lista guarda de qual consulta veio, para não mostrar a anterior.
+  const [resultado, setResultado] = useState<{ consulta: string; lista: ItemDespesa[] } | null>(
+    null,
+  );
+  const [erro, setErro] = useState<string | null>(null);
   const foraDoAr = useApiForaDoAr();
   // Aviso deixado por outra tela, como "Despesa excluída." (B6).
   const aviso = (useLocation().state as { aviso?: string } | null)?.aviso;
 
   useEffect(() => {
     let ativo = true;
-    fetch(`/api/republicas/${REPUBLICA_ID}/despesas`)
-      .then((resposta) => {
-        if (!resposta.ok) throw new Error();
+    fetch(`/api/republicas/${REPUBLICA_ID}/despesas${consulta ? `?${consulta}` : ""}`)
+      .then(async (resposta) => {
+        if (!resposta.ok) {
+          const corpo = await resposta.json().catch(() => ({}));
+          throw new Error(corpo.erro ?? "Não foi possível carregar as despesas.");
+        }
         return resposta.json() as Promise<ItemDespesa[]>;
       })
       .then((lista) => {
-        if (ativo) setDespesas(lista);
+        if (ativo) {
+          setResultado({ consulta, lista });
+          setErro(null);
+        }
       })
-      .catch(() => {
-        if (ativo) setErro(true);
+      .catch((falha: Error) => {
+        if (ativo) setErro(falha.message);
       });
     return () => {
       ativo = false;
     };
-  }, []);
+  }, [consulta]);
+
+  const despesas = resultado?.consulta === consulta ? resultado.lista : null;
+  const total = despesas?.reduce((soma, despesa) => soma + despesa.valorCentavos, 0) ?? 0;
+
+  function aplicar(novos: Filtros) {
+    setParametros(Object.entries(novos).filter(([, valor]) => valor !== ""));
+    setAbertos(false);
+  }
 
   return (
     <>
@@ -64,14 +94,38 @@ export default function Despesas() {
         </p>
       )}
 
+      <button
+        type="button"
+        className="botao-secundario botao-filtrar"
+        aria-expanded={abertos}
+        onClick={() => setAbertos(!abertos)}
+      >
+        {ativos > 0 ? `Filtrar (${ativos})` : "Filtrar"}
+      </button>
+      {abertos && (
+        <CartaoFiltros
+          filtros={filtros}
+          aoAplicar={aplicar}
+          aoLimpar={() => aplicar({ de: "", ate: "", moradorId: "" })}
+        />
+      )}
+      {ativos > 0 && despesas && despesas.length > 0 && (
+        <p role="status" className="resumo-filtro">
+          {despesas.length} {despesas.length === 1 ? "despesa" : "despesas"} ·{" "}
+          {formatarReais(total)}
+        </p>
+      )}
+
       {erro ? (
         <p role="status" className="aviso aviso-erro">
-          Não foi possível carregar as despesas.
+          {erro}
         </p>
       ) : despesas === null ? (
         <p>Carregando despesas…</p>
       ) : despesas.length === 0 ? (
-        <p className="lista-vazia">Nenhuma despesa lançada ainda.</p>
+        <p className="lista-vazia">
+          {ativos > 0 ? "Nenhuma despesa com esses filtros." : "Nenhuma despesa lançada ainda."}
+        </p>
       ) : (
         <ul className="despesas">
           {despesas.map((despesa) => (
