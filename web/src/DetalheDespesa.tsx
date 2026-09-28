@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatarPercentual } from "./divisao";
 import { formatarData } from "./formatarData";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
-import Voltar from "./Voltar";
+import Voltar, { useOrigem } from "./Voltar";
 
 // Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
 const REPUBLICA_ID = 1;
@@ -30,7 +30,9 @@ const TITULO_DIVISAO = {
 } as const;
 
 /** Editar e excluir (B6): só aparecem para quem pagou a despesa. */
-function AcoesDespesa({ id, moradorId }: { id: string; moradorId: number }) {
+type PropsAcoes = { id: string; moradorId: number; origem: string | null };
+
+function AcoesDespesa({ id, moradorId, origem }: PropsAcoes) {
   const navigate = useNavigate();
   const [confirmando, setConfirmando] = useState(false);
   const [excluindo, setExcluindo] = useState(false);
@@ -87,7 +89,12 @@ function AcoesDespesa({ id, moradorId }: { id: string; moradorId: number }) {
         </div>
       ) : (
         <div className="acoes-botoes">
-          <Link to={`/despesas/${id}/editar`} className="botao-secundario">
+          {/* Leva a origem junto, para o Voltar continuar certo depois de salvar. */}
+          <Link
+            to={`/despesas/${id}/editar`}
+            state={origem ? { voltarPara: origem } : undefined}
+            className="botao-secundario"
+          >
             Editar
           </Link>
           <button
@@ -115,12 +122,9 @@ export default function DetalheDespesa() {
   const [erro, setErro] = useState<string | null>(null);
   const { moradorId } = useMoradorAtual();
   // Tela de onde a pessoa veio (lista filtrada ou extrato). Aberto por um
-  // link colado, não há estado e o Voltar vai para a lista.
-  const origem = (useLocation().state as { voltarPara?: unknown } | null)?.voltarPara;
-  const voltarPara =
-    typeof origem === "string" && origem.startsWith("/") && !origem.startsWith("//")
-      ? origem
-      : "/despesas";
+  // link colado, não há origem e o Voltar vai para a lista.
+  const origem = useOrigem();
+  const voltarPara = origem ?? "/despesas";
 
   useEffect(() => {
     let ativo = true;
@@ -218,7 +222,7 @@ export default function DetalheDespesa() {
           )}
 
           {id && moradorId === despesa.pagador.id && (
-            <AcoesDespesa id={id} moradorId={moradorId} />
+            <AcoesDespesa id={id} moradorId={moradorId} origem={origem} />
           )}
         </>
       )}

@@ -28,6 +28,8 @@ export type DespesaEmEdicao = {
   tipoDivisao: TipoDivisao;
   /** Por valores ou percentuais (B5): o texto de cada participante. */
   partes: Record<number, string>;
+  /** Tela de onde a pessoa veio antes do detalhe, para o Voltar de lá. */
+  voltarPara?: string;
 };
 
 const TITULO_DIVISAO = {
@@ -137,7 +139,9 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
       });
       const corpo = await resposta.json();
       if (edicao && resposta.ok) {
-        navigate(`/despesas/${edicao.id}`);
+        navigate(`/despesas/${edicao.id}`, {
+          state: edicao.voltarPara ? { voltarPara: edicao.voltarPara } : undefined,
+        });
         return;
       }
       if (!resposta.ok) {

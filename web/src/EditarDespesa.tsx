@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useMoradorAtual } from "./MoradorAtual";
 import { formatarPercentual, type TipoDivisao } from "./divisao";
 import NovaDespesa, { centavosParaTexto, type DespesaEmEdicao } from "./NovaDespesa";
-import Voltar from "./Voltar";
+import Voltar, { useOrigem } from "./Voltar";
 
 // Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
 const REPUBLICA_ID = 1;
@@ -41,6 +41,8 @@ export default function EditarDespesa() {
   const [despesa, setDespesa] = useState<Detalhe | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const { moradores, moradorId } = useMoradorAtual();
+  // Origem do detalhe (lista filtrada ou extrato), repassada adiante.
+  const origem = useOrigem();
 
   useEffect(() => {
     let ativo = true;
@@ -89,13 +91,14 @@ export default function EditarDespesa() {
       participantesIds: despesa.participacoes.map((p) => p.morador.id),
       tipoDivisao: despesa.tipoDivisao,
       partes: partesDe(despesa),
+      voltarPara: origem ?? undefined,
     };
     conteudo = <NovaDespesa edicao={edicao} />;
   }
 
   return (
     <>
-      <Voltar para={`/despesas/${id}`} />
+      <Voltar para={`/despesas/${id}`} estado={origem ? { voltarPara: origem } : undefined} />
       {conteudo}
     </>
   );
