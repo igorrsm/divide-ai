@@ -442,6 +442,12 @@ a {
   background: var(--cor-destaque-clara);
 }
 
+/* Afunda ao tocar, como os atalhos da tela inicial. */
+.despesa:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--cor-tinta);
+}
+
 .despesa-texto {
   flex-grow: 1;
   min-width: 0;
@@ -507,6 +513,10 @@ a {
 
 .voltar:hover {
   background: var(--cor-destaque-clara);
+}
+
+.voltar:active {
+  transform: translate(1px, 1px);
 }
 
 /* Linha de quem está usando o app no rateio: leva ao saldo dessa pessoa. */

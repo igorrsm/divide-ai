@@ -79,12 +79,18 @@ export default function DetalheDespesa() {
               </h2>
               <ul className="rateio-lista">
                 {despesa.participacoes.map(({ morador, valorCentavos }) => {
+                  // "(você, pagou)" quando é a mesma pessoa, em vez de dois parênteses.
+                  const marcas = [
+                    morador.id === moradorId && "você",
+                    morador.id === despesa.pagador.id && "pagou",
+                  ]
+                    .filter(Boolean)
+                    .join(", ");
                   const conteudo = (
                     <>
                       <span>
                         {morador.nome}
-                        {morador.id === moradorId && <small> (você)</small>}
-                        {morador.id === despesa.pagador.id && <small> (pagou)</small>}
+                        {marcas && <small> ({marcas})</small>}
                       </span>
                       <strong>{formatarReais(valorCentavos)}</strong>
                     </>
