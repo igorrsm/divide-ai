@@ -489,3 +489,22 @@ a {
   margin: 0 0 10px;
   font-size: 18px;
 }
+
+/* Botão "Voltar" das telas internas, no estilo dos botões do seletor. */
+.voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  margin-bottom: 16px;
+  padding: 0 16px;
+  border: var(--borda);
+  border-radius: 20px;
+  background: var(--cor-fundo);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.voltar:hover {
+  background: var(--cor-destaque-clara);
+}

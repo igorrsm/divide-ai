@@ -47,9 +47,9 @@ export default function DetalheDespesa() {
 
   return (
     <>
-      <p>
-        <Link to="/despesas">Voltar</Link>
-      </p>
+      <Link to="/despesas" className="voltar">
+        <span aria-hidden="true">←</span> Voltar
+      </Link>
       {erro ? (
         <p role="status" className="aviso aviso-erro">
           {erro}
