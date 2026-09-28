@@ -50,7 +50,10 @@ function AcoesDespesa({ id, moradorId }: { id: string; moradorId: number }) {
     <section className="acoes-despesa">
       {confirmando ? (
         <div className="cartao confirmacao" role="alertdialog" aria-labelledby="confirma-exclusao">
-          <p id="confirma-exclusao">Excluir esta despesa? Ela some da lista e do saldo.</p>
+          <p id="confirma-exclusao">
+            Tem certeza que quer excluir esta despesa? Ela sumirá da lista de despesas e do
+            saldo dos moradores envolvidos.
+          </p>
           <div className="acoes-botoes">
             <button
               type="button"
