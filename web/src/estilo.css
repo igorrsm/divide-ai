@@ -629,3 +629,79 @@ a {
   margin: 0;
   font-weight: 700;
 }
+
+/* Extrato do mês (E1) */
+.navegacao-mes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.navegacao-mes strong {
+  font-family: var(--fonte-titulo);
+  font-size: 20px;
+  text-align: center;
+}
+
+/* Mesma pílula do Voltar, redonda e com área de toque de 44 px. */
+.seta-mes {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: var(--borda);
+  border-radius: 50%;
+  background: var(--cor-superficie);
+  font-size: 24px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.seta-mes:hover { background: var(--cor-destaque-clara); }
+.seta-mes:active { transform: translate(1px, 1px); }
+.seta-desativada { opacity: 0.3; }
+
+.total-casa {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--cor-destaque);
+  font-weight: 700;
+}
+
+.total-casa strong {
+  font-family: var(--fonte-titulo);
+  font-size: 36px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.extrato-valores {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 2px 8px;
+  margin: 0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.extrato-valores dt {
+  font-size: 12px;
+  font-weight: 700;
+  align-self: center;
+}
+
+.extrato-valores dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 700;
+}
+
+/* Link para o extrato na lista de despesas. */
+.link-extrato {
+  margin-top: 12px;
+}
