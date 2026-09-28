@@ -948,6 +948,14 @@ Sessão no Claude Code, em WSL/Ubuntu: atualização para a `main`, revisão do 
 - Escolha de participantes no formulário, com os estilos, e o `CLAUDE.md`.
 
 **Revisão humana**
+- Avaliação do Lucas: usar a IA para analisar e aprovar pull request rendeu bem.
+  O ganho maior foi ela propor e rodar os testes por conta própria, sem precisar
+  pedir. Na revisão do #36 rodou a suíte inteira, que a IA da Thalita não tinha
+  conseguido executar por causa de um binário de Windows, e ainda testou as duas
+  rotas novas por `curl`, incluindo casos que o PR afirmava mas ninguém tinha
+  comprovado, como o isolamento entre repúblicas. Na B4 apontou que dois dos
+  seis critérios já tinham teste desde a B2, em vez de escrever de novo. Isso
+  encurta a revisão e deixa rastro do que foi de fato verificado.
 - A decisão de não mostrar prévia do rateio na tela foi do Lucas, entre três
   alternativas: sem prévia, prévia com lógica duplicada no front, ou prévia por
   uma rota nova. Escolhida a primeira, para a regra da sobra existir num lugar
