@@ -21,7 +21,7 @@ async function main() {
   });
 
   const ana = await prisma.morador.create({
-    data: { id: 1, nome: "Ana", email: "ana@exemplo.com", republicaId: rep.id },
+    data: { id: 1, nome: "Ana", email: "ana@exemplo.com", republicaId: rep.id, organizador: true },
   });
   const bruno = await prisma.morador.create({
     data: { id: 2, nome: "Bruno", email: "bruno@exemplo.com", republicaId: rep.id },

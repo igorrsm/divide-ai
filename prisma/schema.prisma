@@ -27,6 +27,7 @@ model Morador {
   id          Int       @id @default(autoincrement())
   nome        String
   email       String    @unique
+  organizador Boolean   @default(false)
   republicaId Int
   republica   Republica @relation(fields: [republicaId], references: [id])
 
