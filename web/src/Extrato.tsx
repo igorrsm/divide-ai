@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import ConteudoExtrato, { type DadosExtrato } from "./ConteudoExtrato";
+import { hojeNaCasa } from "./diasDoMes";
 import { formatarMes, mesVizinho } from "./mes";
 import { useMoradorAtual } from "./MoradorAtual";
 import Voltar from "./Voltar";
@@ -10,19 +11,11 @@ const REPUBLICA_ID = 1;
 
 const PADRAO_MES = /^\d{4}-(0[1-9]|1[0-2])$/;
 
-/** Mês de hoje no calendário da casa, como a API faz sem o parâmetro. */
-function mesDeHoje(): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Sao_Paulo",
-    year: "numeric",
-    month: "2-digit",
-  }).format(new Date());
-}
-
 /** Extrato do mês (E1): total da casa, total por morador e as despesas. */
 export default function Extrato() {
   const [parametros] = useSearchParams();
-  const hoje = mesDeHoje();
+  // Mês de hoje no calendário da casa, como a API faz sem o parâmetro.
+  const hoje = hojeNaCasa().slice(0, 7);
   // O mês fica na URL, para o Voltar do navegador voltar ao mês anterior.
   const bruto = parametros.get("mes") ?? "";
   const mes = PADRAO_MES.test(bruto) ? bruto : hoje;

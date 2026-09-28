@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { formatarPercentual } from "./divisao";
+import { formatarPercentual, TITULO_DIVISAO } from "./divisao";
 import { formatarData } from "./formatarData";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
@@ -22,12 +22,6 @@ type Detalhe = {
     morador: { id: number; nome: string };
   }[];
 };
-
-const TITULO_DIVISAO = {
-  IGUAL: "Dividida por igual",
-  VALOR: "Dividida por valores",
-  PERCENTUAL: "Dividida por percentuais",
-} as const;
 
 /** Editar e excluir (B6): só aparecem para quem pagou a despesa. */
 type PropsAcoes = { id: string; moradorId: number; origem: string | null };
