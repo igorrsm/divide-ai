@@ -100,7 +100,7 @@ export default function Despesas() {
         aria-expanded={abertos}
         onClick={() => setAbertos(!abertos)}
       >
-        {ativos > 0 ? `Filtrar (${ativos})` : "Filtrar"}
+        {ativos > 0 ? `Filtrar despesas (${ativos})` : "Filtrar despesas"}
       </button>
       {abertos && (
         <CartaoFiltros
