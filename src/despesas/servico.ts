@@ -31,6 +31,32 @@ export function buscaRepublica(id: number) {
   return prisma.republica.findUnique({ where: { id } });
 }
 
+/**
+ * A data é gravada à meia-noite UTC do dia escolhido (ver interpretaData),
+ * então o dia certo é o prefixo do ISO. Converter para o fuso local mostraria
+ * o dia anterior no Brasil.
+ */
+function diaDa(data: Date): string {
+  return data.toISOString().slice(0, 10);
+}
+
+/** Despesas da república, da mais recente para a mais antiga (B3). */
+export async function listaDespesas(republicaId: number) {
+  const despesas = await prisma.despesa.findMany({
+    where: { republicaId },
+    select: {
+      id: true,
+      descricao: true,
+      valorCentavos: true,
+      data: true,
+      pagador: { select: { id: true, nome: true } },
+    },
+    // No mesmo dia, a última lançada vem primeiro.
+    orderBy: [{ data: "desc" }, { id: "desc" }],
+  });
+  return despesas.map((despesa) => ({ ...despesa, data: diaDa(despesa.data) }));
+}
+
 export function listaMoradores(republicaId: number) {
   return prisma.morador.findMany({
     where: { republicaId },

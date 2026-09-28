@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { ErroNaoEncontrado } from "../erros";
-import { buscaRepublica, criarDespesa, listaMoradores } from "./servico";
+import { buscaRepublica, criarDespesa, listaDespesas, listaMoradores } from "./servico";
 import { interpretaId } from "./validacao";
 
 export const rotasDespesas = Router();
@@ -18,6 +18,12 @@ export async function idDaRepublica(bruto: unknown): Promise<number> {
 rotasDespesas.get("/republicas/:republicaId/moradores", async (req, res) => {
   const republicaId = await idDaRepublica(req.params.republicaId);
   res.json(await listaMoradores(republicaId));
+});
+
+// Alimenta a lista de despesas (B3).
+rotasDespesas.get("/republicas/:republicaId/despesas", async (req, res) => {
+  const republicaId = await idDaRepublica(req.params.republicaId);
+  res.json(await listaDespesas(republicaId));
 });
 
 rotasDespesas.post("/republicas/:republicaId/despesas", async (req, res) => {
