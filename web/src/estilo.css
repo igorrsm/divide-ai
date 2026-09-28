@@ -420,3 +420,105 @@ a {
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
+
+/* Lista de despesas (B3) */
+.despesas {
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.despesa {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.despesa:hover {
+  background: var(--cor-destaque-clara);
+}
+
+.despesa-texto {
+  flex-grow: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-wrap: anywhere;
+}
+
+.despesa-texto strong {
+  font-size: 16px;
+}
+
+.despesa-texto small {
+  font-size: 13px;
+}
+
+.despesa-valor {
+  white-space: nowrap;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.lista-vazia {
+  margin: 20px 0 0;
+  font-weight: 700;
+}
+
+/* Detalhe da despesa (B3) */
+.detalhe-despesa {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.detalhe-despesa strong {
+  font-family: var(--fonte-titulo);
+  font-size: 32px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.rateio h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+/* Botão "Voltar" das telas internas, no estilo dos botões do seletor. */
+.voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  margin-bottom: 16px;
+  padding: 0 16px;
+  border: var(--borda);
+  border-radius: 20px;
+  background: var(--cor-fundo);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.voltar:hover {
+  background: var(--cor-destaque-clara);
+}
+
+/* Linha de quem está usando o app no rateio: leva ao saldo dessa pessoa. */
+.rateio-eu {
+  background: var(--cor-destaque-clara);
+  text-decoration: none;
+}
+
+.rateio-eu strong {
+  margin-left: auto;
+}
+
+.rateio-eu:hover {
+  background: var(--cor-destaque);
+}

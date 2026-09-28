@@ -1,6 +1,12 @@
 import { Router } from "express";
 import { ErroNaoEncontrado } from "../erros";
-import { buscaRepublica, criarDespesa, listaMoradores } from "./servico";
+import {
+  buscaDespesa,
+  buscaRepublica,
+  criarDespesa,
+  listaDespesas,
+  listaMoradores,
+} from "./servico";
 import { interpretaId } from "./validacao";
 
 export const rotasDespesas = Router();
@@ -18,6 +24,19 @@ export async function idDaRepublica(bruto: unknown): Promise<number> {
 rotasDespesas.get("/republicas/:republicaId/moradores", async (req, res) => {
   const republicaId = await idDaRepublica(req.params.republicaId);
   res.json(await listaMoradores(republicaId));
+});
+
+// Alimenta a lista de despesas (B3).
+rotasDespesas.get("/republicas/:republicaId/despesas", async (req, res) => {
+  const republicaId = await idDaRepublica(req.params.republicaId);
+  res.json(await listaDespesas(republicaId));
+});
+
+// Detalhe com o rateio por morador (B3).
+rotasDespesas.get("/republicas/:republicaId/despesas/:despesaId", async (req, res) => {
+  const republicaId = await idDaRepublica(req.params.republicaId);
+  const despesaId = interpretaId(req.params.despesaId, "Id da despesa");
+  res.json(await buscaDespesa(republicaId, despesaId));
 });
 
 rotasDespesas.post("/republicas/:republicaId/despesas", async (req, res) => {
