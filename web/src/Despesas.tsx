@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { formatarData } from "./formatarData";
 import { formatarReais } from "./formatarReais";
+import { useRepublicaAtual } from "./RepublicaAtual";
 import { useApiForaDoAr } from "./StatusApi";
-
-// Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
-const REPUBLICA_ID = 1;
 
 /** Uma linha de GET /api/republicas/:id/despesas. */
 type ItemDespesa = {
@@ -18,13 +16,14 @@ type ItemDespesa = {
 
 /** Lista de despesas da república (B3), da mais recente para a mais antiga. */
 export default function Despesas() {
+  const { republica } = useRepublicaAtual();
   const [despesas, setDespesas] = useState<ItemDespesa[] | null>(null);
   const [erro, setErro] = useState(false);
   const foraDoAr = useApiForaDoAr();
 
   useEffect(() => {
     let ativo = true;
-    fetch(`/api/republicas/${REPUBLICA_ID}/despesas`)
+    fetch(`/api/republicas/${republica.id}/despesas`)
       .then((resposta) => {
         if (!resposta.ok) throw new Error();
         return resposta.json() as Promise<ItemDespesa[]>;
@@ -38,7 +37,7 @@ export default function Despesas() {
     return () => {
       ativo = false;
     };
-  }, []);
+  }, [republica.id]);
 
   return (
     <>

@@ -7,6 +7,7 @@ import Layout from "./Layout";
 import { ProvedorMoradorAtual } from "./MoradorAtual";
 import Moradores from "./Moradores";
 import NovaDespesa from "./NovaDespesa";
+import { ProvedorRepublicaAtual } from "./RepublicaAtual";
 import { ProvedorStatusApi } from "./StatusApi";
 import Saldos from "./Saldos";
 
@@ -27,9 +28,11 @@ export default function App() {
       <Route
         element={
           <ProvedorStatusApi>
-            <ProvedorMoradorAtual>
-              <Layout />
-            </ProvedorMoradorAtual>
+            <ProvedorRepublicaAtual>
+              <ProvedorMoradorAtual>
+                <Layout />
+              </ProvedorMoradorAtual>
+            </ProvedorRepublicaAtual>
           </ProvedorStatusApi>
         }
       >

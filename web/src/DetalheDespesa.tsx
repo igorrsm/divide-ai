@@ -3,9 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { formatarData } from "./formatarData";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
-
-// Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
-const REPUBLICA_ID = 1;
+import { useRepublicaAtual } from "./RepublicaAtual";
 
 /** Resposta de GET /api/republicas/:id/despesas/:despesaId. */
 type Detalhe = {
@@ -20,13 +18,14 @@ type Detalhe = {
 /** Uma despesa com o rateio por morador (B3). */
 export default function DetalheDespesa() {
   const { id } = useParams();
+  const { republica } = useRepublicaAtual();
   const [despesa, setDespesa] = useState<Detalhe | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const { moradorId } = useMoradorAtual();
 
   useEffect(() => {
     let ativo = true;
-    fetch(`/api/republicas/${REPUBLICA_ID}/despesas/${id}`)
+    fetch(`/api/republicas/${republica.id}/despesas/${id}`)
       .then(async (resposta) => {
         if (resposta.status === 404 || resposta.status === 400) {
           throw new Error("Despesa não encontrada.");
@@ -43,7 +42,7 @@ export default function DetalheDespesa() {
     return () => {
       ativo = false;
     };
-  }, [id]);
+  }, [republica.id, id]);
 
   const quantos = despesa?.participacoes.length ?? 0;
 

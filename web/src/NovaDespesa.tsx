@@ -1,11 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
+import { useRepublicaAtual } from "./RepublicaAtual";
 import { useApiForaDoAr } from "./StatusApi";
-
-// Fixo até a A1 (criar república) entrar.
-// É o id da república criada pelo seed.
-const REPUBLICA_ID = 1;
 
 /** O rateio que a API devolveu ao criar a despesa (B2). */
 type Rateio = {
@@ -19,6 +16,7 @@ function hoje(): string {
 }
 
 export default function NovaDespesa() {
+  const { republica } = useRepublicaAtual();
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
   const [data, setData] = useState(hoje());
@@ -62,7 +60,7 @@ export default function NovaDespesa() {
     setRateio(null);
     setEnviando(true);
     try {
-      const resposta = await fetch(`/api/republicas/${REPUBLICA_ID}/despesas`, {
+      const resposta = await fetch(`/api/republicas/${republica.id}/despesas`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ descricao, valor, data, pagadorId, participantesIds }),
