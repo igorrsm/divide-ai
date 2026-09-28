@@ -36,4 +36,75 @@ describe("montaDespesa", () => {
     assert.throws(() => montaDespesa({ ...ENTRADA, descricao: undefined }, CASA, HOJE), ErroDeValidacao);
     assert.throws(() => montaDespesa({ ...ENTRADA, valor: undefined }, CASA, HOJE), ErroDeValidacao);
   });
+
+  it("sem tipo de divisão, continua dividindo por igual", () => {
+    assert.equal(montaDespesa(ENTRADA, CASA, HOJE).tipoDivisao, "IGUAL");
+  });
+
+  it("divide pelos valores informados só entre os marcados (B5)", () => {
+    const despesa = montaDespesa(
+      {
+        ...ENTRADA,
+        tipoDivisao: "VALOR",
+        participantesIds: [1, 3],
+        partes: [
+          { moradorId: 1, valor: "70" },
+          { moradorId: 3, valor: "30,00" },
+        ],
+      },
+      CASA,
+      HOJE,
+    );
+    assert.equal(despesa.tipoDivisao, "VALOR");
+    assert.deepEqual(despesa.participacoes, [
+      { moradorId: 1, valorCentavos: 7000 },
+      { moradorId: 3, valorCentavos: 3000 },
+    ]);
+  });
+
+  it("divide pelos percentuais informados (B5)", () => {
+    const despesa = montaDespesa(
+      {
+        ...ENTRADA,
+        tipoDivisao: "PERCENTUAL",
+        partes: [
+          { moradorId: 1, valor: "50" },
+          { moradorId: 2, valor: "25" },
+          { moradorId: 3, valor: "25,00" },
+        ],
+      },
+      CASA,
+      HOJE,
+    );
+    assert.deepEqual(
+      despesa.participacoes.map((p) => [p.valorCentavos, p.percentualCentesimos]),
+      [
+        [5000, 5000],
+        [2500, 2500],
+        [2500, 2500],
+      ],
+    );
+  });
+
+  it("recusa parte faltando, parte de quem não participa e tipo inválido", () => {
+    const base = { ...ENTRADA, tipoDivisao: "VALOR", participantesIds: [1, 2] };
+    assert.throws(
+      () => montaDespesa({ ...base, partes: [{ moradorId: 1, valor: "100" }] }, CASA, HOJE),
+      /Falta a parte do morador 2/,
+    );
+    assert.throws(
+      () =>
+        montaDespesa(
+          { ...base, partes: [{ moradorId: 1, valor: "50" }, { moradorId: 3, valor: "50" }] },
+          CASA,
+          HOJE,
+        ),
+      /não está marcado para participar/,
+    );
+    assert.throws(() => montaDespesa({ ...base, partes: "50" }, CASA, HOJE), /Informe a parte/);
+    assert.throws(
+      () => montaDespesa({ ...ENTRADA, tipoDivisao: "METADE" }, CASA, HOJE),
+      /Tipo de divisão inválido/,
+    );
+  });
 });
