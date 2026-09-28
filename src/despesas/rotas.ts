@@ -29,7 +29,7 @@ rotasDespesas.get("/republicas/:republicaId/moradores", async (req, res) => {
   res.json(await listaMoradores(republicaId));
 });
 
-// Alimenta a lista de despesas (B3), com ?de, ?ate e ?moradorId opcionais (E2).
+// Alimenta a lista de despesas (B3), com ?de, ?ate e ?moradores=1,2 opcionais (E2).
 rotasDespesas.get("/republicas/:republicaId/despesas", async (req, res) => {
   const republicaId = await idDaRepublica(req.params.republicaId);
   const idsDaCasa = (await listaMoradores(republicaId)).map((morador) => morador.id);

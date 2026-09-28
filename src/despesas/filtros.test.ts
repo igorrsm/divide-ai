@@ -7,7 +7,7 @@ const CASA = [1, 2, 3];
 describe("interpretaFiltros", () => {
   it("sem parâmetros, não filtra nada", () => {
     assert.deepEqual(interpretaFiltros({}, CASA), {});
-    assert.deepEqual(interpretaFiltros({ de: "", ate: "", moradorId: "" }, CASA), {});
+    assert.deepEqual(interpretaFiltros({ de: "", ate: "", moradores: "" }, CASA), {});
   });
 
   it("o período inclui o dia final inteiro", () => {
@@ -35,12 +35,14 @@ describe("interpretaFiltros", () => {
     );
   });
 
-  it("aceita morador da casa, vindo como texto", () => {
-    assert.equal(interpretaFiltros({ moradorId: "2" }, CASA).moradorId, 2);
+  it("aceita um ou vários moradores da casa, sem repetir", () => {
+    assert.deepEqual(interpretaFiltros({ moradores: "2" }, CASA).moradorIds, [2]);
+    assert.deepEqual(interpretaFiltros({ moradores: "1, 3,1" }, CASA).moradorIds, [1, 3]);
   });
 
   it("recusa morador de outra casa ou id inválido", () => {
-    assert.throws(() => interpretaFiltros({ moradorId: "9" }, CASA), /não é desta república/);
-    assert.throws(() => interpretaFiltros({ moradorId: "abc" }, CASA), /Morador inválido/);
+    assert.throws(() => interpretaFiltros({ moradores: "1,9" }, CASA), /não é desta república/);
+    assert.throws(() => interpretaFiltros({ moradores: "abc" }, CASA), /Morador inválido/);
+    assert.throws(() => interpretaFiltros({ moradores: "1,,2" }, CASA), /Morador inválido/);
   });
 });

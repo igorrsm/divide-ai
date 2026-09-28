@@ -11,19 +11,24 @@ export function buscaRepublica(id: number) {
 
 /**
  * Despesas da república, da mais recente para a mais antiga (B3), com os
- * filtros opcionais da E2. O filtro de morador pega o que ele pagou ou do
- * que participa: tudo o que mexe no saldo dele.
+ * filtros opcionais da E2. O filtro de moradores pega o que algum deles
+ * pagou ou do que participa: tudo o que mexe no saldo de algum deles.
  */
 export async function listaDespesas(republicaId: number, filtros: FiltrosDespesas = {}) {
-  const { desde, antesDe, moradorId } = filtros;
+  const { desde, antesDe, moradorIds } = filtros;
   const despesas = await prisma.despesa.findMany({
     where: {
       republicaId,
       // Despesa excluída (B6) some da lista.
       excluidaEm: null,
       ...(desde || antesDe ? { data: { gte: desde, lt: antesDe } } : {}),
-      ...(moradorId
-        ? { OR: [{ pagadorId: moradorId }, { participacoes: { some: { moradorId } } }] }
+      ...(moradorIds
+        ? {
+            OR: [
+              { pagadorId: { in: moradorIds } },
+              { participacoes: { some: { moradorId: { in: moradorIds } } } },
+            ],
+          }
         : {}),
     },
     select: {

@@ -9,8 +9,8 @@ export type FiltrosDespesas = {
   desde?: Date;
   /** Meia-noite UTC do dia seguinte ao "Até": a busca usa `lt`. */
   antesDe?: Date;
-  /** Despesas que esse morador pagou ou das quais participa. */
-  moradorId?: number;
+  /** Despesas que algum desses moradores pagou ou das quais participa. */
+  moradorIds?: number[];
 };
 
 /** Parâmetro ausente ou vazio vale como "sem filtro"; repetido é recusado. */
@@ -35,18 +35,19 @@ function dia(bruto: string, campo: string): Date {
 }
 
 /**
- * Interpreta `?de=AAAA-MM-DD&ate=AAAA-MM-DD&moradorId=2` (E2). Cada filtro é
- * opcional. Morador de outra casa é recusado em vez de devolver lista vazia,
- * como em `interpretaParticipantes`.
+ * Interpreta `?de=AAAA-MM-DD&ate=AAAA-MM-DD&moradores=1,2` (E2). Cada filtro é
+ * opcional. Com vários moradores, vale a despesa de qualquer um deles
+ * (decisão da Thalita). Morador de outra casa é recusado em vez de devolver
+ * lista vazia, como em `interpretaParticipantes`.
  */
 export function interpretaFiltros(
-  consulta: { de?: unknown; ate?: unknown; moradorId?: unknown },
+  consulta: { de?: unknown; ate?: unknown; moradores?: unknown },
   idsDaCasa: number[],
 ): FiltrosDespesas {
   const filtros: FiltrosDespesas = {};
   const de = texto(consulta.de, "Data inicial");
   const ate = texto(consulta.ate, "Data final");
-  const morador = texto(consulta.moradorId, "Morador");
+  const moradores = texto(consulta.moradores, "Morador");
 
   if (de) filtros.desde = dia(de, "Data inicial");
   if (ate) {
@@ -56,12 +57,15 @@ export function interpretaFiltros(
   if (filtros.desde && filtros.antesDe && filtros.desde >= filtros.antesDe) {
     throw new ErroDeValidacao("A data inicial não pode ser depois da data final.");
   }
-  if (morador) {
-    const id = interpretaId(morador, "Morador");
-    if (!idsDaCasa.includes(id)) {
-      throw new ErroDeValidacao(`O morador ${id} não é desta república.`);
+  if (moradores) {
+    // Set: id repetido na URL não vira filtro duplicado.
+    const ids = new Set(moradores.split(",").map((bruto) => interpretaId(bruto.trim(), "Morador")));
+    for (const id of ids) {
+      if (!idsDaCasa.includes(id)) {
+        throw new ErroDeValidacao(`O morador ${id} não é desta república.`);
+      }
     }
-    filtros.moradorId = id;
+    filtros.moradorIds = [...ids];
   }
   return filtros;
 }
