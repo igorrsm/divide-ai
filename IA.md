@@ -1070,3 +1070,42 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
 - A B6 foi feita em cima da branch da revisão da B3 (PR #38), que mexe nos
   mesmos arquivos; o PR da B6 mostra aqueles commits até o #38 entrar.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Extrato do mês (E1)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- Implementar a E1, puxada do Backlog pela Thalita logo depois da B6. O
+  cartão não tinha critérios; a IA propôs os critérios e a Thalita aprovou.
+
+**O que a IA produziu**
+- `montaExtrato` (função pura, com testes): total da casa e, por morador,
+  "A pagar" (a parte dele) e "Pago" (o que adiantou). Acertos ficam fora.
+- `interpretaMes` e `intervaloDoMes` (com testes): mês AAAA-MM, o atual no
+  fuso de São Paulo quando não vem; `hojeNaCasa` passou a ser exportada.
+- `GET /api/republicas/:id/extrato?mes=AAAA-MM`, ignorando despesa excluída.
+- Tela `/extrato`: setas de mês (o mês fica na URL e não passa do atual),
+  cartão "Total da casa", um cartão por morador com o destaque de quem está
+  usando e as despesas do mês. `formatarMes` e `mesVizinho` no front, com
+  testes. Botão "Ver extrato do mês" na lista de despesas.
+
+**Revisão humana**
+- Plano e critérios aprovados pela Thalita antes do código. Ela decidiu
+  mostrar as duas informações por morador e escolheu os nomes "A pagar" e
+  "Pago".
+- A IA rodou os testes puros (cálculo, mês e `web/src/mes.ts`) com o Node do
+  ambiente dela e checou os tipos dos arquivos novos; não conseguiu rodar
+  lint, build nem a tela (sem as dependências do projeto).
+- A Thalita aplicou os patches no PC dela, rodou lint (sem avisos),
+  `npm test` (64 de 64) e build, e testou a tela na própria máquina: meses,
+  total, "A pagar" e "Pago", destaque de quem está usando, despesa excluída
+  e 375 px.
+- Depois do teste, ela pediu dois ajustes: "Ver extrato do mês" no mesmo
+  estilo de "Lançar despesa", e "A pagar" e "Pago" alinhados à direita e mais
+  afastados dos valores, que grudavam acima de R$ 1.000,00.
+
+**Observações**
+- Issue #41. Feita em cima da branch da B6 (PR #40), por causa do filtro
+  `excluidaEm`.
+- Tempo economizado ou perdido: não medido.
