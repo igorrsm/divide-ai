@@ -1320,3 +1320,35 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
 - Decisão de arquitetura: `Morador.organizador` como booleano com default `false` evitou dependência circular de chaves estrangeiras entre `Republica` e `Morador` no SQLite.
 - Transação aninhada: A criação da república e do organizador ocorre em uma única operação do Prisma, garantindo que não exista república sem organizador nem morador órfão.
 - As funções de validação puras possuem 100% de cobertura de testes. Rotas e componentes React foram validados via build e script de teste funcional.
+
+## 2026-09-28 — Thalita — Registrar pagamento entre moradores (D3)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- O Eduardo não vai conseguir fazer as tarefas dele; a Thalita assumiu a D3,
+  a A2 e a C1, nessa ordem. Na D3, a IA seguiu os critérios do cartão e a
+  Thalita aprovou o plano antes do código.
+
+**O que a IA produziu**
+- `montaPagamento` (função pura, com testes): moradores da casa, valor em
+  centavos, data até hoje e recusa de pagamento para si mesmo.
+- `POST` e `GET /api/republicas/:id/pagamentos`; o saldo já lia os
+  pagamentos, então não mudou.
+- Tela `/saldos/pagamento`: quem pagou, para quem, valor e data; aviso
+  quando o valor passa da dívida (`avisoDeValor`, com testes), sem impedir
+  o registro. Em Saldos, o botão "Registrar pagamento", o aviso
+  "Pagamento registrado." e a lista "Acertos registrados".
+
+**Revisão humana**
+- A Thalita rodou lint, `npm test` e build e testou a tela na própria
+  máquina antes dos commits. O endereço `/saldos/pagamento` (em vez de
+  `/pagamentos/novo`) foi proposto pela IA e aceito por ela.
+
+**Observações**
+- O formulário tem mais de 100 linhas; entrou em três commits (campos e
+  envio, data e mesma pessoa, aviso da dívida), cada um funcionando.
+- No PC de casa, o `npm test` não roda no terminal da IA (o esbuild do
+  `node_modules` é o do Windows); a IA compilou os testes com o `tsc` e
+  rodou com o `node --test` (111 de 111).
+- Tempo economizado ou perdido: não medido.
