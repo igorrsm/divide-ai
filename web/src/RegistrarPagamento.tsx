@@ -17,7 +17,7 @@ export default function RegistrarPagamento() {
   const [pagador, setPagador] = useState(moradorId ? String(moradorId) : "");
   const [recebedor, setRecebedor] = useState("");
   const [valor, setValor] = useState("");
-  const [data] = useState(hojeNaCasa());
+  const [data, setData] = useState(hojeNaCasa());
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
@@ -25,6 +25,7 @@ export default function RegistrarPagamento() {
   const pagadorId = pagador || String(moradores[0]?.id ?? "");
   const recebedorId =
     recebedor || String(moradores.find((m) => String(m.id) !== pagadorId)?.id ?? "");
+  const mesmaPessoa = pagadorId !== "" && pagadorId === recebedorId;
 
   async function enviar(evento: FormEvent) {
     evento.preventDefault();
@@ -70,6 +71,11 @@ export default function RegistrarPagamento() {
           {opcoes}
         </select>
       </label>
+      {mesmaPessoa && (
+        <p role="alert" className="aviso aviso-erro">
+          Quem pagou e quem recebeu precisam ser pessoas diferentes.
+        </p>
+      )}
       <label className="campo">
         Valor em reais
         <input
@@ -80,10 +86,20 @@ export default function RegistrarPagamento() {
           required
         />
       </label>
+      <label className="campo">
+        Data
+        <input
+          type="date"
+          value={data}
+          max={hojeNaCasa()}
+          onChange={(e) => setData(e.target.value)}
+          required
+        />
+      </label>
       <button
         type="submit"
         className="botao-principal"
-        disabled={enviando || foraDoAr}
+        disabled={enviando || foraDoAr || mesmaPessoa}
       >
         {enviando ? "Registrando..." : "Registrar pagamento"}
       </button>
