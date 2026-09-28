@@ -148,3 +148,12 @@ vite.config.ts.timestamp-*
 *.db
 *.db-journal
 src/generated/
+
+# Skills de IA instaladas por ferramenta (Prisma, via skills-lock.json).
+# O conteúdo é baixado e reproduzível a partir do lock, então fica de fora,
+# como node_modules em relação ao package-lock. Só o lock é versionado.
+# Ignora apenas skills/, para um .claude/settings.json compartilhado ainda
+# poder entrar no repositório mais adiante.
+/.agents/skills/
+/.claude/skills/
+/.windsurf/skills/
