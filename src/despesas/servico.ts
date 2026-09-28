@@ -38,7 +38,8 @@ export function buscaRepublica(id: number) {
 /** Despesas da república, da mais recente para a mais antiga (B3). */
 export async function listaDespesas(republicaId: number) {
   const despesas = await prisma.despesa.findMany({
-    where: { republicaId },
+    // Despesa excluída (B6) some da lista.
+    where: { republicaId, excluidaEm: null },
     select: {
       id: true,
       descricao: true,
@@ -58,7 +59,8 @@ export async function listaDespesas(republicaId: number) {
  */
 export async function buscaDespesa(republicaId: number, despesaId: number) {
   const despesa = await prisma.despesa.findFirst({
-    where: { id: despesaId, republicaId },
+    // Despesa excluída (B6) dá 404, como a que não existe.
+    where: { id: despesaId, republicaId, excluidaEm: null },
     select: {
       id: true,
       descricao: true,
