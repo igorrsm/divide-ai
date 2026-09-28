@@ -1181,3 +1181,43 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
 - Feito em cima da branch da E2 (PR #44), porque mexe nas telas da B6, da E1
   e da E2.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Divisão por valores ou percentuais (B5)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- A Thalita pediu sugestões do Backlog e escolheu a B5 (#46). O cartão tinha
+  um critério (soma errada recusada com mensagem visível); a IA propôs os
+  demais e a Thalita aprovou.
+
+**O que a IA produziu**
+- `ratearPorValores` e `ratearPorPercentuais` (funções puras, com testes):
+  soma dos valores igual ao total, soma dos percentuais igual a 100%, sobra
+  de centavos pela regra da B2.
+- `montaDespesa` aceita `tipoDivisao` e `partes`; migration com
+  `Participacao.percentualCentesimos`, para a edição abrir com o % digitado.
+- Formulário: "Como dividir?" em pílulas, campo em R$ ou % ao lado de cada
+  marcado, conta ao vivo ("Faltam R$ 30,00") e salvar só quando fecha.
+  Detalhe com o modo e o % de cada um; editar abre com os números originais.
+
+**Revisão humana**
+- Plano aprovado pela Thalita antes do código. A IA tinha proposto que campo
+  em branco significasse "não participa"; a Thalita preferiu manter as
+  caixas de marcar nos três modos, com a pergunta "Quem participará do rateio
+  desta despesa?".
+- A IA rodou lint, a checagem de tipos do front e os testes puros no PC da
+  Thalita. Ela aplicou a migration, rodou lint, `npm test` (92 de 92) e build
+  e testou a tela na própria máquina antes dos commits.
+
+**Observações**
+- No primeiro teste deu "Erro interno no servidor": o passo a passo da IA
+  dizia que o `migrate dev` regenerava o cliente do Prisma, mas no Prisma 7
+  não regenera. Com `npx prisma generate` funcionou; o passo entrou no
+  CLAUDE.md.
+- No PC de casa, o terminal da IA não alcança o GitHub nem apagava os
+  arquivos de trava do git (um `index.lock` ficou para trás e a Thalita
+  apagou). Ela buscou as branches e a IA fez os commits depois de ganhar
+  permissão para apagar arquivos na pasta.
+- Feita em cima do PR das pendências pequenas, que está em cima da E2.
+- Tempo economizado ou perdido: não medido.
