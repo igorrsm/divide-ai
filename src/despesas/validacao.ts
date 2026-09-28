@@ -9,7 +9,7 @@ const PADRAO_DATA = /^\d{4}-\d{2}-\d{2}$/;
 const FUSO_DA_CASA = "America/Sao_Paulo";
 
 /** Data de hoje no fuso da casa, no formato AAAA-MM-DD. */
-function hojeNaCasa(agora: Date): string {
+export function hojeNaCasa(agora: Date): string {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: FUSO_DA_CASA,
     year: "numeric",
