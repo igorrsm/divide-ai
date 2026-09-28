@@ -1031,3 +1031,42 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
 - Nesse PC o PowerShell bloqueia scripts; `npm.cmd` e `npx.cmd` funcionam
   sem mudar a configuração do Windows.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Editar e excluir despesa (B6)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- Implementar a B6 (#39), puxada do Backlog pela Thalita. O cartão pede
+  exclusão lógica, para não furar o histórico de acertos.
+
+**O que a IA produziu**
+- Migration `despesa_excluida_em` (campo `excluidaEm`); lista, detalhe e saldo
+  passam a ignorar despesa excluída (o filtro do saldo mexe no serviço da D1).
+- `montaDespesa`: validação e rateio separados do banco, usados em lançar e
+  editar, com testes.
+- `PUT` e `DELETE` em `/api/republicas/:id/despesas/:despesaId`; só quem pagou
+  (novo 403, `ErroSemPermissao`).
+- Formulário de lançar reaproveitado para editar, tela `/despesas/:id/editar`,
+  botões "Editar" e "Excluir" no detalhe com confirmação na própria tela.
+
+**Revisão humana**
+- Plano aprovado pela Thalita antes do código; ela decidiu que só quem pagou
+  edita ou exclui.
+- O texto da confirmação foi pedido dela: "Tem certeza que quer excluir esta
+  despesa? Ela sumirá da lista de despesas e do saldo dos moradores
+  envolvidos."
+- A IA não conseguiu rodar typecheck, lint nem testes (PC do trabalho sem
+  shell para a IA e sem npm no ambiente dela). A Thalita aplicou os patches,
+  rodou a migration, `prisma generate`, lint, `npm test` (51 de 51) e build, e
+  testou a tela na própria máquina: editar, excluir e os botões escondidos
+  para quem não pagou.
+
+**Observações**
+- Sem login, "quem pagou" depende de "Quem é você?": é trava de uso, não de
+  segurança.
+- A D5 (menor número de transferências) ficou fora: pela regra do próprio
+  cartão, só entraria com D1, D2 e D3 finalizadas até 27/09.
+- A B6 foi feita em cima da branch da revisão da B3 (PR #38), que mexe nos
+  mesmos arquivos; o PR da B6 mostra aqueles commits até o #38 entrar.
+- Tempo economizado ou perdido: não medido.
