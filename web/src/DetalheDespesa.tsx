@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatarData } from "./formatarData";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
@@ -102,6 +102,13 @@ export default function DetalheDespesa() {
   const [despesa, setDespesa] = useState<Detalhe | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const { moradorId } = useMoradorAtual();
+  // Tela de onde a pessoa veio (lista filtrada ou extrato). Aberto por um
+  // link colado, não há estado e o Voltar vai para a lista.
+  const origem = (useLocation().state as { voltarPara?: unknown } | null)?.voltarPara;
+  const voltarPara =
+    typeof origem === "string" && origem.startsWith("/") && !origem.startsWith("//")
+      ? origem
+      : "/despesas";
 
   useEffect(() => {
     let ativo = true;
@@ -128,7 +135,7 @@ export default function DetalheDespesa() {
 
   return (
     <>
-      <Link to="/despesas" className="voltar">
+      <Link to={voltarPara} className="voltar">
         <span aria-hidden="true">←</span> Voltar
       </Link>
       {erro ? (

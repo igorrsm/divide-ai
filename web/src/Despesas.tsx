@@ -38,7 +38,8 @@ export default function Despesas() {
   const [erro, setErro] = useState<string | null>(null);
   const foraDoAr = useApiForaDoAr();
   // Aviso deixado por outra tela, como "Despesa excluída." (B6).
-  const aviso = (useLocation().state as { aviso?: string } | null)?.aviso;
+  const local = useLocation();
+  const aviso = (local.state as { aviso?: string } | null)?.aviso;
 
   useEffect(() => {
     let ativo = true;
@@ -130,7 +131,12 @@ export default function Despesas() {
         <ul className="despesas">
           {despesas.map((despesa) => (
             <li key={despesa.id}>
-              <Link to={`/despesas/${despesa.id}`} className="cartao despesa">
+              <Link
+                to={`/despesas/${despesa.id}`}
+                // O Voltar do detalhe volta para a lista com os mesmos filtros.
+                state={{ voltarPara: local.pathname + local.search }}
+                className="cartao despesa"
+              >
                 <span className={`inicial inicial-${despesa.pagador.id % 4}`} aria-hidden="true">
                   {despesa.pagador.nome.charAt(0)}
                 </span>
