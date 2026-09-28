@@ -1,4 +1,4 @@
-import { Link, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import CriarRepublica from "./CriarRepublica";
 import Inicio from "./Inicio";
 import Despesas from "./Despesas";
@@ -11,13 +11,12 @@ import Moradores from "./Moradores";
 import NovaDespesa from "./NovaDespesa";
 import { ProvedorStatusApi } from "./StatusApi";
 import Saldos from "./Saldos";
+import Voltar from "./Voltar";
 
 function PaginaNovaDespesa() {
   return (
     <>
-      <Link to="/despesas" className="voltar">
-        <span aria-hidden="true">←</span> Voltar
-      </Link>
+      <Voltar para="/despesas" />
       <NovaDespesa />
     </>
   );

@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import ConteudoExtrato, { type DadosExtrato } from "./ConteudoExtrato";
 import { formatarMes, mesVizinho } from "./mes";
 import { useMoradorAtual } from "./MoradorAtual";
+import Voltar from "./Voltar";
 
 // Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
 const REPUBLICA_ID = 1;
@@ -55,9 +56,7 @@ export default function Extrato() {
 
   return (
     <>
-      <Link to="/despesas" className="voltar">
-        <span aria-hidden="true">←</span> Voltar
-      </Link>
+      <Voltar para="/despesas" />
       <h1>Extrato do mês</h1>
       <nav className="navegacao-mes" aria-label="Escolher o mês">
         <Link to={`?mes=${mesVizinho(mes, -1)}`} className="seta-mes" aria-label="Mês anterior">

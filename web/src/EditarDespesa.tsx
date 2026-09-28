@@ -1,8 +1,9 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useMoradorAtual } from "./MoradorAtual";
 import { formatarPercentual, type TipoDivisao } from "./divisao";
 import NovaDespesa, { centavosParaTexto, type DespesaEmEdicao } from "./NovaDespesa";
+import Voltar from "./Voltar";
 
 // Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
 const REPUBLICA_ID = 1;
@@ -94,9 +95,7 @@ export default function EditarDespesa() {
 
   return (
     <>
-      <Link to={`/despesas/${id}`} className="voltar">
-        <span aria-hidden="true">←</span> Voltar
-      </Link>
+      <Voltar para={`/despesas/${id}`} />
       {conteudo}
     </>
   );

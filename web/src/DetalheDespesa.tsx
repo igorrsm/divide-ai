@@ -4,6 +4,7 @@ import { formatarPercentual } from "./divisao";
 import { formatarData } from "./formatarData";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
+import Voltar from "./Voltar";
 
 // Fixo até a A1 (criar república) entrar. É a república criada pelo seed.
 const REPUBLICA_ID = 1;
@@ -146,9 +147,7 @@ export default function DetalheDespesa() {
 
   return (
     <>
-      <Link to={voltarPara} className="voltar">
-        <span aria-hidden="true">←</span> Voltar
-      </Link>
+      <Voltar para={voltarPara} />
       {erro ? (
         <p role="status" className="aviso aviso-erro">
           {erro}
