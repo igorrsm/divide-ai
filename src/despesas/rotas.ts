@@ -16,7 +16,7 @@ export const rotasDespesas = Router();
 
 /** República inexistente é 404, separado dos 400 de regra de negócio. */
 export async function idDaRepublica(bruto: unknown): Promise<number> {
-  const id = interpretaId(bruto, "República");
+  const id = interpretaId(bruto, "Id da república");
   if (!(await buscaRepublica(id))) {
     throw new ErroNaoEncontrado("República não encontrada.");
   }

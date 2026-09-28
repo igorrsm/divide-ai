@@ -136,7 +136,7 @@ async function exigePagador(republicaId: number, despesaId: number, moradorId: u
     select: { pagadorId: true },
   });
   if (!despesa) throw new ErroNaoEncontrado("Despesa não encontrada.");
-  if (interpretaId(moradorId, "Quem está usando o app") !== despesa.pagadorId) {
+  if (interpretaId(moradorId, "Id de quem está usando o app") !== despesa.pagadorId) {
     throw new ErroSemPermissao("Só quem pagou pode editar ou excluir esta despesa.");
   }
 }
