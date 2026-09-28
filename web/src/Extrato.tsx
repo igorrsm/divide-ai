@@ -55,6 +55,9 @@ export default function Extrato() {
 
   return (
     <>
+      <Link to="/despesas" className="voltar">
+        <span aria-hidden="true">←</span> Voltar
+      </Link>
       <h1>Extrato do mês</h1>
       <nav className="navegacao-mes" aria-label="Escolher o mês">
         <Link to={`?mes=${mesVizinho(mes, -1)}`} className="seta-mes" aria-label="Mês anterior">
