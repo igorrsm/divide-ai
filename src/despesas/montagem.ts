@@ -67,6 +67,10 @@ function interpretaPartes(bruto: unknown, participantesIds: number[]): Map<numbe
     if (!participantesIds.includes(id)) {
       throw new ErroDeValidacao(`O morador ${id} não está marcado para participar.`);
     }
+    // Recusa em vez de ficar com a última, como interpretaParticipantes faz.
+    if (partes.has(id)) {
+      throw new ErroDeValidacao(`A parte do morador ${id} veio repetida.`);
+    }
     partes.set(id, comoTexto(valor, "A parte de cada participante"));
   }
   const faltando = participantesIds.find((id) => !partes.has(id));
