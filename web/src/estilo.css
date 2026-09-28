@@ -797,6 +797,15 @@ a {
   background: var(--cor-destaque-clara);
 }
 
+.calendario-dia:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.calendario-dia:disabled:hover {
+  background: none;
+}
+
 .calendario-hoje {
   border-color: var(--cor-tinta);
 }
