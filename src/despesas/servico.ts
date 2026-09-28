@@ -1,35 +1,7 @@
 import { prisma } from "../db";
-import { ErroDeValidacao, ErroNaoEncontrado } from "../erros";
+import { ErroNaoEncontrado } from "../erros";
 import { diaDa } from "./dia";
-import { ratearIgualmente } from "./rateio";
-import {
-  interpretaData,
-  interpretaDescricao,
-  interpretaId,
-  interpretaParticipantes,
-  reaisParaCentavos,
-} from "./validacao";
-
-export type EntradaNovaDespesa = {
-  descricao?: unknown;
-  valor?: unknown;
-  data?: unknown;
-  pagadorId?: unknown;
-  /** Quem participa do rateio (B4). Ausente significa todos os moradores. */
-  participantesIds?: unknown;
-};
-
-/**
- * Aceita texto e número. Número é convertido pela representação curta do
- * JavaScript, então 19.99 vira "19.99"; um float sujo como 0.30000000000000004
- * não casa com o padrão de valor e é recusado em vez de arredondado em
- * silêncio.
- */
-function comoTexto(valor: unknown, campo: string): string {
-  if (typeof valor === "string") return valor;
-  if (typeof valor === "number" && Number.isFinite(valor)) return String(valor);
-  throw new ErroDeValidacao(`${campo} é obrigatório.`);
-}
+import { montaDespesa, type EntradaDespesa } from "./montagem";
 
 export function buscaRepublica(id: number) {
   return prisma.republica.findUnique({ where: { id } });
@@ -103,36 +75,25 @@ export function listaMoradores(republicaId: number) {
  */
 export async function criarDespesa(
   republicaId: number,
-  entrada: EntradaNovaDespesa,
+  entrada: EntradaDespesa,
   hoje: Date = new Date(),
 ) {
-  const descricao = interpretaDescricao(comoTexto(entrada.descricao, "Descrição"));
-  const valorCentavos = reaisParaCentavos(comoTexto(entrada.valor, "Valor"));
-  const data = interpretaData(comoTexto(entrada.data, "Data"), hoje);
-  const pagadorId = interpretaId(entrada.pagadorId, "Quem pagou");
-
   // Uma consulta só: serve para validar quem pagou e os participantes.
   const moradores = await prisma.morador.findMany({
     where: { republicaId },
     select: { id: true },
     orderBy: { id: "asc" },
   });
-  const idsDaCasa = moradores.map((morador) => morador.id);
-  // Precisa ser morador desta república, não de outra.
-  if (!idsDaCasa.includes(pagadorId)) {
-    throw new ErroDeValidacao("Quem pagou precisa ser um morador desta república.");
-  }
-
-  const participantesIds = interpretaParticipantes(entrada.participantesIds, idsDaCasa);
-  const participacoes = ratearIgualmente(valorCentavos, participantesIds, pagadorId);
+  const { participacoes, ...campos } = montaDespesa(
+    entrada,
+    moradores.map((morador) => morador.id),
+    hoje,
+  );
 
   return prisma.despesa.create({
     data: {
-      descricao,
-      valorCentavos,
-      data,
+      ...campos,
       republicaId,
-      pagadorId,
       tipoDivisao: "IGUAL",
       participacoes: { create: participacoes },
     },
