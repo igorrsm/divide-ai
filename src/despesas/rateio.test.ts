@@ -27,6 +27,18 @@ describe("ratearIgualmente", () => {
     assert.deepEqual(valores(10000, CASA, CARLA), [3333, 3333, 3334]);
   });
 
+  it("desmarcar um morador redistribui o valor entre os restantes", () => {
+    // O critério 2 da B4: os mesmos R$ 100,00, com menos gente participando.
+    assert.deepEqual(valores(10000, CASA, ANA), [3334, 3333, 3333]);
+    assert.deepEqual(valores(10000, [ANA, BRUNO], ANA), [5000, 5000]);
+    assert.deepEqual(valores(10000, [ANA], ANA), [10000]);
+    // E quem saiu do rateio não recebe participação nenhuma.
+    assert.deepEqual(
+      ratearIgualmente(10000, [ANA, BRUNO], ANA).map((p) => p.moradorId),
+      [ANA, BRUNO],
+    );
+  });
+
   it("divisão exata não deixa sobra", () => {
     assert.deepEqual(valores(240000, CASA, ANA), [80000, 80000, 80000]);
     assert.deepEqual(valores(15000, [BRUNO, CARLA], BRUNO), [7500, 7500]);

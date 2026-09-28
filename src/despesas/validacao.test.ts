@@ -5,6 +5,7 @@ import {
   interpretaData,
   interpretaDescricao,
   interpretaId,
+  interpretaParticipantes,
   reaisParaCentavos,
 } from "./validacao";
 
@@ -89,5 +90,51 @@ describe("interpretaId", () => {
     assert.throws(() => interpretaId("0", "Morador"), ErroDeValidacao);
     assert.throws(() => interpretaId("1.5", "Morador"), ErroDeValidacao);
     assert.throws(() => interpretaId("abc", "Morador"), ErroDeValidacao);
+  });
+});
+
+describe("interpretaParticipantes", () => {
+  const CASA = [1, 2, 3];
+
+  it("campo ausente significa todos os moradores", () => {
+    assert.deepEqual(interpretaParticipantes(undefined, CASA), CASA);
+    assert.deepEqual(interpretaParticipantes(null, CASA), CASA);
+  });
+
+  it("aceita um subconjunto da casa", () => {
+    assert.deepEqual(interpretaParticipantes([1, 3], CASA), [1, 3]);
+    assert.deepEqual(interpretaParticipantes([2], CASA), [2]);
+  });
+
+  it("devolve na ordem da casa, não na ordem recebida", () => {
+    // O rateio decide o dono da sobra pelo menor id; a ordem não pode depender
+    // de como o cliente montou a lista.
+    assert.deepEqual(interpretaParticipantes([3, 1, 2], CASA), [1, 2, 3]);
+  });
+
+  it("aceita id vindo como texto do formulário", () => {
+    assert.deepEqual(interpretaParticipantes(["2", "3"], CASA), [2, 3]);
+  });
+
+  it("id repetido não duplica participante", () => {
+    assert.deepEqual(interpretaParticipantes([2, 2, 3], CASA), [2, 3]);
+  });
+
+  it("recusa lista vazia", () => {
+    assert.throws(() => interpretaParticipantes([], CASA), ErroDeValidacao);
+  });
+
+  it("recusa quem não é morador desta casa", () => {
+    assert.throws(() => interpretaParticipantes([1, 99], CASA), ErroDeValidacao);
+  });
+
+  it("recusa o que não é lista", () => {
+    assert.throws(() => interpretaParticipantes("1,2", CASA), ErroDeValidacao);
+    assert.throws(() => interpretaParticipantes(2, CASA), ErroDeValidacao);
+  });
+
+  it("recusa id que não é inteiro positivo", () => {
+    assert.throws(() => interpretaParticipantes(["abc"], CASA), ErroDeValidacao);
+    assert.throws(() => interpretaParticipantes([0], CASA), ErroDeValidacao);
   });
 });
