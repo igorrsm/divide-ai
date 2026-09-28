@@ -1109,3 +1109,32 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
 - Issue #41. Feita em cima da branch da B6 (PR #40), por causa do filtro
   `excluidaEm`.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Filtros da lista de despesas (E2)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- Implementar a E2 (#43), puxada do Backlog pela Thalita depois da E1. O
+  cartão não tinha critérios; a IA propôs e a Thalita aprovou. O filtro por
+  categoria ficou fora, porque a categoria saiu do TP1.
+
+**O que a IA produziu**
+- `interpretaFiltros` (com testes): de, até (inclusive, aceita futuro) e
+  morador; início depois do fim e morador de outra casa dão 400.
+- `GET /api/republicas/:id/despesas` com `?de`, `?ate` e `?moradorId`; sem
+  parâmetros, a lista da B3 continua igual.
+- Tela: botão "Filtrar" com a contagem de filtros ativos, `CartaoFiltros`
+  (De, Até, Morador, "Aplicar" e "Limpar filtros"), filtros na URL, resumo
+  "N despesas · R$ X" e "Nenhuma despesa com esses filtros.".
+
+**Revisão humana**
+- Plano e critérios aprovados pela Thalita antes do código. Ela decidiu que o
+  filtro de morador mostra o que ele pagou ou do que participa.
+- A IA rodou os testes puros com o Node do ambiente dela e checou os tipos
+  dos arquivos novos; lint, build e a tela ficam com a Thalita.
+
+**Observações**
+- Feita em cima da branch da E1 (PR #42), porque as duas mexem em
+  `Despesas.tsx`.
+- Tempo economizado ou perdido: não medido.
