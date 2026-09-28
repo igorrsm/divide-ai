@@ -2,6 +2,7 @@ import { Link, Route, Routes } from "react-router-dom";
 import CriarRepublica from "./CriarRepublica";
 import Inicio from "./Inicio";
 import Despesas from "./Despesas";
+import DetalheDespesa from "./DetalheDespesa";
 import Layout from "./Layout";
 import { ProvedorMoradorAtual } from "./MoradorAtual";
 import Moradores from "./Moradores";
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/" element={<Inicio />} />
         <Route path="/despesas" element={<Despesas />} />
         <Route path="/despesas/nova" element={<PaginaNovaDespesa />} />
+        <Route path="/despesas/:id" element={<DetalheDespesa />} />
         <Route path="/saldos" element={<Saldos />} />
         <Route path="/moradores" element={<Moradores />} />
         <Route path="/republicas/nova" element={<CriarRepublica />} />
