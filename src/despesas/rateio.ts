@@ -1,6 +1,11 @@
 import { ErroDeValidacao } from "../erros";
 
-export type ParticipacaoRateada = { moradorId: number; valorCentavos: number };
+export type ParticipacaoRateada = {
+  moradorId: number;
+  valorCentavos: number;
+  /** Só na divisão por percentual (B5): 33,33% é 3333. */
+  percentualCentesimos?: number;
+};
 
 /**
  * Divide o valor igualmente entre os participantes, em centavos inteiros.
