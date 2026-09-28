@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import Acertos from "./Acertos";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
 import { useRepublicaAtual } from "./RepublicaAtual";
@@ -132,6 +133,7 @@ export default function Saldos() {
           );
         })}
       </ul>
+      <Acertos />
     </>
   );
 }
