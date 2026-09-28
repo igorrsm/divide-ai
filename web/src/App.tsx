@@ -1,4 +1,5 @@
-import { Link, Route, Routes } from "react-router-dom";
+import type { ReactNode } from "react";
+import { Route, Routes } from "react-router-dom";
 import CriarRepublica from "./CriarRepublica";
 import Inicio from "./Inicio";
 import Despesas from "./Despesas";
@@ -11,13 +12,22 @@ import Moradores from "./Moradores";
 import NovaDespesa from "./NovaDespesa";
 import { ProvedorStatusApi } from "./StatusApi";
 import Saldos from "./Saldos";
+import Voltar from "./Voltar";
+
+/** Telas do menu e Criar república: o Voltar leva para a tela inicial. */
+function TelaPrincipal({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <Voltar para="/" />
+      {children}
+    </>
+  );
+}
 
 function PaginaNovaDespesa() {
   return (
     <>
-      <Link to="/despesas" className="voltar">
-        <span aria-hidden="true">←</span> Voltar
-      </Link>
+      <Voltar para="/despesas" />
       <NovaDespesa />
     </>
   );
@@ -36,14 +46,14 @@ export default function App() {
         }
       >
         <Route path="/" element={<Inicio />} />
-        <Route path="/despesas" element={<Despesas />} />
+        <Route path="/despesas" element={<TelaPrincipal><Despesas /></TelaPrincipal>} />
         <Route path="/despesas/nova" element={<PaginaNovaDespesa />} />
         <Route path="/despesas/:id" element={<DetalheDespesa />} />
         <Route path="/extrato" element={<Extrato />} />
         <Route path="/despesas/:id/editar" element={<EditarDespesa />} />
-        <Route path="/saldos" element={<Saldos />} />
-        <Route path="/moradores" element={<Moradores />} />
-        <Route path="/republicas/nova" element={<CriarRepublica />} />
+        <Route path="/saldos" element={<TelaPrincipal><Saldos /></TelaPrincipal>} />
+        <Route path="/moradores" element={<TelaPrincipal><Moradores /></TelaPrincipal>} />
+        <Route path="/republicas/nova" element={<TelaPrincipal><CriarRepublica /></TelaPrincipal>} />
       </Route>
     </Routes>
   );
