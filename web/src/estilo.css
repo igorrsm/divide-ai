@@ -522,3 +522,48 @@ a {
 .rateio-eu:hover {
   background: var(--cor-destaque);
 }
+
+/* Escolha de quem participa da despesa (B4). */
+.participantes {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.participantes legend {
+  padding: 0;
+  font-weight: 700;
+}
+
+.participantes-resumo {
+  margin: 4px 0 10px;
+  font-size: 13px;
+}
+
+.participantes-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.participante {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+/* Fora de .campo de propósito: lá a regra dá largura total e 48 px de altura
+   a qualquer campo, o que deformaria a caixa de seleção. */
+.participante input {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  accent-color: var(--cor-tinta);
+  cursor: pointer;
+}

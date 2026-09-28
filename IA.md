@@ -928,3 +928,74 @@ projeto e ao navegador do app.
 - A Thalita perguntou por que o mercado do seed é dividido entre dois: vem do
   seed; pela tela, escolher participantes é a B4 (Lucas, #28).
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Lucas — Escolher quem participa (B4) e revisão do PR #36
+
+Sessão no Claude Code, em WSL/Ubuntu: atualização para a `main`, revisão do PR
+#36 da Thalita (B3) e a história B4.
+
+**Pedido à IA**
+- Revisar o PR #36 e deixar comentário; depois aprovar e mesclar.
+- Atualizar os arquivos locais para a `main`.
+- Implementar a B4, com plano antes do código.
+
+**O que a IA produziu**
+- Revisão do #36 numa cópia separada da branch (`git worktree`), com banco
+  próprio: lint, typecheck, build, os 33 testes, tamanho dos commits,
+  integridade do `IA.md` e as duas rotas novas testadas por `curl`.
+- `interpretaParticipantes` em `src/despesas/validacao.ts` e dez testes dela.
+- Serviço rateando só entre os escolhidos, sem forçar quem pagou no rateio.
+- Escolha de participantes no formulário, com os estilos, e o `CLAUDE.md`.
+
+**Revisão humana**
+- Avaliação do Lucas: usar a IA para analisar e aprovar pull request rendeu bem.
+  O ganho maior foi ela propor e rodar os testes por conta própria, sem precisar
+  pedir. Na revisão do #36 rodou a suíte inteira, que a IA da Thalita não tinha
+  conseguido executar por causa de um binário de Windows, e ainda testou as duas
+  rotas novas por `curl`, incluindo casos que o PR afirmava mas ninguém tinha
+  comprovado, como o isolamento entre repúblicas. Na B4 apontou que dois dos
+  seis critérios já tinham teste desde a B2, em vez de escrever de novo. Isso
+  encurta a revisão e deixa rastro do que foi de fato verificado.
+- A decisão de não mostrar prévia do rateio na tela foi do Lucas, entre três
+  alternativas: sem prévia, prévia com lógica duplicada no front, ou prévia por
+  uma rota nova. Escolhida a primeira, para a regra da sobra existir num lugar
+  só.
+- Pendente: ninguém abriu a tela da B4 ainda. A IA exercitou o fluxo por `curl`
+  pelo proxy do Vite, com o mesmo formato que o formulário envia, mas não viu as
+  caixas de seleção renderizadas.
+
+**Observações**
+- Dois dos seis critérios (a sobra com quem pagou participando, e a sobra maior
+  que 1 centavo indo para o menor id quando ele não participa) já estavam
+  cobertos por testes desde a B2. A IA apontou isso em vez de duplicar.
+- Achado antes de escrever CSS: a regra `.campo input` dá largura total e 48 px
+  de altura a qualquer campo, o que deformaria a caixa de seleção. Os
+  participantes ficaram fora de `.campo` por causa disso, com comentário no
+  arquivo.
+- Decisão de implementação: o estado guarda quem foi **desmarcado**, não quem
+  está marcado. A lista de moradores chega de forma assíncrona do contexto, e
+  guardar os marcados exigiria sincronizar estado quando ela chegasse.
+- Decisão de produto: depois de lançar, a escolha volta para todos. Deixar uma
+  exclusão valendo para a próxima despesa é erro difícil de notar.
+- Limite do teste de rede: o critério da sobra maior que 1 centavo com o pagador
+  fora é impossível numa casa de três, porque exige três participantes mais um
+  pagador. Foi preciso criar um quarto morador temporário para provar pela API,
+  e o seed foi reposto depois. O teste de unidade já cobria o caso.
+- Na revisão do #36, a IA levantou um bug (o efeito da lista sem dependência de
+  `foraDoAr`, diferente do padrão do `MoradorAtual`) e o descartou ao verificar:
+  o `Layout` redireciona para `/` com a API fora, então a situação não é
+  alcançável. Ficou registrado no comentário do PR para ninguém repetir a
+  análise.
+- A aprovação do #36 saiu com ressalva explícita: as verificações foram rodadas
+  por IA, não pelo revisor, e ninguém abriu a tela. A IA se recusou a marcar o
+  item do DoD como cumprido.
+- Efeito colateral de uma sessão anterior, resolvido: o `skills-lock.json`
+  tinha ficado como arquivo solto no diretório e bloqueou o avanço para a
+  `main`, que passou a versioná-lo. Os dois eram idênticos byte a byte; a cópia
+  solta foi removida.
+- Conferência que virou hábito: ao dizer que os arquivos locais estavam
+  atualizados, a IA checou o reflog em vez de aceitar, e mostrou que o
+  diretório continuava 28 commits atrás.
+- Sem cobertura automatizada: o serviço (que toca o banco) e o componente React
+  continuam sem teste. Só as funções puras têm.
+- Tempo economizado ou perdido: não medido.

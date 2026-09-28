@@ -83,3 +83,32 @@ export function interpretaId(entrada: unknown, campo: string): number {
   }
   return id;
 }
+
+/**
+ * Quais moradores participam da despesa (B4).
+ *
+ * Campo ausente significa todos, o que preserva o comportamento da B2 para quem
+ * chama a API sem escolher. Lista vazia é recusada: despesa sem participante não
+ * tem rateio possível. Id que não é morador desta casa é recusado em vez de
+ * ignorado, para um erro de digitação não virar despesa dividida errado.
+ *
+ * Devolve na ordem da casa, não na ordem recebida, para o rateio não depender de
+ * como o cliente montou a lista.
+ */
+export function interpretaParticipantes(bruto: unknown, idsDaCasa: number[]): number[] {
+  if (bruto === undefined || bruto === null) return idsDaCasa;
+  if (!Array.isArray(bruto)) {
+    throw new ErroDeValidacao("Participantes devem vir numa lista.");
+  }
+  if (bruto.length === 0) {
+    throw new ErroDeValidacao("Escolha ao menos um morador para dividir a despesa.");
+  }
+
+  const escolhidos = new Set(bruto.map((id) => interpretaId(id, "Participante")));
+  for (const id of escolhidos) {
+    if (!idsDaCasa.includes(id)) {
+      throw new ErroDeValidacao(`O participante ${id} não é morador desta república.`);
+    }
+  }
+  return idsDaCasa.filter((id) => escolhidos.has(id));
+}

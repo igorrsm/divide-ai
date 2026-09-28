@@ -5,6 +5,7 @@ import {
   interpretaData,
   interpretaDescricao,
   interpretaId,
+  interpretaParticipantes,
   reaisParaCentavos,
 } from "./validacao";
 
@@ -13,6 +14,8 @@ export type EntradaNovaDespesa = {
   valor?: unknown;
   data?: unknown;
   pagadorId?: unknown;
+  /** Quem participa do rateio (B4). Ausente significa todos os moradores. */
+  participantesIds?: unknown;
 };
 
 /**
@@ -90,14 +93,19 @@ export function listaMoradores(republicaId: number) {
 }
 
 /**
- * Cria a despesa rateada igualmente entre todos os moradores da república.
- * Quem pagou também participa, e a sobra de centavos fica com ele.
+ * Cria a despesa rateada igualmente entre os participantes escolhidos (B4).
+ * Sem escolha, participam todos os moradores da república.
+ *
+ * Quem pagou não é forçado dentro do rateio: dá para lançar uma despesa que
+ * alguém pagou para os outros. Quando ele participa, a sobra de centavos fica
+ * com ele; quando não, vai para o participante de menor id. Quem não participa
+ * nunca ganha participação.
  *
  * A despesa e as participações entram na mesma operação aninhada, que o Prisma
  * resolve em transação: não fica despesa gravada sem rateio se algo falhar no
  * meio.
  *
- * Escolher quem participa é a B4; dividir por valor ou percentual, a B5.
+ * Dividir por valor ou percentual é a B5.
  */
 export async function criarDespesa(
   republicaId: number,
@@ -109,22 +117,20 @@ export async function criarDespesa(
   const data = interpretaData(comoTexto(entrada.data, "Data"), hoje);
   const pagadorId = interpretaId(entrada.pagadorId, "Quem pagou");
 
-  // Uma consulta só: serve para validar quem pagou e para montar o rateio.
+  // Uma consulta só: serve para validar quem pagou e os participantes.
   const moradores = await prisma.morador.findMany({
     where: { republicaId },
     select: { id: true },
     orderBy: { id: "asc" },
   });
+  const idsDaCasa = moradores.map((morador) => morador.id);
   // Precisa ser morador desta república, não de outra.
-  if (!moradores.some((morador) => morador.id === pagadorId)) {
+  if (!idsDaCasa.includes(pagadorId)) {
     throw new ErroDeValidacao("Quem pagou precisa ser um morador desta república.");
   }
 
-  const participacoes = ratearIgualmente(
-    valorCentavos,
-    moradores.map((morador) => morador.id),
-    pagadorId,
-  );
+  const participantesIds = interpretaParticipantes(entrada.participantesIds, idsDaCasa);
+  const participacoes = ratearIgualmente(valorCentavos, participantesIds, pagadorId);
 
   return prisma.despesa.create({
     data: {
