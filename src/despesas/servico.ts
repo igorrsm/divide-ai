@@ -77,7 +77,8 @@ export async function buscaDespesa(republicaId: number, despesaId: number) {
 export function listaMoradores(republicaId: number) {
   return prisma.morador.findMany({
     where: { republicaId },
-    select: { id: true, nome: true },
+    // E-mail e organizador servem à tela de moradores (A2).
+    select: { id: true, nome: true, email: true, organizador: true },
     orderBy: { nome: "asc" },
   });
 }
