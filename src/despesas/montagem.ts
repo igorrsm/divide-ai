@@ -89,7 +89,7 @@ export function montaDespesa(
   const descricao = interpretaDescricao(comoTexto(entrada.descricao, "Descrição"));
   const valorCentavos = reaisParaCentavos(comoTexto(entrada.valor, "Valor"));
   const data = interpretaData(comoTexto(entrada.data, "Data"), hoje);
-  const pagadorId = interpretaId(entrada.pagadorId, "Quem pagou");
+  const pagadorId = interpretaId(entrada.pagadorId, "Id de quem pagou");
   // Precisa ser morador desta república, não de outra.
   if (!idsDaCasa.includes(pagadorId)) {
     throw new ErroDeValidacao("Quem pagou precisa ser um morador desta república.");

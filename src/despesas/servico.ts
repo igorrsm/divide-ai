@@ -1,5 +1,5 @@
 import { prisma } from "../db";
-import { ErroNaoEncontrado, ErroSemPermissao } from "../erros";
+import { ErroDeValidacao, ErroNaoEncontrado, ErroSemPermissao } from "../erros";
 import { DESPESA_ATIVA } from "./ativa";
 import { diaDa } from "./dia";
 import type { FiltrosDespesas } from "./filtros";
@@ -139,6 +139,10 @@ async function exigePagador(republicaId: number, despesaId: number, moradorId: u
     select: { pagadorId: true },
   });
   if (!despesa) throw new ErroNaoEncontrado("Despesa não encontrada.");
+  // Sem o campo, a pessoa não escolheu quem é: a frase diz o que fazer.
+  if (moradorId === undefined || moradorId === null || moradorId === "") {
+    throw new ErroDeValidacao('Escolha quem você é em "Quem é você?" antes de editar ou excluir.');
+  }
   if (interpretaId(moradorId, "Id de quem está usando o app") !== despesa.pagadorId) {
     throw new ErroSemPermissao("Só quem pagou pode editar ou excluir esta despesa.");
   }
