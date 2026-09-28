@@ -904,6 +904,9 @@ projeto e ao navegador do app.
   mostrar o dia anterior.
 - A pedido da Thalita, o "Voltar" virou um botão em pílula "← Voltar", no
   detalhe e no formulário de lançar despesa.
+- A pedido da Thalita, no detalhe, a linha do rateio de quem está usando o
+  app (escolhido em "Quem é você?") leva para Saldos; as dos outros
+  moradores não são clicáveis. Ela testou antes do commit.
 
 **Revisão humana**
 - Plano aprovado pela Thalita antes do código; ela esperou a B2 do Lucas.
@@ -920,6 +923,8 @@ projeto e ao navegador do app.
   remoção da página provisória do App.tsx passaria de 100 linhas.
 - Sem teste automatizado nas rotas, que acessam o banco, como as demais.
 - O total do mês ("Total da casa" do protótipo) é da E1 e ficou fora.
+- O Igor pediu para segurar o escopo no fim do sprint; os dois ajustes pedidos
+  pela Thalita são pequenos e ficam dentro da própria B3.
 - A Thalita perguntou por que o mercado do seed é dividido entre dois: vem do
   seed; pela tela, escolher participantes é a B4 (Lucas, #28).
 - Tempo economizado ou perdido: não medido.
