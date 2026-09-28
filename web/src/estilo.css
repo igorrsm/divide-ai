@@ -203,6 +203,11 @@ a {
   background: var(--cor-fundo-ok);
 }
 
+/* Alerta que não impede de seguir, como o valor acima da dívida (D3). */
+.aviso-alerta {
+  background: var(--cor-destaque-clara);
+}
+
 /* Tela inicial: apresentação e atalhos em cartão (2 colunas em tela larga). */
 .apresentacao {
   margin: 0 0 20px;
@@ -851,4 +856,35 @@ a {
 
 .conta-divisao.fecha {
   background: var(--cor-fundo-ok);
+}
+
+/* Acertos registrados (D3), embaixo do painel de saldos. */
+.botao-pagamento {
+  margin-bottom: 20px;
+}
+
+.acertos {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.acerto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.acerto small {
+  display: block;
+  font-size: 13px;
+}
+
+.acerto strong {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
