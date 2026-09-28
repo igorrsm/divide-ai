@@ -9,6 +9,7 @@ import {
   listaDespesas,
   listaMoradores,
 } from "./servico";
+import { interpretaFiltros } from "./filtros";
 import { interpretaId } from "./validacao";
 
 export const rotasDespesas = Router();
@@ -28,10 +29,12 @@ rotasDespesas.get("/republicas/:republicaId/moradores", async (req, res) => {
   res.json(await listaMoradores(republicaId));
 });
 
-// Alimenta a lista de despesas (B3).
+// Alimenta a lista de despesas (B3), com ?de, ?ate e ?moradorId opcionais (E2).
 rotasDespesas.get("/republicas/:republicaId/despesas", async (req, res) => {
   const republicaId = await idDaRepublica(req.params.republicaId);
-  res.json(await listaDespesas(republicaId));
+  const idsDaCasa = (await listaMoradores(republicaId)).map((morador) => morador.id);
+  const filtros = interpretaFiltros(req.query, idsDaCasa);
+  res.json(await listaDespesas(republicaId, filtros));
 });
 
 // Detalhe com o rateio por morador (B3).
