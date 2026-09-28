@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { formatarData } from "./formatarData";
 import { formatarReais } from "./formatarReais";
 import { useApiForaDoAr } from "./StatusApi";
@@ -21,6 +21,8 @@ export default function Despesas() {
   const [despesas, setDespesas] = useState<ItemDespesa[] | null>(null);
   const [erro, setErro] = useState(false);
   const foraDoAr = useApiForaDoAr();
+  // Aviso deixado por outra tela, como "Despesa excluída." (B6).
+  const aviso = (useLocation().state as { aviso?: string } | null)?.aviso;
 
   useEffect(() => {
     let ativo = true;
@@ -51,6 +53,12 @@ export default function Despesas() {
         <Link to="/despesas/nova" className="botao-principal">
           Lançar despesa
         </Link>
+      )}
+
+      {aviso && (
+        <p role="status" className="aviso aviso-ok">
+          {aviso}
+        </p>
       )}
 
       {erro ? (

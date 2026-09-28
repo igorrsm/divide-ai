@@ -577,3 +577,55 @@ a {
   accent-color: var(--cor-tinta);
   cursor: pointer;
 }
+
+/* Editar e excluir no detalhe da despesa (B6). */
+.acoes-despesa {
+  margin-top: 24px;
+}
+
+.acoes-botoes {
+  display: flex;
+  gap: 10px;
+}
+
+.botao-secundario {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 16px;
+  border: var(--borda);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+  color: var(--cor-tinta);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.botao-secundario:hover {
+  background: var(--cor-destaque-clara);
+}
+
+.botao-secundario:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.botao-perigo {
+  color: var(--cor-pagar);
+}
+
+.confirmacao {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--cor-fundo-pagar);
+}
+
+.confirmacao p {
+  margin: 0;
+  font-weight: 700;
+}

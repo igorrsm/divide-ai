@@ -43,6 +43,9 @@ model Despesa {
   data          DateTime
   tipoDivisao   TipoDivisao @default(IGUAL)
   criadaEm      DateTime    @default(now())
+  /// Exclusão lógica (B6): preenchida quando a despesa é excluída. A linha
+  /// continua no banco para não furar o histórico; some da lista e do saldo.
+  excluidaEm    DateTime?
 
   republicaId Int
   republica   Republica @relation(fields: [republicaId], references: [id])

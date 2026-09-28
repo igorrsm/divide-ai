@@ -4,6 +4,8 @@ import {
   buscaDespesa,
   buscaRepublica,
   criarDespesa,
+  editarDespesa,
+  excluirDespesa,
   listaDespesas,
   listaMoradores,
 } from "./servico";
@@ -43,4 +45,18 @@ rotasDespesas.post("/republicas/:republicaId/despesas", async (req, res) => {
   const republicaId = await idDaRepublica(req.params.republicaId);
   const despesa = await criarDespesa(republicaId, req.body ?? {});
   res.status(201).json(despesa);
+});
+
+// Editar e excluir (B6): só quem pagou, informado em moradorId no corpo.
+rotasDespesas.put("/republicas/:republicaId/despesas/:despesaId", async (req, res) => {
+  const republicaId = await idDaRepublica(req.params.republicaId);
+  const despesaId = interpretaId(req.params.despesaId, "Id da despesa");
+  res.json(await editarDespesa(republicaId, despesaId, req.body ?? {}));
+});
+
+rotasDespesas.delete("/republicas/:republicaId/despesas/:despesaId", async (req, res) => {
+  const republicaId = await idDaRepublica(req.params.republicaId);
+  const despesaId = interpretaId(req.params.despesaId, "Id da despesa");
+  await excluirDespesa(republicaId, despesaId, req.body?.moradorId);
+  res.status(204).end();
 });
