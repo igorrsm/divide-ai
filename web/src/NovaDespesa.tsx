@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
 import { useApiForaDoAr } from "./StatusApi";
@@ -13,19 +14,42 @@ type Rateio = {
   participacoes: { moradorId: number; valorCentavos: number }[];
 };
 
+/** Uma despesa já lançada, para o formulário abrir preenchido (B6). */
+export type DespesaEmEdicao = {
+  id: number;
+  descricao: string;
+  valorCentavos: number;
+  data: string;
+  pagadorId: number;
+  participantesIds: number[];
+};
+
+/** 12345 centavos vira "123,45", no formato que o campo de valor aceita. */
+function centavosParaTexto(centavos: number): string {
+  return `${Math.floor(centavos / 100)},${String(centavos % 100).padStart(2, "0")}`;
+}
+
 /** Hoje no fuso de quem está usando, no formato que o input date espera. */
 function hoje(): string {
   return new Date().toLocaleDateString("en-CA");
 }
 
-export default function NovaDespesa() {
-  const [descricao, setDescricao] = useState("");
-  const [valor, setValor] = useState("");
-  const [data, setData] = useState(hoje());
+/**
+ * Formulário de lançar despesa. Com `edicao`, abre preenchido e salva com PUT
+ * em vez de criar (B6); quem chama só o renderiza depois de os moradores
+ * carregarem, para os participantes começarem certos.
+ */
+export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
+  const navigate = useNavigate();
+  const [descricao, setDescricao] = useState(edicao?.descricao ?? "");
+  const [valor, setValor] = useState(edicao ? centavosParaTexto(edicao.valorCentavos) : "");
+  const [data, setData] = useState(edicao?.data ?? hoje());
   // A lista vem do useMoradorAtual (A3), sem buscar a rota de novo.
   // "Quem pagou" começa com quem foi escolhido em "Quem é você?".
   const { moradores, moradorId, erro: erroMoradores } = useMoradorAtual();
-  const [pagadorEscolhido, setPagadorId] = useState(moradorId ? String(moradorId) : "");
+  const [pagadorEscolhido, setPagadorId] = useState(
+    edicao ? String(edicao.pagadorId) : moradorId ? String(moradorId) : "",
+  );
   // Se o escolhido não está na lista, vale o primeiro morador.
   const pagadorId = moradores.some((m) => String(m.id) === pagadorEscolhido)
     ? pagadorEscolhido
@@ -33,7 +57,14 @@ export default function NovaDespesa() {
   // Guarda quem foi desmarcado, não quem está marcado: assim todo morador
   // nasce participando, sem precisar sincronizar estado com a lista que chega
   // de forma assíncrona do contexto.
-  const [desmarcados, setDesmarcados] = useState<Set<number>>(new Set());
+  const [desmarcados, setDesmarcados] = useState<Set<number>>(
+    () =>
+      new Set(
+        edicao
+          ? moradores.filter((m) => !edicao.participantesIds.includes(m.id)).map((m) => m.id)
+          : [],
+      ),
+  );
   const participantesIds = moradores
     .filter((morador) => !desmarcados.has(morador.id))
     .map((morador) => morador.id);
@@ -62,12 +93,18 @@ export default function NovaDespesa() {
     setRateio(null);
     setEnviando(true);
     try {
-      const resposta = await fetch(`/api/republicas/${REPUBLICA_ID}/despesas`, {
-        method: "POST",
+      const url = `/api/republicas/${REPUBLICA_ID}/despesas${edicao ? `/${edicao.id}` : ""}`;
+      const resposta = await fetch(url, {
+        method: edicao ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ descricao, valor, data, pagadorId, participantesIds }),
+        // Na edição, moradorId diz quem está usando o app: só quem pagou edita.
+        body: JSON.stringify({ descricao, valor, data, pagadorId, participantesIds, moradorId }),
       });
       const corpo = await resposta.json();
+      if (edicao && resposta.ok) {
+        navigate(`/despesas/${edicao.id}`);
+        return;
+      }
       if (!resposta.ok) {
         setAviso({ tipo: "erro", texto: corpo.erro ?? "Não foi possível lançar a despesa." });
         return;
@@ -88,7 +125,7 @@ export default function NovaDespesa() {
 
   return (
     <form onSubmit={enviar} className="formulario">
-      <h2>Nova despesa</h2>
+      <h2>{edicao ? "Editar despesa" : "Nova despesa"}</h2>
 
       <label className="campo">
         Descrição
@@ -172,7 +209,15 @@ export default function NovaDespesa() {
         disabled={enviando || foraDoAr || participantesIds.length === 0}
         className="botao-principal"
       >
-        {foraDoAr ? "Servidor indisponível" : enviando ? "Lançando..." : "Lançar despesa"}
+        {foraDoAr
+          ? "Servidor indisponível"
+          : edicao
+            ? enviando
+              ? "Salvando..."
+              : "Salvar alterações"
+            : enviando
+              ? "Lançando..."
+              : "Lançar despesa"}
       </button>
 
       {/* Com a API fora do ar, o aviso do topo já explica o erro. */}
