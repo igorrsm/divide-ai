@@ -54,7 +54,7 @@ export default function Despesas() {
           Lançar despesa
         </Link>
       )}
-      <Link to="/extrato" className="botao-secundario link-extrato">
+      <Link to="/extrato" className="botao-principal link-extrato">
         Ver extrato do mês
       </Link>
 
