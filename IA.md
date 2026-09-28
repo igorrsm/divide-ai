@@ -1097,7 +1097,15 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
 - A IA rodou os testes puros (cálculo, mês e `web/src/mes.ts`) com o Node do
   ambiente dela e checou os tipos dos arquivos novos; não conseguiu rodar
   lint, build nem a tela (sem as dependências do projeto).
+- A Thalita aplicou os patches no PC dela, rodou lint (sem avisos),
+  `npm test` (64 de 64) e build, e testou a tela na própria máquina: meses,
+  total, "A pagar" e "Pago", destaque de quem está usando, despesa excluída
+  e 375 px.
+- Depois do teste, ela pediu dois ajustes: "Ver extrato do mês" no mesmo
+  estilo de "Lançar despesa", e "A pagar" e "Pago" alinhados à direita e mais
+  afastados dos valores, que grudavam acima de R$ 1.000,00.
 
 **Observações**
-- Feita em cima da branch da B6 (PR #40), por causa do filtro `excluidaEm`.
+- Issue #41. Feita em cima da branch da B6 (PR #40), por causa do filtro
+  `excluidaEm`.
 - Tempo economizado ou perdido: não medido.
