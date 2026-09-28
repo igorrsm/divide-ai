@@ -1,5 +1,5 @@
 import { prisma } from "../db";
-import { ErroDeValidacao } from "../erros";
+import { ErroDeValidacao, ErroNaoEncontrado } from "../erros";
 import { ratearIgualmente } from "./rateio";
 import {
   interpretaData,
@@ -55,6 +55,30 @@ export async function listaDespesas(republicaId: number) {
     orderBy: [{ data: "desc" }, { id: "desc" }],
   });
   return despesas.map((despesa) => ({ ...despesa, data: diaDa(despesa.data) }));
+}
+
+/**
+ * Uma despesa com o rateio por morador (B3). Despesa de outra república dá
+ * 404, igual à que não existe: não revela que o id existe em outra casa.
+ */
+export async function buscaDespesa(republicaId: number, despesaId: number) {
+  const despesa = await prisma.despesa.findFirst({
+    where: { id: despesaId, republicaId },
+    select: {
+      id: true,
+      descricao: true,
+      valorCentavos: true,
+      data: true,
+      tipoDivisao: true,
+      pagador: { select: { id: true, nome: true } },
+      participacoes: {
+        select: { valorCentavos: true, morador: { select: { id: true, nome: true } } },
+        orderBy: { morador: { nome: "asc" } },
+      },
+    },
+  });
+  if (!despesa) throw new ErroNaoEncontrado("Despesa não encontrada.");
+  return { ...despesa, data: diaDa(despesa.data) };
 }
 
 export function listaMoradores(republicaId: number) {
