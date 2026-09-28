@@ -1,4 +1,6 @@
 import { useState, type FormEvent } from "react";
+import Calendario from "./Calendario";
+import { formatarData } from "./formatarData";
 import { useMoradorAtual } from "./MoradorAtual";
 
 /** Filtros da lista de despesas (E2), como ficam na URL. Vazio é "sem filtro". */
@@ -19,10 +21,30 @@ export default function CartaoFiltros({ filtros, aoAplicar, aoLimpar }: Props) {
   const { moradores } = useMoradorAtual();
   const [rascunho, setRascunho] = useState(filtros);
   const [erro, setErro] = useState<string | null>(null);
+  // Qual data está com o calendário aberto; só um de cada vez.
+  const [calendario, setCalendario] = useState<"de" | "ate" | null>(null);
 
   function mudar(campo: keyof Filtros, valor: string) {
     setRascunho((atual) => ({ ...atual, [campo]: valor }));
     setErro(null);
+  }
+
+  /** Botão que abre o calendário, mostrando a data escolhida. */
+  function botaoData(campo: "de" | "ate", rotulo: string) {
+    return (
+      <div className="campo">
+        <span id={`rotulo-${campo}`}>{rotulo}</span>
+        <button
+          type="button"
+          className="campo-data"
+          aria-labelledby={`rotulo-${campo}`}
+          aria-expanded={calendario === campo}
+          onClick={() => setCalendario(calendario === campo ? null : campo)}
+        >
+          {rascunho[campo] ? formatarData(rascunho[campo]) : "Escolher data"}
+        </button>
+      </div>
+    );
   }
 
   function aplicar(evento: FormEvent) {
@@ -36,17 +58,27 @@ export default function CartaoFiltros({ filtros, aoAplicar, aoLimpar }: Props) {
   }
 
   return (
-    <form className="cartao formulario filtros" onSubmit={aplicar}>
+    <form
+      className="cartao formulario filtros"
+      onSubmit={aplicar}
+      onKeyDown={(e) => e.key === "Escape" && setCalendario(null)}
+    >
       <div className="filtros-periodo">
-        <label className="campo">
-          De
-          <input type="date" value={rascunho.de} onChange={(e) => mudar("de", e.target.value)} />
-        </label>
-        <label className="campo">
-          Até
-          <input type="date" value={rascunho.ate} onChange={(e) => mudar("ate", e.target.value)} />
-        </label>
+        {botaoData("de", "De")}
+        {botaoData("ate", "Até")}
       </div>
+      {calendario && (
+        <Calendario
+          key={calendario}
+          rotulo={calendario === "de" ? "De" : "Até"}
+          valor={rascunho[calendario]}
+          aoEscolher={(dia) => {
+            mudar(calendario, dia);
+            setCalendario(null);
+          }}
+          aoFechar={() => setCalendario(null)}
+        />
+      )}
 
       <label className="campo">
         Morador
