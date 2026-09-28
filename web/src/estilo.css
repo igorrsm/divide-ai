@@ -852,3 +852,19 @@ a {
 .conta-divisao.fecha {
   background: var(--cor-fundo-ok);
 }
+
+/* Moradores (A2) */
+.morador-email {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.etiqueta {
+  flex-shrink: 0;
+  padding: 2px 10px;
+  border: var(--borda);
+  border-radius: 12px;
+  background: var(--cor-destaque);
+  font-size: 12px;
+  font-weight: 700;
+}
