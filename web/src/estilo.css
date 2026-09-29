@@ -1056,3 +1056,8 @@ a {
 .sugestao .botao-secundario {
   flex: 0 0 auto;
 }
+
+/* Exportar o fechamento (E3), logo abaixo do botão das recorrentes. */
+.exportar {
+  margin-bottom: 20px;
+}

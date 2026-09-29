@@ -1572,3 +1572,33 @@ Ferramenta: Claude Code (Claude Opus 5.5).
 - Três envios simultâneos do mesmo link criaram um morador só; testado à
   mão pela API, sem teste automatizado.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-29 — Igor — Exportar o fechamento do mês (E3)
+
+Ferramenta: Claude Code (Claude Opus 5.5).
+
+**Pedido à IA**
+- Último cartão do fechamento do backlog: baixar o fechamento do mês num
+  arquivo que abra na planilha, com despesas, totais, saldos e acertos.
+
+**O que a IA produziu**
+- O merge da D5 (#59) na branch, porque a E3 exporta a sugestão de acertos
+  e a D5 estava num ramo separado. Os três conflitos (CLAUDE.md, IA.md e
+  CSS) eram acréscimos dos dois lados e ficaram com os dois.
+- `fechamentoParaCsv` (função pura) e 6 testes: reais com vírgula, campo
+  com `;` e aspas, quem saiu marcado, total da casa e casa sem acertos.
+- A rota `GET .../extrato/csv` (com BOM, para o Excel abrir os acentos) e
+  o link "Exportar CSV" no Extrato. Sem biblioteca de CSV.
+
+**Revisão humana**
+- O Igor aprovou o plano e testou a tela antes dos commits: arquivo aberto
+  na planilha, com os valores somáveis, e depois de gerar o aluguel (C2),
+  marcar a saída da Carla (A4) e trocar de mês. Não alterou o código
+  gerado; a revisão de código fica com a Thalita no PR.
+
+**Observações**
+- Os saldos e os acertos no arquivo são os de hoje, e não os do fim do
+  mês, porque o saldo soma todos os meses; o título diz "Saldos em" e a
+  data.
+- A branch é o ensaio geral do dia: tem D5, C2, A4, A5 e E3 juntos.
+- Tempo economizado ou perdido: não medido.

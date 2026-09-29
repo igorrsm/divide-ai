@@ -6,6 +6,7 @@ import GerarRecorrentes from "./GerarRecorrentes";
 import { formatarMes, mesVizinho } from "./mes";
 import { useMoradorAtual } from "./MoradorAtual";
 import { useRepublicaAtual } from "./RepublicaAtual";
+import { useApiForaDoAr } from "./StatusApi";
 import Voltar from "./Voltar";
 
 const PADRAO_MES = /^\d{4}-(0[1-9]|1[0-2])$/;
@@ -24,6 +25,7 @@ export default function Extrato() {
   const [versao, setVersao] = useState(0);
   const { moradorId } = useMoradorAtual();
   const { republica } = useRepublicaAtual();
+  const foraDoAr = useApiForaDoAr();
 
   useEffect(() => {
     let ativo = true;
@@ -70,6 +72,20 @@ export default function Extrato() {
       </nav>
       {/* key: o aviso de um mês não fica aparecendo no outro. */}
       <GerarRecorrentes key={mes} mes={mes} aoGerar={() => setVersao((v) => v + 1)} />
+      {/* Fechamento em CSV (E3): o navegador baixa o arquivo direto da API. */}
+      {foraDoAr ? (
+        <button type="button" className="botao-secundario exportar" disabled>
+          ⬇ Exportar CSV
+        </button>
+      ) : (
+        <a
+          href={`/api/republicas/${republica.id}/extrato/csv?mes=${mes}`}
+          download={`fechamento-${mes}.csv`}
+          className="botao-secundario exportar"
+        >
+          ⬇ Exportar CSV
+        </a>
+      )}
 
       {erro ? (
         <p role="status" className="aviso aviso-erro">
