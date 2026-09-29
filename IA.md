@@ -1435,6 +1435,37 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
   compartilhada; reiniciar o servidor e recarregar com Ctrl+F5 resolve.
 - Tempo economizado ou perdido: não medido.
 
+## 2026-09-28 — Igor — Sugestão de acertos (D5)
+
+Ferramenta: Claude Code (Claude Opus 5.5).
+
+**Pedido à IA**
+- Planejar o fechamento do backlog no Sprint 2 (D5, C2, A4, A5, E3; B7 foi
+  para "Fora do TP1" por ser upload, proibido no `CLAUDE.md`) e começar pela
+  D5, com um plano curto aprovado antes do código.
+
+**O que a IA produziu**
+- `sugerirTransferencias` (função pura, gulosa: o maior devedor paga ao
+  maior credor, empate pelo menor id) e 5 testes, entre eles "aplicar as
+  sugestões zera todos os saldos" com no máximo N − 1 transferências.
+- A rota `GET .../saldos/transferencias`, separada de `/saldos` para não
+  mudar o formato que o painel e o formulário de pagamento já usam.
+- A seção "Como acertar" no painel, com "Registrar" abrindo o formulário de
+  pagamento (D3) já preenchido.
+
+**Revisão humana**
+- O Igor aprovou o plano antes do código e testou a tela: sugestão do seed,
+  "Registrar" preenchido, a lista encolhendo a cada pagamento até "Ninguém
+  deve nada", 375 px. Os commits só foram feitos depois do teste.
+- O Igor não alterou o código gerado; a revisão de código fica com a
+  Thalita no PR.
+
+**Observações**
+- A tela chama de "sugestão" de propósito: o guloso não garante o mínimo
+  absoluto de transferências, e provar isso estava fora do escopo.
+- Para testar a rota, a IA subiu o backend por alguns segundos e o encerrou.
+- Tempo economizado ou perdido: não medido.
+
 ## 2026-09-28 — Igor — Gerar os lançamentos das recorrentes (C2)
 
 Ferramenta: Claude Code (Claude Opus 5.5).

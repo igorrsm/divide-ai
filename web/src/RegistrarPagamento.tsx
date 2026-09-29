@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CampoData from "./CampoData";
 import { hojeNaCasa } from "./diasDoMes";
 import { textoParaInteiro } from "./divisao";
@@ -8,6 +8,9 @@ import { useMoradorAtual } from "./MoradorAtual";
 import { avisoDeValor } from "./pagamento";
 import { useRepublicaAtual } from "./RepublicaAtual";
 import { useApiForaDoAr } from "./StatusApi";
+
+/** Estado da navegação que a sugestão de acertos (D5) manda. */
+type PagamentoSugerido = { pagadorId?: string; recebedorId?: string; valor?: string };
 
 /**
  * Registrar um acerto entre moradores (D3): quem pagou, para quem, quanto e
@@ -19,9 +22,13 @@ export default function RegistrarPagamento() {
   // Todos, com quem saiu (A4): ele ainda pode acertar o que deve.
   const { todos: moradores, moradorId } = useMoradorAtual();
   const foraDoAr = useApiForaDoAr();
-  const [pagador, setPagador] = useState(moradorId ? String(moradorId) : "");
-  const [recebedor, setRecebedor] = useState("");
-  const [valor, setValor] = useState("");
+  // Vindo da sugestão de acertos (D5), o formulário abre preenchido.
+  const sugerido = (useLocation().state ?? {}) as PagamentoSugerido;
+  const [pagador, setPagador] = useState(
+    sugerido.pagadorId ?? (moradorId ? String(moradorId) : ""),
+  );
+  const [recebedor, setRecebedor] = useState(sugerido.recebedorId ?? "");
+  const [valor, setValor] = useState(sugerido.valor ?? "");
   const [data, setData] = useState(hojeNaCasa());
   const [saldos, setSaldos] = useState<Record<number, number>>({});
   const [erro, setErro] = useState<string | null>(null);
