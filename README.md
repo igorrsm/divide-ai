@@ -179,6 +179,47 @@ estrangeira ao mesmo tempo). A soma das participações de uma despesa é igual 
 dela: a sobra do arredondamento fica com quem pagou ou, se ele não participa, com o
 participante de menor id.
 
+### Diagrama de sequência: lançar uma despesa e ver o saldo
+
+O caso de uso central do sistema. A tela fala com a API pelo proxy do Vite; a rota
+chama o serviço, que busca os dados com o Prisma e entrega a conta às funções puras.
+
+```mermaid
+sequenceDiagram
+    actor M as Morador
+    participant T as Tela (React)
+    participant R as API (Express)
+    participant S as Serviço
+    participant F as Funções puras
+    participant B as Prisma + SQLite
+
+    M->>T: preenche "Nova despesa" e salva
+    T->>R: POST /api/republicas/:id/despesas
+    R->>S: criarDespesa(republicaId, corpo)
+    S->>B: moradores que ainda moram na casa
+    B-->>S: ids dos moradores
+    S->>F: montaDespesa(entrada, idsDaCasa)
+    F->>F: valida campos e participantes
+    F->>F: rateia em centavos (sobra com quem pagou)
+    F-->>S: despesa com as participações
+    S->>B: cria Despesa e Participacoes (transação)
+    B-->>S: despesa gravada
+    S-->>R: despesa
+    R-->>T: 201 Created
+    T-->>M: detalhe da despesa com o rateio
+
+    M->>T: abre "Saldos"
+    T->>R: GET /api/republicas/:id/saldos
+    R->>S: buscaSaldos(republicaId)
+    S->>B: moradores, despesas ativas e pagamentos
+    B-->>S: dados da república
+    S->>F: calcularSaldos(moradores, despesas, pagamentos)
+    F-->>S: saldo de cada morador (soma zero)
+    S-->>R: saldos
+    R-->>T: 200 OK (valores em centavos)
+    T-->>M: painel em reais (formatarReais)
+```
+
 ## Convenções de desenvolvimento
 
 - Commits seguindo Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`)
