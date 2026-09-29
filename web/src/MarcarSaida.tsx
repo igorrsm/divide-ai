@@ -69,8 +69,8 @@ export default function MarcarSaida({ morador, aoCancelar, aoConfirmar }: Props)
   return (
     <div className="cartao confirmacao saida" role="alertdialog" aria-labelledby="confirma-saida">
       <p id="confirma-saida">
-        Marcar que {morador.nome} saiu da casa? Nada é apagado: as despesas e os acertos dele
-        continuam, mas ele não entra mais em despesas novas.
+        Marcar que {morador.nome} saiu da casa? Nada é apagado: as despesas e os acertos
+        continuam, mas {morador.nome} não entra mais em despesas novas.
       </p>
       <p className="saida-saldo">{textoDoSaldo(morador.nome, saldo)}</p>
       <div className="acoes-botoes">
