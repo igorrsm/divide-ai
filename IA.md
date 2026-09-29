@@ -1459,3 +1459,45 @@ rodada seguinte, para não abrir um PR só de docs.
   `--cor-inicial-1`). Não muda nada na tela; foi registrado como
   observação.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Igor — Revisão dos PRs #51, #52 e #53 (D3, A2 e C1)
+
+Três PRs da Thalita, que assumiu as tarefas do Eduardo.
+
+**Pedido à IA**
+- Avaliar, testar e aprovar os três PRs, com o teste de tela do Igor antes
+  de cada aprovação.
+
+**O que a IA produziu**
+- Antes de validar: a `main` local estava 119 commits atrás da remota. A
+  IA atualizou, aplicou as migrations novas (`migrate deploy`), regenerou o
+  client e rodou o seed.
+- Validação de cada PR numa cópia separada (`git worktree`): lint,
+  `npm test` (111, 105 e 119), build, commits de até 100 linhas e o IA.md
+  sem linha removida em relação à `main`.
+- Simulação dos merges em sequência: #51 e #53 (feito em cima do #51)
+  entravam sem conflito; o #52 conflitaria depois deles em quatro arquivos.
+- Três observações não bloqueantes, postadas nas aprovações: um aviso sem
+  uso no #51, o `dataFim` apagado ao reativar a recorrência no #53 e o erro
+  genérico na corrida de e-mails iguais no #52.
+- Com o ok do Igor, a IA resolveu o conflito do #52 na branch da Thalita
+  (commit `7054045`), mantendo os dois lados, e atualizou os cartões D3, C1
+  e A2 no Notion.
+
+**Revisão humana**
+- O Igor testou a tela em duas rodadas: D3 e C1 juntas na branch do #53, e
+  depois a A2. Só então autorizou cada aprovação.
+- No teste, o Igor criou uma república sem querer; a IA explicou que a
+  república ativa fica no navegador e rodou o seed de novo para voltar ao
+  estado inicial.
+
+**Observações**
+- Erros da IA, corrigidos na hora: na resolução do conflito do #52, a
+  junção automática do `estilo.css` cortou uma regra no meio, porque a `}`
+  final era comum aos dois lados (refeito e chaves conferidas); e no Notion
+  o Status dos três cartões não mudou, porque a chamada que trocava o texto
+  ignorou a propriedade sem avisar. Uma consulta ao banco do Notion achou o
+  erro, e o Status foi trocado numa chamada separada.
+- Achado antigo: as entradas de 20/09 (Igor) e da A1 (Eduardo) neste
+  arquivo não têm a linha "Tempo economizado ou perdido".
+- Tempo economizado ou perdido: não medido.
