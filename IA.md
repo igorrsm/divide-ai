@@ -1509,3 +1509,35 @@ Ferramenta: Claude Code (Claude Opus 5.5).
   dev` do Igor já estava rodando; as chamadas foram atendidas por um deles,
   com o mesmo código. Nenhum processo do Igor foi encerrado.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Igor — Convite de morador por link (A5)
+
+Ferramenta: Claude Code (Claude Opus 5.5).
+
+**Pedido à IA**
+- Quarto cartão do fechamento do backlog: o organizador gera um link e a
+  pessoa convidada completa o próprio cadastro. Sem envio de e-mail e sem
+  login (fora de escopo). Migration avisada ao time antes do código.
+
+**O que a IA produziu**
+- O model `Convite` e a migration; `validaConvite` (função pura, com
+  testes); as rotas para gerar (só o organizador), consultar e usar o link.
+  Usar o link reaproveita `montaMorador` da A2, e a marca de uso é uma
+  atualização condicional na mesma transação da criação do morador.
+- `ConviteLink.tsx` (gerar e copiar o link) na tela de moradores e a página
+  `AceitarConvite.tsx` em `/convite/:token`, que no fim já escolhe a casa e
+  o morador novo.
+
+**Revisão humana**
+- O Igor aprovou o plano e testou a tela antes dos commits, com o link
+  aberto numa aba anônima (os sete passos do PR). Não alterou o código
+  gerado; a revisão de código fica com a Thalita no PR.
+
+**Observações**
+- A IA percebeu antes do teste que o seed quebraria com convites no banco
+  (a chave estrangeira impede apagar a república) e acrescentou a limpeza.
+- Mudança em relação ao plano: o aviso de sucesso fica na própria página do
+  convite, porque o início não mostra avisos vindos de outra tela.
+- Três envios simultâneos do mesmo link criaram um morador só; testado à
+  mão pela API, sem teste automatizado.
+- Tempo economizado ou perdido: não medido.
