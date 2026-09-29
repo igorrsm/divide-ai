@@ -102,6 +102,145 @@ um ou mais cartões, com código e critérios de aceitação. Todos estão mescl
 | 8. Extrato do mês | E1 (#42), E3 (#63) | Também exporta o fechamento em CSV |
 | Extensão: simplificar dívidas | D5 (#59) | Sugestão gulosa; não promete o mínimo absoluto de transferências |
 
+## Documentação (UML)
+
+### Diagrama de classes
+
+As classes de domínio são as tabelas de `prisma/schema.prisma`. O backend não tem
+classes de serviço: as regras são funções puras agrupadas por pasta, que aparecem aqui
+como os módulos `ModuloDespesas` (`src/despesas`), `ModuloSaldos` (`src/saldos`) e
+`ModuloExtrato` (`src/extrato`). Eles só leem as entidades, por isso a ligação é de
+dependência. Dinheiro é sempre `Int` em centavos, e o saldo não é guardado: é
+calculado a cada consulta.
+
+```mermaid
+classDiagram
+    direction LR
+    class Republica {
+        +Int id
+        +String nome
+        +DateTime criadaEm
+    }
+    class Morador {
+        +Int id
+        +String nome
+        +String email
+        +Boolean organizador
+        +DateTime saiuEm
+    }
+    class Despesa {
+        +Int id
+        +String descricao
+        +Int valorCentavos
+        +DateTime data
+        +TipoDivisao tipoDivisao
+        +DateTime excluidaEm
+    }
+    class DespesaRecorrente {
+        +Int diaDoMes
+        +Boolean ativa
+        +DateTime dataFim
+        +DateTime ultimaGeracao
+    }
+    class Participacao {
+        +Int valorCentavos
+        +Int percentualCentesimos
+    }
+    class Pagamento {
+        +Int valorCentavos
+        +DateTime data
+    }
+    class Convite {
+        +String token
+        +DateTime usadoEm
+    }
+    class TipoDivisao {
+        <<enumeration>>
+        IGUAL
+        VALOR
+        PERCENTUAL
+    }
+    class ModuloDespesas {
+        +montaDespesa(entrada, idsDaCasa, hoje) DespesaMontada
+        +ratearIgualmente(valorCentavos, participantesIds, pagadorId) Participacao[]
+        +ratearPorValores(valorCentavos, partes) Participacao[]
+        +ratearPorPercentuais(valorCentavos, partes, pagadorId) Participacao[]
+        +lancamentosDoMes(mes, modelos, agora) Lancamento[]
+    }
+    class ModuloSaldos {
+        +calcularSaldos(moradores, despesas, pagamentos) SaldoMorador[]
+        +sugerirTransferencias(saldos) Transferencia[]
+    }
+    class ModuloExtrato {
+        +montaExtrato(mes, moradores, despesas) Extrato
+        +fechamentoParaCsv(dados) String
+    }
+
+    Republica "1" *-- "*" Morador : moradores
+    Republica "1" *-- "*" Despesa : despesas
+    Republica "1" *-- "*" Pagamento : pagamentos
+    Republica "1" *-- "*" Convite : convites
+    Despesa "1" *-- "*" Participacao : participacoes
+    Despesa <|-- DespesaRecorrente
+    Despesa "*" --> "1" Morador : pagador
+    Participacao "*" --> "1" Morador : morador
+    Pagamento "*" --> "1" Morador : pagador
+    Pagamento "*" --> "1" Morador : recebedor
+    Despesa --> TipoDivisao
+    ModuloDespesas ..> Despesa
+    ModuloDespesas ..> Participacao
+    ModuloSaldos ..> Despesa
+    ModuloSaldos ..> Participacao
+    ModuloSaldos ..> Pagamento
+    ModuloExtrato ..> Despesa
+```
+
+`DespesaRecorrente` herda de `Despesa` (tabela por subclasse: o `id` é chave primária e
+estrangeira ao mesmo tempo). A soma das participações de uma despesa é igual ao valor
+dela: a sobra do arredondamento fica com quem pagou ou, se ele não participa, com o
+participante de menor id.
+
+### Diagrama de sequência: lançar uma despesa e ver o saldo
+
+O caso de uso central do sistema. A tela fala com a API pelo proxy do Vite; a rota
+chama o serviço, que busca os dados com o Prisma e entrega a conta às funções puras.
+
+```mermaid
+sequenceDiagram
+    actor M as Morador
+    participant T as Tela (React)
+    participant R as API (Express)
+    participant S as Serviço
+    participant F as Funções puras
+    participant B as Prisma + SQLite
+
+    M->>T: preenche "Nova despesa" e salva
+    T->>R: POST /api/republicas/:id/despesas
+    R->>S: criarDespesa(republicaId, corpo)
+    S->>B: moradores que ainda moram na casa
+    B-->>S: ids dos moradores
+    S->>F: montaDespesa(entrada, idsDaCasa)
+    F->>F: valida campos e participantes
+    F->>F: rateia em centavos (sobra com quem pagou)
+    F-->>S: despesa com as participações
+    S->>B: cria Despesa e Participacoes (transação)
+    B-->>S: despesa gravada
+    S-->>R: despesa
+    R-->>T: 201 Created
+    T-->>M: "Despesa lançada" e o rateio no formulário
+
+    M->>T: abre "Saldos"
+    T->>R: GET /api/republicas/:id/saldos
+    R->>S: buscaSaldos(republicaId)
+    S->>B: moradores, despesas ativas e pagamentos
+    B-->>S: dados da república
+    S->>F: calcularSaldos(moradores, despesas, pagamentos)
+    F-->>S: saldo de cada morador (soma zero)
+    S-->>R: saldos
+    R-->>T: 200 OK (valores em centavos)
+    T-->>M: painel em reais (formatarReais)
+```
+
 ## Convenções de desenvolvimento
 
 - Commits seguindo Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`)
