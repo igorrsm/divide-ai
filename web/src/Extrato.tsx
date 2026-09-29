@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import ConteudoExtrato, { type DadosExtrato } from "./ConteudoExtrato";
 import { hojeNaCasa } from "./diasDoMes";
+import GerarRecorrentes from "./GerarRecorrentes";
 import { formatarMes, mesVizinho } from "./mes";
 import { useMoradorAtual } from "./MoradorAtual";
 import { useRepublicaAtual } from "./RepublicaAtual";
+import { useApiForaDoAr } from "./StatusApi";
 import Voltar from "./Voltar";
 
 const PADRAO_MES = /^\d{4}-(0[1-9]|1[0-2])$/;
@@ -19,8 +21,11 @@ export default function Extrato() {
   const mes = PADRAO_MES.test(bruto) ? bruto : hoje;
   const [extrato, setExtrato] = useState<DadosExtrato | null>(null);
   const [erro, setErro] = useState(false);
+  // Sobe depois de gerar as recorrentes (C2), para buscar o extrato de novo.
+  const [versao, setVersao] = useState(0);
   const { moradorId } = useMoradorAtual();
   const { republica } = useRepublicaAtual();
+  const foraDoAr = useApiForaDoAr();
 
   useEffect(() => {
     let ativo = true;
@@ -41,7 +46,7 @@ export default function Extrato() {
     return () => {
       ativo = false;
     };
-  }, [republica.id, mes]);
+  }, [republica.id, mes, versao]);
 
   // Enquanto o mês novo não chega, não mostra os números do mês anterior.
   const doMes = extrato?.mes === mes ? extrato : null;
@@ -65,6 +70,22 @@ export default function Extrato() {
           </span>
         )}
       </nav>
+      {/* key: o aviso de um mês não fica aparecendo no outro. */}
+      <GerarRecorrentes key={mes} mes={mes} aoGerar={() => setVersao((v) => v + 1)} />
+      {/* Fechamento em CSV (E3): o navegador baixa o arquivo direto da API. */}
+      {foraDoAr ? (
+        <button type="button" className="botao-secundario exportar" disabled>
+          ⬇ Exportar CSV
+        </button>
+      ) : (
+        <a
+          href={`/api/republicas/${republica.id}/extrato/csv?mes=${mes}`}
+          download={`fechamento-${mes}.csv`}
+          className="botao-secundario exportar"
+        >
+          ⬇ Exportar CSV
+        </a>
+      )}
 
       {erro ? (
         <p role="status" className="aviso aviso-erro">

@@ -4,7 +4,13 @@ import { DESPESA_ATIVA } from "./ativa";
 import { diaDa } from "./dia";
 import type { FiltrosDespesas } from "./filtros";
 import { montaDespesa, type EntradaDespesa } from "./montagem";
-import { diaDoMesDa, interpretaRecorrente } from "./recorrencia";
+import { intervaloDoMes } from "../extrato/mes";
+import {
+  diaDoMesDa,
+  interpretaRecorrente,
+  lancamentosDoMes,
+  quemSaiuDoModelo,
+} from "./recorrencia";
 import { interpretaId } from "./validacao";
 
 export function buscaRepublica(id: number) {
@@ -88,13 +94,14 @@ export async function buscaDespesa(republicaId: number, despesaId: number) {
   };
 }
 
-export function listaMoradores(republicaId: number) {
-  return prisma.morador.findMany({
+export async function listaMoradores(republicaId: number) {
+  const moradores = await prisma.morador.findMany({
     where: { republicaId },
-    // E-mail e organizador servem à tela de moradores (A2).
-    select: { id: true, nome: true, email: true, organizador: true },
+    // E-mail e organizador servem à tela de moradores (A2); saiuEm, à A4.
+    select: { id: true, nome: true, email: true, organizador: true, saiuEm: true },
     orderBy: { nome: "asc" },
   });
+  return moradores.map((m) => ({ ...m, saiuEm: m.saiuEm ? diaDa(m.saiuEm) : null }));
 }
 
 /**
@@ -117,9 +124,10 @@ export async function criarDespesa(
   hoje: Date = new Date(),
 ) {
   const recorrente = interpretaRecorrente(entrada.recorrente);
-  // Uma consulta só: serve para validar quem pagou e os participantes.
+  // Uma consulta só: serve para validar quem pagou e os participantes. Quem
+  // saiu da casa (A4) não entra em despesa nova, nem no "todos participam".
   const moradores = await prisma.morador.findMany({
-    where: { republicaId },
+    where: { republicaId, saiuEm: null },
     select: { id: true },
     orderBy: { id: "asc" },
   });
@@ -179,8 +187,16 @@ export async function editarDespesa(
 ) {
   await exigePagador(republicaId, despesaId, entrada.moradorId);
   const recorrente = interpretaRecorrente(entrada.recorrente);
+  // Na edição, quem saiu (A4) só continua se já estava nesta despesa.
   const moradores = await prisma.morador.findMany({
-    where: { republicaId },
+    where: {
+      republicaId,
+      OR: [
+        { saiuEm: null },
+        { despesasPagas: { some: { id: despesaId } } },
+        { participacoes: { some: { despesaId } } },
+      ],
+    },
     select: { id: true },
     orderBy: { id: "asc" },
   });
@@ -243,4 +259,83 @@ export async function pararDeRepetir(
 export async function excluirDespesa(republicaId: number, despesaId: number, moradorId: unknown) {
   await exigePagador(republicaId, despesaId, moradorId);
   await prisma.despesa.update({ where: { id: despesaId }, data: { excluidaEm: new Date() } });
+}
+
+/**
+ * Gera os lançamentos do mês a partir das despesas recorrentes (C2), por ação
+ * explícita do morador, sem agendador. Cada lançamento é uma despesa comum,
+ * cópia do modelo (mesmo pagador e mesmas participações, então a soma bate).
+ *
+ * A trava da idempotência é a atualização de `ultimaGeracao`: ela só pega a
+ * linha se o mês ainda não foi gerado, e o lançamento só é criado nesse caso.
+ * Assim, nem dois cliques ao mesmo tempo duplicam.
+ */
+export async function gerarRecorrentes(republicaId: number, mes: string, agora = new Date()) {
+  const modelos = await prisma.despesa.findMany({
+    where: { republicaId, ...DESPESA_ATIVA, recorrente: { isNot: null } },
+    select: {
+      id: true,
+      descricao: true,
+      valorCentavos: true,
+      data: true,
+      tipoDivisao: true,
+      pagadorId: true,
+      recorrente: { select: { diaDoMes: true, ativa: true, ultimaGeracao: true } },
+      participacoes: {
+        select: { moradorId: true, valorCentavos: true, percentualCentesimos: true },
+      },
+    },
+  });
+  const lancamentos = lancamentosDoMes(
+    mes,
+    modelos.flatMap((m) => (m.recorrente ? [{ id: m.id, data: m.data, ...m.recorrente }] : [])),
+    agora,
+  );
+  const { inicio } = intervaloDoMes(mes);
+  const saidos = new Map(
+    (
+      await prisma.morador.findMany({
+        where: { republicaId, saiuEm: { not: null } },
+        select: { id: true, nome: true },
+      })
+    ).map((m) => [m.id, m.nome]),
+  );
+
+  return prisma.$transaction(async (tx) => {
+    const gerados = [];
+    // Modelo com alguém que saiu da casa (A4) não gera: a tela avisa.
+    const pulados: { descricao: string; quem: string[] }[] = [];
+    for (const { modeloId, data } of lancamentos) {
+      const modelo = modelos.find((m) => m.id === modeloId)!;
+      const quem = quemSaiuDoModelo(
+        modelo.pagadorId,
+        modelo.participacoes.map((p) => p.moradorId),
+        saidos,
+      );
+      if (quem.length > 0) {
+        pulados.push({ descricao: modelo.descricao, quem });
+        continue;
+      }
+      const marcou = await tx.despesaRecorrente.updateMany({
+        where: { id: modeloId, OR: [{ ultimaGeracao: null }, { ultimaGeracao: { lt: inicio } }] },
+        data: { ultimaGeracao: inicio },
+      });
+      if (marcou.count === 0) continue;
+      const { descricao, valorCentavos, tipoDivisao, pagadorId, participacoes } = modelo;
+      const despesa = await tx.despesa.create({
+        data: {
+          descricao,
+          valorCentavos,
+          tipoDivisao,
+          pagadorId,
+          data,
+          republicaId,
+          participacoes: { create: participacoes },
+        },
+        select: { id: true, descricao: true, valorCentavos: true, data: true },
+      });
+      gerados.push({ ...despesa, data: diaDa(despesa.data) });
+    }
+    return { gerados, pulados };
+  });
 }

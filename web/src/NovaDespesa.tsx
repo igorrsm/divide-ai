@@ -54,7 +54,13 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
   const [data, setData] = useState(edicao?.data ?? hojeNaCasa());
   // A lista vem do useMoradorAtual (A3), sem buscar a rota de novo.
   // "Quem pagou" começa com quem foi escolhido em "Quem é você?".
-  const { moradores, moradorId, erro: erroMoradores } = useMoradorAtual();
+  const { moradores: ativos, todos, moradorId, erro: erroMoradores } = useMoradorAtual();
+  // Quem saiu (A4) não entra em despesa nova; na edição, fica se já estava nela.
+  const moradores = edicao
+    ? todos.filter(
+        (m) => !m.saiuEm || m.id === edicao.pagadorId || edicao.participantesIds.includes(m.id),
+      )
+    : ativos;
   const [pagadorEscolhido, setPagadorId] = useState(
     edicao ? String(edicao.pagadorId) : moradorId ? String(moradorId) : "",
   );

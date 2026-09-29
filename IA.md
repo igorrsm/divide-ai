@@ -1534,3 +1534,171 @@ Três PRs da Thalita, que assumiu as tarefas do Eduardo.
   período de graça até 02/10) e as consultas ao banco. A conferência do
   Status passou a ser feita lendo cada cartão.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Igor — Sugestão de acertos (D5)
+
+Ferramenta: Claude Code (Claude Opus 5.5).
+
+**Pedido à IA**
+- Planejar o fechamento do backlog no Sprint 2 (D5, C2, A4, A5, E3; B7 foi
+  para "Fora do TP1" por ser upload, proibido no `CLAUDE.md`) e começar pela
+  D5, com um plano curto aprovado antes do código.
+
+**O que a IA produziu**
+- `sugerirTransferencias` (função pura, gulosa: o maior devedor paga ao
+  maior credor, empate pelo menor id) e 5 testes, entre eles "aplicar as
+  sugestões zera todos os saldos" com no máximo N − 1 transferências.
+- A rota `GET .../saldos/transferencias`, separada de `/saldos` para não
+  mudar o formato que o painel e o formulário de pagamento já usam.
+- A seção "Como acertar" no painel, com "Registrar" abrindo o formulário de
+  pagamento (D3) já preenchido.
+
+**Revisão humana**
+- O Igor aprovou o plano antes do código e testou a tela: sugestão do seed,
+  "Registrar" preenchido, a lista encolhendo a cada pagamento até "Ninguém
+  deve nada", 375 px. Os commits só foram feitos depois do teste.
+- O Igor não alterou o código gerado; a revisão de código fica com a
+  Thalita no PR.
+
+**Observações**
+- A tela chama de "sugestão" de propósito: o guloso não garante o mínimo
+  absoluto de transferências, e provar isso estava fora do escopo.
+- Para testar a rota, a IA subiu o backend por alguns segundos e o encerrou.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Igor — Gerar os lançamentos das recorrentes (C2)
+
+Ferramenta: Claude Code (Claude Opus 5.5).
+
+**Pedido à IA**
+- Segundo cartão do fechamento do backlog: gerar os lançamentos do mês a
+  partir das despesas recorrentes (C1), por ação explícita, sem agendador.
+  Critério do cartão: gerar duas vezes o mesmo mês não duplica.
+
+**O que a IA produziu**
+- `lancamentosDoMes` (função pura) e 6 testes: não duplicar, dia 31 em
+  fevereiro comum e bissexto, recorrência parada, mês do próprio modelo,
+  dia que ainda não chegou e mês futuro recusado.
+- `gerarRecorrentes` e a rota `POST .../recorrentes/gerar`. A trava da
+  idempotência é a atualização condicional de `ultimaGeracao` antes de
+  criar o lançamento, o que também segura dois cliques ao mesmo tempo.
+- O botão no Extrato (`GerarRecorrentes.tsx`), que recarrega o mês.
+
+**Revisão humana**
+- No planejamento, a IA achou um problema: o sistema recusa data futura e o
+  aluguel do seed era de 05/09, então a demo não teria nada a gerar. O Igor
+  escolheu mover o aluguel do seed para 05/08 (os saldos iniciais não mudam).
+- O Igor aprovou o plano e testou a tela antes dos commits: geração de
+  setembro, "Nada a gerar" na segunda vez e em agosto, saldos, 375 px. Não
+  alterou o código gerado; a revisão de código fica com a Thalita no PR.
+
+**Observações**
+- O caso de `dataFim` do plano ficou coberto pelo teste de recorrência
+  parada: a C1 só grava `dataFim` junto com `ativa = false`.
+- Limitações documentadas: gerar um mês anterior ao último gerado não gera,
+  e excluir um lançamento gerado não faz ele ser gerado de novo (não há
+  vínculo com o modelo sem migration).
+- Três chamadas simultâneas à rota criaram um lançamento só; isso foi
+  testado à mão, sem teste automatizado.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Igor — Desativar morador que saiu da casa (A4)
+
+Ferramenta: Claude Code (Claude Opus 5.5).
+
+**Pedido à IA**
+- Terceiro cartão do fechamento do backlog: o organizador marca que um
+  morador saiu, sem apagar o histórico. Primeira migration da rodada; o
+  time foi avisado antes (regra do `CLAUDE.md`).
+
+**O que a IA produziu**
+- Migration `Morador.saiuEm`; `validaSaida` (função pura, com testes) e a
+  rota `DELETE .../moradores/:moradorId`, só para o organizador, que não
+  pode marcar a própria saída.
+- As regras nas outras consultas: despesa nova só com quem mora na casa;
+  edição mantém quem já estava na despesa; saldos mostram quem saiu até
+  ele zerar; extrato mostra quem ainda morava lá no mês; pagamento aceita
+  quem saiu, para ele acertar a dívida.
+- Na C2, `quemSaiuDoModelo` (com testes): o modelo com alguém que saiu não
+  gera lançamento e a tela avisa.
+- No front, `moradores` (só ativos) e `todos` no `useMoradorAtual`, a
+  confirmação de saída com o saldo (`MarcarSaida.tsx`) e "(saiu)" nos saldos.
+
+**Revisão humana**
+- No planejamento, o Igor decidiu que a C2 não gera (e avisa) quando o
+  modelo tem alguém que saiu, em vez de redividir, e que desfazer a saída
+  fica fora da história.
+- O Igor testou a tela antes dos commits (os oito passos do PR). Não alterou
+  o código gerado; a revisão de código fica com a Thalita no PR.
+
+**Observações**
+- Durante a implementação a IA corrigiu três pontos antes do teste: a data
+  de saída era gravada em UTC (às 23h de Brasília já seria o dia seguinte);
+  o extrato poderia deixar o total por morador sem fechar com o da casa num
+  caso raro; e a tela dizia "Nada a gerar" junto com o aviso de pulado.
+- Nos testes pela API, a IA subiu um servidor sem perceber que o `npm run
+  dev` do Igor já estava rodando; as chamadas foram atendidas por um deles,
+  com o mesmo código. Nenhum processo do Igor foi encerrado.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Igor — Convite de morador por link (A5)
+
+Ferramenta: Claude Code (Claude Opus 5.5).
+
+**Pedido à IA**
+- Quarto cartão do fechamento do backlog: o organizador gera um link e a
+  pessoa convidada completa o próprio cadastro. Sem envio de e-mail e sem
+  login (fora de escopo). Migration avisada ao time antes do código.
+
+**O que a IA produziu**
+- O model `Convite` e a migration; `validaConvite` (função pura, com
+  testes); as rotas para gerar (só o organizador), consultar e usar o link.
+  Usar o link reaproveita `montaMorador` da A2, e a marca de uso é uma
+  atualização condicional na mesma transação da criação do morador.
+- `ConviteLink.tsx` (gerar e copiar o link) na tela de moradores e a página
+  `AceitarConvite.tsx` em `/convite/:token`, que no fim já escolhe a casa e
+  o morador novo.
+
+**Revisão humana**
+- O Igor aprovou o plano e testou a tela antes dos commits, com o link
+  aberto numa aba anônima (os sete passos do PR). Não alterou o código
+  gerado; a revisão de código fica com a Thalita no PR.
+
+**Observações**
+- A IA percebeu antes do teste que o seed quebraria com convites no banco
+  (a chave estrangeira impede apagar a república) e acrescentou a limpeza.
+- Mudança em relação ao plano: o aviso de sucesso fica na própria página do
+  convite, porque o início não mostra avisos vindos de outra tela.
+- Três envios simultâneos do mesmo link criaram um morador só; testado à
+  mão pela API, sem teste automatizado.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-29 — Igor — Exportar o fechamento do mês (E3)
+
+Ferramenta: Claude Code (Claude Opus 5.5).
+
+**Pedido à IA**
+- Último cartão do fechamento do backlog: baixar o fechamento do mês num
+  arquivo que abra na planilha, com despesas, totais, saldos e acertos.
+
+**O que a IA produziu**
+- O merge da D5 (#59) na branch, porque a E3 exporta a sugestão de acertos
+  e a D5 estava num ramo separado. Os três conflitos (CLAUDE.md, IA.md e
+  CSS) eram acréscimos dos dois lados e ficaram com os dois.
+- `fechamentoParaCsv` (função pura) e 6 testes: reais com vírgula, campo
+  com `;` e aspas, quem saiu marcado, total da casa e casa sem acertos.
+- A rota `GET .../extrato/csv` (com BOM, para o Excel abrir os acentos) e
+  o link "Exportar CSV" no Extrato. Sem biblioteca de CSV.
+
+**Revisão humana**
+- O Igor aprovou o plano e testou a tela antes dos commits: arquivo aberto
+  na planilha, com os valores somáveis, e depois de gerar o aluguel (C2),
+  marcar a saída da Carla (A4) e trocar de mês. Não alterou o código
+  gerado; a revisão de código fica com a Thalita no PR.
+
+**Observações**
+- Os saldos e os acertos no arquivo são os de hoje, e não os do fim do
+  mês, porque o saldo soma todos os meses; o título diz "Saldos em" e a
+  data.
+- A branch é o ensaio geral do dia: tem D5, C2, A4, A5 e E3 juntos.
+- Tempo economizado ou perdido: não medido.

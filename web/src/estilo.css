@@ -996,3 +996,68 @@ a {
   box-shadow: none;
   line-height: 1.4;
 }
+
+/* Gerar as recorrentes do mês (C2), logo abaixo da navegação do extrato. */
+.gerar-recorrentes {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Saída da casa (A4) */
+.etiqueta-saiu {
+  opacity: 0.7;
+}
+
+.botao-saida {
+  flex: 0 0 auto;
+  min-height: 40px;
+}
+
+.saida {
+  margin-top: 16px;
+}
+
+.confirmacao .saida-saldo {
+  font-weight: 400;
+}
+
+/* Convite por link (A5): o link e o "Copiar" lado a lado. */
+.convite {
+  margin-top: 20px;
+}
+
+.convite-link {
+  display: flex;
+  gap: 10px;
+}
+
+.convite-link input {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 12px;
+  border: var(--borda);
+  border-radius: 12px;
+  background: var(--cor-superficie);
+  color: var(--cor-tinta);
+  font: inherit;
+}
+
+.convite-link .botao-secundario {
+  flex: 0 0 auto;
+}
+
+/* Sugestão de acertos (D5): o botão não estica como nas ações da despesa. */
+.dica-sugestao {
+  margin: 0 0 4px;
+}
+
+.sugestao .botao-secundario {
+  flex: 0 0 auto;
+}
+
+/* Exportar o fechamento (E3), logo abaixo do botão das recorrentes. */
+.exportar {
+  margin-bottom: 20px;
+}

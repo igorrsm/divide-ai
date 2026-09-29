@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import AceitarConvite from "./AceitarConvite";
 import { Route, Routes } from "react-router-dom";
 import CriarRepublica from "./CriarRepublica";
 import Inicio from "./Inicio";
@@ -68,6 +69,7 @@ export default function App() {
         <Route path="/saldos/pagamento" element={<PaginaRegistrarPagamento />} />
         <Route path="/moradores" element={<TelaPrincipal><Moradores /></TelaPrincipal>} />
         <Route path="/republicas/nova" element={<TelaPrincipal><CriarRepublica /></TelaPrincipal>} />
+        <Route path="/convite/:token" element={<AceitarConvite />} />
       </Route>
     </Routes>
   );

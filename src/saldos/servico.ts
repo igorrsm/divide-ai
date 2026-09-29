@@ -1,6 +1,7 @@
 import { prisma } from "../db";
 import { DESPESA_ATIVA } from "../despesas/ativa";
 import { calcularSaldos } from "./calculo";
+import { sugerirTransferencias } from "./transferencias";
 
 /**
  * Saldos de todos os moradores da república, em ordem alfabética de nome.
@@ -10,7 +11,7 @@ import { calcularSaldos } from "./calculo";
 export async function buscaSaldos(republicaId: number) {
   const moradores = await prisma.morador.findMany({
     where: { republicaId },
-    select: { id: true, nome: true },
+    select: { id: true, nome: true, saiuEm: true },
     orderBy: { nome: "asc" },
   });
   const despesas = await prisma.despesa.findMany({
@@ -27,5 +28,15 @@ export async function buscaSaldos(republicaId: number) {
     select: { pagadorId: true, recebedorId: true, valorCentavos: true },
   });
 
-  return calcularSaldos(moradores, despesas, pagamentos);
+  // Quem saiu (A4) continua enquanto tiver o que acertar; quitado, some. A
+  // soma da república não muda, porque só sai quem está com saldo zero.
+  const saiu = new Set(moradores.filter((m) => m.saiuEm).map((m) => m.id));
+  return calcularSaldos(moradores, despesas, pagamentos)
+    .map((saldo) => ({ ...saldo, saiu: saiu.has(saldo.moradorId) }))
+    .filter((saldo) => !saldo.saiu || saldo.saldoCentavos !== 0);
+}
+
+/** Sugestão de acertos que zera os saldos (D5), a partir dos saldos acima. */
+export async function buscaTransferencias(republicaId: number) {
+  return sugerirTransferencias(await buscaSaldos(republicaId));
 }

@@ -1,4 +1,7 @@
 import { useState, type FormEvent } from "react";
+import ConviteLink from "./ConviteLink";
+import { formatarData } from "./formatarData";
+import MarcarSaida from "./MarcarSaida";
 import { useMoradorAtual } from "./MoradorAtual";
 import { useRepublicaAtual } from "./RepublicaAtual";
 import { useApiForaDoAr } from "./StatusApi";
@@ -9,12 +12,16 @@ import { useApiForaDoAr } from "./StatusApi";
  */
 export default function Moradores() {
   const { republica } = useRepublicaAtual();
-  const { moradores, moradorId, erro: erroLista, recarregar } = useMoradorAtual();
+  // A lista mostra também quem saiu (A4), com a data.
+  const { todos: moradores, moradorId, erro: erroLista, recarregar } = useMoradorAtual();
   const foraDoAr = useApiForaDoAr();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [aviso, setAviso] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
   const [enviando, setEnviando] = useState(false);
+  // Morador cuja saída está sendo confirmada (A4) e o aviso depois de salvar.
+  const [saindo, setSaindo] = useState<number | null>(null);
+  const [avisoSaida, setAvisoSaida] = useState<string | null>(null);
 
   // O id cresce com a entrada na casa: ordenar por ele é a ordem de entrada.
   const emOrdem = [...moradores].sort((a, b) => a.id - b.id);
@@ -69,13 +76,49 @@ export default function Moradores() {
                   <small className="morador-email">{morador.email}</small>
                 </span>
                 {morador.organizador && <span className="etiqueta">Organizador</span>}
+                {morador.saiuEm ? (
+                  <span className="etiqueta etiqueta-saiu">Saiu em {formatarData(morador.saiuEm)}</span>
+                ) : (
+                  souOrganizador &&
+                  !morador.organizador && (
+                    <button
+                      type="button"
+                      className="botao-secundario botao-saida"
+                      onClick={() => {
+                        setAvisoSaida(null);
+                        setSaindo(morador.id);
+                      }}
+                      aria-label={`Marcar que ${morador.nome} saiu da casa`}
+                    >
+                      Saiu
+                    </button>
+                  )
+                )}
               </li>
             );
           })}
         </ul>
       )}
+      {saindo !== null && moradores.some((m) => m.id === saindo) && (
+        <MarcarSaida
+          key={saindo}
+          morador={moradores.find((m) => m.id === saindo)!}
+          aoCancelar={() => setSaindo(null)}
+          aoConfirmar={() => {
+            const nome = moradores.find((m) => m.id === saindo)?.nome;
+            setSaindo(null);
+            setAvisoSaida(`${nome} saiu da casa. O histórico continua salvo.`);
+            recarregar();
+          }}
+        />
+      )}
+      {avisoSaida && (
+        <p role="status" className="aviso aviso-ok">
+          {avisoSaida}
+        </p>
+      )}
 
-      {souOrganizador ? (
+      {souOrganizador && (
         // noValidate: o aviso de e-mail inválido é o da API, igual em todo navegador.
         <form onSubmit={adicionar} className="cartao formulario adicionar-morador" noValidate>
           <h2>Adicionar morador</h2>
@@ -101,6 +144,9 @@ export default function Moradores() {
             {enviando ? "Adicionando..." : "Adicionar morador"}
           </button>
         </form>
+      )}
+      {souOrganizador ? (
+        <ConviteLink />
       ) : (
         organizador && (
           <p className="cartao aviso-organizador">

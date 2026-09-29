@@ -1,4 +1,4 @@
-import { ErroDeValidacao } from "../erros";
+import { ErroDeValidacao, ErroNaoEncontrado } from "../erros";
 import { interpretaEmail } from "../republicas/validacao";
 
 export type EntradaMorador = { nome?: unknown; email?: unknown };
@@ -16,4 +16,34 @@ export function montaMorador(entrada: EntradaMorador): { nome: string; email: st
     throw new ErroDeValidacao("Nome do morador é obrigatório.");
   }
   return { nome, email: interpretaEmail(entrada.email) };
+}
+
+/** O que a saída (A4) precisa saber do morador que vai sair. */
+export type AlvoDaSaida = { id: number; organizador: boolean; saiuEm: Date | null };
+
+/**
+ * Confere se o morador pode ser marcado como "saiu da casa" (A4). `alvo` vem
+ * nulo quando o id não é desta república. O organizador não sai: sem ele,
+ * ninguém mais adiciona moradores nem marca saídas.
+ */
+export function validaSaida(alvo: AlvoDaSaida | null): AlvoDaSaida {
+  if (!alvo) throw new ErroNaoEncontrado("Morador não encontrado nesta república.");
+  if (alvo.organizador) {
+    throw new ErroDeValidacao("O organizador não pode marcar a própria saída.");
+  }
+  if (alvo.saiuEm) throw new ErroDeValidacao("Este morador já saiu da casa.");
+  return alvo;
+}
+
+/** O que a entrada pelo convite (A5) precisa saber dele. */
+export type ConviteParaUsar = { republicaId: number; usadoEm: Date | null };
+
+/**
+ * Confere se o link de convite (A5) ainda vale: `convite` vem nulo quando o
+ * token não existe. O link é de uso único; usado, não vale de novo.
+ */
+export function validaConvite<T extends ConviteParaUsar>(convite: T | null): T {
+  if (!convite) throw new ErroNaoEncontrado("Convite não encontrado.");
+  if (convite.usadoEm) throw new ErroDeValidacao("Este convite já foi usado.");
+  return convite;
 }

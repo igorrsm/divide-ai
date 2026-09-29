@@ -21,7 +21,8 @@ type Props = {
  * deles pagou ou do que participa (decisões da Thalita).
  */
 export default function CartaoFiltros({ filtros, aoAplicar, aoLimpar }: Props) {
-  const { moradores } = useMoradorAtual();
+  // Com quem saiu (A4): as despesas antigas dele continuam filtráveis.
+  const { todos: moradores } = useMoradorAtual();
   const [rascunho, setRascunho] = useState(filtros);
   const [erro, setErro] = useState<string | null>(null);
   // Qual data está com o calendário aberto; só um de cada vez.
