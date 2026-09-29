@@ -1434,3 +1434,28 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
 - O `npm run dev` nem sempre percebe as mudanças que a IA grava pela pasta
   compartilhada; reiniciar o servidor e recarregar com Ctrl+F5 resolve.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-27 — Igor — Revisão do PR #33 (cores do painel de saldos)
+
+Registro feito em 29/09: na hora, o Igor preferiu juntar esta revisão com a
+rodada seguinte, para não abrir um PR só de docs.
+
+**Pedido à IA**
+- Avaliar o PR #33 da Thalita (cores fixas do painel de saldos passadas
+  para variáveis e o título antes do resumo), que atendia aos dois pontos
+  não bloqueantes da revisão do #31, e aprovar depois do teste de tela.
+
+**O que a IA produziu**
+- Validação numa cópia separada da branch (`git worktree`): lint,
+  `npm test` (21 de 21) e build.
+- Conferência de que nenhuma cor fixa ficou fora do `:root` e de que as
+  variáveis novas têm os mesmos valores das cores antigas.
+
+**Revisão humana**
+- O Igor testou a tela antes da aprovação e do merge.
+
+**Observações**
+- A numeração das iniciais ficou deslocada (`.inicial-0` usa
+  `--cor-inicial-1`). Não muda nada na tela; foi registrado como
+  observação.
+- Tempo economizado ou perdido: não medido.
