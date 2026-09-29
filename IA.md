@@ -1814,3 +1814,38 @@ Ferramenta: Claude Code (Claude Opus 5.5).
   `<<enumeration>>`, que é sintaxe válida; a conferência final é a página do
   GitHub.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-29 — Igor — README de entrega e roteiro da apresentação
+
+Ferramenta: Claude Code (Claude Opus 5.5).
+
+**Pedido à IA**
+- Deixar o README fiel ao que foi entregue e escrever o roteiro dos 20 minutos
+  da apresentação, conforme a distribuição de dias do professor.
+
+**O que a IA produziu**
+- README:
+  - tecnologias: os três agentes usados, e a migração para PostgreSQL passou a
+    constar como fora do TP1;
+  - "Como rodar" com `.env`, `generate` e seed;
+  - uma tabela com a situação de cada história.
+- `docs/roteiro-demo.md`, com a demo minuto a minuto, a fala das histórias e a
+  tabela de participação com os commits.
+
+**Revisão humana**
+- Pendente: o Igor e quem revisar o PR conferem os textos e a tabela de
+  participação.
+
+**Observações**
+- A IA achou uma história não entregue por inteiro: a despesa não tem
+  categoria (história 2). Isso ficou declarado no README e no roteiro.
+- O README dizia que a migração para PostgreSQL não mudaria o código. Com o
+  Prisma 7, o adaptador do SQLite está em `src/db.ts` e no seed; o texto foi
+  corrigido.
+- A IA testou os passos de "Como rodar" num clone limpo e simulou a demo pela
+  API. O rateio (50,01 e 50,00), os saldos, a sugestão e a geração sem
+  repetição batem com o roteiro. A demo não foi testada pela tela.
+- A Thalita, na revisão, corrigiu três pontos: a pergunta de recorrência é
+  obrigatória, o rateio aparece no formulário e não no detalhe, e o `echo`
+  do `.env` grava em UTF-16 no PowerShell. Também faltava o T3 dela.
+- Tempo economizado ou perdido: não medido.

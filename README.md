@@ -26,8 +26,8 @@ ser relançadas manualmente todo mês.
 
 - **Frontend:** React 18 + TypeScript, Vite, React Router
 - **Backend:** Node.js + Express + TypeScript, API REST
-- **Banco de dados:** SQLite + ORM Prisma, com migração programada para PostgreSQL
-- **Agente de IA:** Claude Code
+- **Banco de dados:** SQLite + ORM Prisma
+- **Agentes de IA:** Claude Code e Claude (Cowork), da Anthropic; Antigravity, do Google
 
 Justificativa: adotamos uma linguagem única (TypeScript) em todo o stack, para
 que todos os membros consigam atuar e revisar tanto backend quanto frontend,
@@ -35,28 +35,31 @@ conforme exigido no enunciado. React e Node.js são as tecnologias web mais
 utilizadas do mercado (44,7% e 48,7% — Stack Overflow Developer Survey 2025).
 
 O projeto começa em SQLite para eliminar atrito de instalação e garantir que os
-quatro membros consigam executá-lo desde o primeiro dia. Está prevista a
-migração para PostgreSQL (banco mais utilizado do mercado, 55,6% na mesma
-pesquisa), orquestrado por Docker Compose, ainda durante o desenvolvimento.
-Como todo o acesso a dados passa pelo ORM Prisma, a migração se restringe ao
-provider e à string de conexão, sem alteração no código da aplicação. A decisão
-é deliberada: queremos ter contato com as duas ferramentas e registrar a
-migração como parte do aprendizado.
+quatro membros consigam executá-lo desde o primeiro dia. A migração para
+PostgreSQL (banco mais utilizado do mercado, 55,6% na mesma pesquisa), com
+Docker Compose, estava prevista, mas ficou fora do TP1: o time priorizou as
+histórias. Como todo o acesso a dados passa pelo ORM Prisma, ela se restringe
+ao provider, à string de conexão e ao adaptador do banco (em `src/db.ts` e
+`prisma/seed.ts`); as consultas não mudam.
 
 ## Como rodar localmente
 
 ```bash
 git clone https://github.com/igorrsm/divide-ai.git
 cd divide-ai
+echo 'DATABASE_URL="file:./dev.db"' > .env
 npm install
 npx prisma migrate dev      # cria o arquivo do banco e as tabelas
-npm run dev
+npx prisma generate         # gera o cliente do Prisma em src/generated/
+npx prisma db seed          # República Demo: Ana (organizadora), Bruno e Carla
+npm run dev                 # API na porta 3000 e tela em http://localhost:5173
 ```
 
 Pré-requisito: Node.js 24, conforme o `.nvmrc` (com o nvm, rode `nvm install` na pasta do projeto).
+No Windows, crie o `.env` pelo editor: no PowerShell, o `echo` grava em UTF-16.
 
-> Após a migração para PostgreSQL, esta seção passa a incluir
-> `docker compose up -d` e a configuração do arquivo `.env`.
+O seed apaga e recria os dados, então pode ser rodado de novo para voltar ao estado
+inicial. `npm test` roda os testes e `npm run lint` o ESLint.
 
 ## Histórias de usuário
 
@@ -80,6 +83,24 @@ Pré-requisito: Node.js 24, conforme o `.nvmrc` (com o nvm, rode `nvm install` n
 ### Possível extensão
 Simplificação de dívidas: em vez de A→B, B→C e C→A, o sistema calcula o menor
 número de transferências que zera todos os saldos.
+
+### Situação das histórias ao fim do TP1
+
+As histórias acima são as do início do trabalho. No backlog (Notion), cada uma virou
+um ou mais cartões, com código e critérios de aceitação. Todos estão mesclados na
+`main`.
+
+| História | Cartões (PR) | O que mudou em relação ao texto original |
+|---|---|---|
+| 1. Criar república e convidar | A1 (#49), A2 (#52), A3 (#23), A4 (#61), A5 (#62) | O convite é por link de uso único, sem envio de e-mail. Sem login: "Quem é você?" escolhe o morador |
+| 2. Cadastrar despesa | B1 (#15), B3 (#36), B6 (#40), E2 (#44) | **Sem categoria**: ficou fora do escopo. Há lista com filtros, edição e exclusão |
+| 3. Escolher quem participa | B4 (#37) | — |
+| 4. Dividir igual, por valores ou percentuais | B2 (#34), B5 (#47) | — |
+| 5. Ver o saldo consolidado | D1 (#25), D2 (#31) | — |
+| 6. Registrar acerto | D3 (#51) | — |
+| 7. Despesas recorrentes | C1 (#53), C2 (#60) | Os lançamentos do mês são gerados por um botão, não automaticamente (sem agendador) |
+| 8. Extrato do mês | E1 (#42), E3 (#63) | Também exporta o fechamento em CSV |
+| Extensão: simplificar dívidas | D5 (#59) | Sugestão gulosa; não promete o mínimo absoluto de transferências |
 
 ## Documentação (UML)
 
