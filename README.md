@@ -206,7 +206,7 @@ sequenceDiagram
     B-->>S: despesa gravada
     S-->>R: despesa
     R-->>T: 201 Created
-    T-->>M: detalhe da despesa com o rateio
+    T-->>M: "Despesa lançada" e o rateio no formulário
 
     M->>T: abre "Saldos"
     T->>R: GET /api/republicas/:id/saldos

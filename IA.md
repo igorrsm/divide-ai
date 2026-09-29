@@ -1801,6 +1801,8 @@ Ferramenta: Claude Code (Claude Opus 5.5).
   artificiais, e manter os diagramas com ele, como planejado.
 - O Igor conferiu na página do PR que os dois diagramas renderizam certo no
   GitHub, inclusive o `<<enumeration>>` que o validador acusava.
+- A Thalita, na revisão, apontou que depois de lançar a tela mostra o rateio
+  no próprio formulário, e não no detalhe da despesa; o diagrama foi corrigido.
 
 **Observações**
 - Os cartões T9 e T10 citavam um `RelatorioService` que nunca existiu: o saldo
