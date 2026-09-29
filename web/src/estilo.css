@@ -996,3 +996,10 @@ a {
   box-shadow: none;
   line-height: 1.4;
 }
+
+/* Gerar as recorrentes do mês (C2), logo abaixo da navegação do extrato. */
+.gerar-recorrentes {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
