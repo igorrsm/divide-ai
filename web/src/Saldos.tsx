@@ -13,6 +13,8 @@ type Saldo = {
   nome: string;
   saldoCentavos: number;
   situacao: "a receber" | "a pagar" | "quitado";
+  /** Saiu da casa (A4): só aparece enquanto tem o que acertar. */
+  saiu: boolean;
 };
 
 const CLASSE_VALOR = {
@@ -125,6 +127,7 @@ export default function Saldos() {
               <span className="saldo-nome">
                 {saldo.nome}
                 {eu && <small> (você)</small>}
+                {saldo.saiu && <small> (saiu)</small>}
               </span>
               <span className={`saldo-valor ${CLASSE_VALOR[saldo.situacao]}`}>
                 <strong>{valorComSinal(saldo.saldoCentavos)}</strong>
