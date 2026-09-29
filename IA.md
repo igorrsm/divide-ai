@@ -1501,3 +1501,36 @@ Três PRs da Thalita, que assumiu as tarefas do Eduardo.
 - Achado antigo: as entradas de 20/09 (Igor) e da A1 (Eduardo) neste
   arquivo não têm a linha "Tempo economizado ou perdido".
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Igor — Quadro do Sprint 2 e planejamento do backlog restante
+
+**Pedido à IA**
+- Propor uma estrutura para os cartões que saíram do backlog e foram
+  finalizados fora do planejamento, e depois planejar o fechamento de todo
+  o backlog restante, um cartão por vez.
+
+**O que a IA produziu**
+- A proposta de manter esses cartões no Sprint 2, com a propriedade nova
+  "Entrada" (Planejada ou Puxada durante a sprint), para não misturar o
+  compromisso com o que entrou depois. A alternativa de uma classificação
+  à parte foi descartada: sprint é janela de tempo, não grupo de cartões.
+- Com as datas tiradas do GitHub: B5, B6, E1 e E2 (puxadas em 28/09) e a
+  T14 (criada em 26/09) marcadas como puxadas; o resto do Sprint 2 e o
+  Sprint 0 como planejados.
+- O plano do backlog restante: a ordem D5, C2, A4, A5 e E3 (por prioridade
+  e dependência), critérios de aceitação e issues #54 a #58, e a mensagem
+  de aviso das duas migrations (A4 e A5) para o time.
+
+**Revisão humana**
+- O Igor escolheu a estrutura, informou o motivo das puxadas (a Thalita já
+  tinha terminado as atividades dela) e decidiu: B7 (comprovante) para
+  "Fora do TP1", porque upload é proibido no `CLAUDE.md`; implementação com
+  a IA e revisão da Thalita; só o cartão em desenvolvimento "Em andamento".
+- As regras de corte antigas da D5, A5 e E3 ficaram nos cartões, com a
+  nota de que o Igor as revisou.
+
+**Observações**
+- O plano gratuito do Notion chegou ao limite: acabaram os blocos (há
+  período de graça até 02/10) e as consultas ao banco. A conferência do
+  Status passou a ser feita lendo cada cartão.
+- Tempo economizado ou perdido: não medido.
