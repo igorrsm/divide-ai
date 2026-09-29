@@ -106,7 +106,7 @@ export default function Moradores() {
           aoConfirmar={() => {
             const nome = moradores.find((m) => m.id === saindo)?.nome;
             setSaindo(null);
-            setAvisoSaida(`${nome} saiu da casa. O histórico dele continua salvo.`);
+            setAvisoSaida(`${nome} saiu da casa. O histórico continua salvo.`);
             recarregar();
           }}
         />
