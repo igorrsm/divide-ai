@@ -1003,3 +1003,21 @@ a {
   gap: 10px;
   margin-bottom: 20px;
 }
+
+/* Saída da casa (A4) */
+.etiqueta-saiu {
+  opacity: 0.7;
+}
+
+.botao-saida {
+  flex: 0 0 auto;
+  min-height: 40px;
+}
+
+.saida {
+  margin-top: 16px;
+}
+
+.confirmacao .saida-saldo {
+  font-weight: 400;
+}
