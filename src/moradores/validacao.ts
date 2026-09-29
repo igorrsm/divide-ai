@@ -34,3 +34,16 @@ export function validaSaida(alvo: AlvoDaSaida | null): AlvoDaSaida {
   if (alvo.saiuEm) throw new ErroDeValidacao("Este morador já saiu da casa.");
   return alvo;
 }
+
+/** O que a entrada pelo convite (A5) precisa saber dele. */
+export type ConviteParaUsar = { republicaId: number; usadoEm: Date | null };
+
+/**
+ * Confere se o link de convite (A5) ainda vale: `convite` vem nulo quando o
+ * token não existe. O link é de uso único; usado, não vale de novo.
+ */
+export function validaConvite<T extends ConviteParaUsar>(convite: T | null): T {
+  if (!convite) throw new ErroNaoEncontrado("Convite não encontrado.");
+  if (convite.usadoEm) throw new ErroDeValidacao("Este convite já foi usado.");
+  return convite;
+}
