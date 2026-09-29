@@ -11,6 +11,7 @@ import { ProvedorMoradorAtual } from "./MoradorAtual";
 import Moradores from "./Moradores";
 import NovaDespesa from "./NovaDespesa";
 import { ProvedorRepublicaAtual } from "./RepublicaAtual";
+import RegistrarPagamento from "./RegistrarPagamento";
 import { ProvedorStatusApi } from "./StatusApi";
 import Saldos from "./Saldos";
 import Voltar from "./Voltar";
@@ -21,6 +22,15 @@ function TelaPrincipal({ children }: { children: ReactNode }) {
     <>
       <Voltar para="/" />
       {children}
+    </>
+  );
+}
+
+function PaginaRegistrarPagamento() {
+  return (
+    <>
+      <Voltar para="/saldos" />
+      <RegistrarPagamento />
     </>
   );
 }
@@ -55,6 +65,7 @@ export default function App() {
         <Route path="/despesas/:id/editar" element={<EditarDespesa />} />
         <Route path="/extrato" element={<Extrato />} />
         <Route path="/saldos" element={<TelaPrincipal><Saldos /></TelaPrincipal>} />
+        <Route path="/saldos/pagamento" element={<PaginaRegistrarPagamento />} />
         <Route path="/moradores" element={<TelaPrincipal><Moradores /></TelaPrincipal>} />
         <Route path="/republicas/nova" element={<TelaPrincipal><CriarRepublica /></TelaPrincipal>} />
       </Route>

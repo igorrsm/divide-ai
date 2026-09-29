@@ -9,6 +9,10 @@ type Props = {
   valor: string;
   aoEscolher: (dia: string) => void;
   aoFechar: () => void;
+  /** Último dia que dá para escolher; os seguintes ficam desativados. */
+  max?: string;
+  /** Esconde o "Limpar", para data obrigatória. */
+  semLimpar?: boolean;
 };
 
 const SEMANA = ["D", "S", "T", "Q", "Q", "S", "S"];
@@ -18,7 +22,14 @@ const SEMANA_EXTENSO = ["domingo", "segunda", "terça", "quarta", "quinta", "sex
  * Calendário no visual do site (E2), no lugar do calendário do navegador, que
  * o CSS não alcança. Abre no mês do dia escolhido, ou no mês de hoje.
  */
-export default function Calendario({ rotulo, valor, aoEscolher, aoFechar }: Props) {
+export default function Calendario({
+  rotulo,
+  valor,
+  aoEscolher,
+  aoFechar,
+  max,
+  semLimpar = false,
+}: Props) {
   const hoje = hojeNaCasa();
   const [mes, setMes] = useState((valor || hoje).slice(0, 7));
   const cartao = useRef<HTMLDivElement>(null);
@@ -80,6 +91,8 @@ export default function Calendario({ rotulo, valor, aoEscolher, aoFechar }: Prop
               type="button"
               className={dia === hoje ? "calendario-dia calendario-hoje" : "calendario-dia"}
               aria-pressed={dia === valor}
+              // AAAA-MM-DD compara como texto na mesma ordem da data.
+              disabled={max !== undefined && dia > max}
               aria-label={`${Number(dia.slice(8))} de ${formatarMes(mes)}`}
               onClick={() => aoEscolher(dia)}
             >
@@ -90,9 +103,11 @@ export default function Calendario({ rotulo, valor, aoEscolher, aoFechar }: Prop
       </div>
 
       <div className="acoes-botoes">
-        <button type="button" className="botao-secundario" onClick={() => aoEscolher("")}>
-          Limpar
-        </button>
+        {!semLimpar && (
+          <button type="button" className="botao-secundario" onClick={() => aoEscolher("")}>
+            Limpar
+          </button>
+        )}
         <button type="button" className="botao-secundario" onClick={aoFechar}>
           Fechar
         </button>

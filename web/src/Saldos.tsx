@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import Acertos from "./Acertos";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
 import { useRepublicaAtual } from "./RepublicaAtual";
+import { useApiForaDoAr } from "./StatusApi";
 
 /** Uma linha de GET /api/republicas/:id/saldos (D1). */
 type Saldo = {
@@ -52,6 +55,17 @@ export default function Saldos() {
   const [saldos, setSaldos] = useState<Saldo[] | null>(null);
   const [erro, setErro] = useState(false);
   const { moradorId } = useMoradorAtual();
+  const foraDoAr = useApiForaDoAr();
+  // "Pagamento registrado." (D3) aparece uma vez e sai do histórico, como o
+  // aviso de despesa excluída.
+  const local = useLocation();
+  const navigate = useNavigate();
+  const [aviso] = useState((local.state as { aviso?: string } | null)?.aviso);
+  useEffect(() => {
+    if ((local.state as { aviso?: string } | null)?.aviso) {
+      navigate(local.pathname, { replace: true, state: null });
+    }
+  }, [local, navigate]);
 
   useEffect(() => {
     let ativo = true;
@@ -84,7 +98,21 @@ export default function Saldos() {
     <>
       {/* O título vem antes do resumo, para leitor de tela anunciar a tela primeiro. */}
       <h1>Como está a casa</h1>
+      {aviso && (
+        <p role="status" className="aviso aviso-ok">
+          {aviso}
+        </p>
+      )}
       <Resumo saldo={saldos.find((s) => s.moradorId === moradorId)} />
+      {foraDoAr ? (
+        <button type="button" className="botao-principal botao-pagamento" disabled>
+          Registrar pagamento
+        </button>
+      ) : (
+        <Link to="/saldos/pagamento" className="botao-principal botao-pagamento">
+          Registrar pagamento
+        </Link>
+      )}
       <ul className="saldos">
         {saldos.map((saldo) => {
           const eu = saldo.moradorId === moradorId;
@@ -105,6 +133,7 @@ export default function Saldos() {
           );
         })}
       </ul>
+      <Acertos />
     </>
   );
 }
