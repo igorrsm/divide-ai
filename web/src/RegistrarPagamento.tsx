@@ -16,7 +16,8 @@ import { useApiForaDoAr } from "./StatusApi";
 export default function RegistrarPagamento() {
   const navigate = useNavigate();
   const { republica } = useRepublicaAtual();
-  const { moradores, moradorId } = useMoradorAtual();
+  // Todos, com quem saiu (A4): ele ainda pode acertar o que deve.
+  const { todos: moradores, moradorId } = useMoradorAtual();
   const foraDoAr = useApiForaDoAr();
   const [pagador, setPagador] = useState(moradorId ? String(moradorId) : "");
   const [recebedor, setRecebedor] = useState("");
