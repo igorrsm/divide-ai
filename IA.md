@@ -1733,3 +1733,35 @@ Ferramenta: Claude Code (Claude Opus 5.5).
   do Igor. A IA não conferiu um por um; o "abre no LibreOffice" e o
   "legível em 375 px" não têm teste registrado.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-29 — Igor — Planejamento da entrega e diagramas UML (T9 e T10)
+
+Ferramenta: Claude Code (Claude Opus 5.5).
+
+**Pedido à IA**
+- Levantar o que falta para a apresentação de 30/09, cruzando o enunciado, a
+  distribuição de dias, o Notion, o README e os slides da Thalita, e montar
+  um plano. Depois, fazer os diagramas UML no README.
+
+**O que a IA produziu**
+- O plano: faltavam a UML no README, o roteiro da demo, as falas de "histórias
+  implementadas" e de participação (a distribuição de dias pede 20 min, não
+  15) e ajustes no README (PostgreSQL, agentes usados, como rodar).
+- A conta dos commits por membro na `main`: o Eduardo (3,3%) e o Lucas (11,4%)
+  ficam abaixo dos 15% do enunciado.
+- Os dois diagramas em mermaid, conferidos no renderizador antes do commit.
+
+**Revisão humana**
+- O Igor decidiu declarar a distribuição desigual na apresentação, sem commits
+  artificiais, e manter os diagramas com ele, como planejado.
+
+**Observações**
+- Os cartões T9 e T10 citavam um `RelatorioService` que nunca existiu: o saldo
+  é o módulo `src/saldos`. O backend usa funções puras, não classes de serviço,
+  então os módulos aparecem como classes `Modulo...`, ligadas por dependência.
+- `Lancamento[]` e `Extrato`, nos retornos, são simplificações: as funções
+  devolvem objetos sem tipo nomeado.
+- O validador de mermaid usado acusava erro em qualquer `<<...>>`, inclusive
+  `<<enumeration>>`, que é sintaxe válida; a conferência final é a página do
+  GitHub.
+- Tempo economizado ou perdido: não medido.
