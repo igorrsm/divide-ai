@@ -61,3 +61,20 @@ export function lancamentosDoMes(
     return [{ modeloId: modelo.id, data }];
   });
 }
+
+/**
+ * Quem já saiu da casa (A4) entre o pagador e os participantes de um modelo
+ * recorrente, em ordem de id. Com alguém de fora, a geração (C2) pula o
+ * modelo e avisa, em vez de lançar uma parte para quem não mora mais lá.
+ */
+export function quemSaiuDoModelo(
+  pagadorId: number,
+  participantesIds: number[],
+  saidos: Map<number, string>,
+): string[] {
+  const ids = [...new Set([pagadorId, ...participantesIds])].sort((a, b) => a - b);
+  return ids.flatMap((id) => {
+    const nome = saidos.get(id);
+    return nome === undefined ? [] : [nome];
+  });
+}
