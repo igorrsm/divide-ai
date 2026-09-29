@@ -5,6 +5,7 @@ import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
 import { useRepublicaAtual } from "./RepublicaAtual";
 import { useApiForaDoAr } from "./StatusApi";
+import SugestaoAcertos from "./SugestaoAcertos";
 
 /** Uma linha de GET /api/republicas/:id/saldos (D1). */
 type Saldo = {
@@ -133,6 +134,7 @@ export default function Saldos() {
           );
         })}
       </ul>
+      <SugestaoAcertos />
       <Acertos />
     </>
   );
