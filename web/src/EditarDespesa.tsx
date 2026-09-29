@@ -18,6 +18,7 @@ type Detalhe = {
     percentualCentesimos: number | null;
     morador: { id: number };
   }[];
+  recorrencia: { diaDoMes: number } | null;
 };
 
 /** Os números de cada participante como a pessoa digitou (B5). */
@@ -90,6 +91,7 @@ export default function EditarDespesa() {
       participantesIds: despesa.participacoes.map((p) => p.morador.id),
       tipoDivisao: despesa.tipoDivisao,
       partes: partesDe(despesa),
+      recorrente: despesa.recorrencia !== null,
       voltarPara: origem ?? undefined,
     };
     conteudo = <NovaDespesa edicao={edicao} />;

@@ -7,6 +7,7 @@ import { formatarReais } from "./formatarReais";
 import EscolhaMorador from "./EscolhaMorador";
 import { useMoradorAtual } from "./MoradorAtual";
 import ParticipantesRateio from "./ParticipantesRateio";
+import { diaDoTexto, textoRecorrencia } from "./recorrencia";
 import { useRepublicaAtual } from "./RepublicaAtual";
 import { useApiForaDoAr } from "./StatusApi";
 
@@ -28,6 +29,8 @@ export type DespesaEmEdicao = {
   tipoDivisao: TipoDivisao;
   /** Por valores ou percentuais (B5): o texto de cada participante. */
   partes: Record<number, string>;
+  /** Repete todo mês (C1). */
+  recorrente: boolean;
   /** Tela de onde a pessoa veio antes do detalhe, para o Voltar de lá. */
   voltarPara?: string;
 };
@@ -75,6 +78,9 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
     .map((morador) => morador.id);
   const [tipo, setTipo] = useState<TipoDivisao>(edicao?.tipoDivisao ?? "IGUAL");
   const [partes, setPartes] = useState<Record<number, string>>(edicao?.partes ?? {});
+  // C1: sem resposta (null) ao lançar; a Thalita pediu a escolha obrigatória.
+  const [recorrente, setRecorrente] = useState<boolean | null>(edicao?.recorrente ?? null);
+  const diaDoMes = diaDoTexto(data);
   // Só os marcados contam na soma (B5); a API confere de novo ao salvar.
   const conferencia =
     tipo === "IGUAL"
@@ -107,6 +113,20 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
     if (foraDoAr) return;
     setAviso(null);
     setRateio(null);
+    // Os obrigatórios são conferidos aqui, com aviso no estilo do site: o
+    // balão do navegador some rápido e aceitava descrição só com espaços.
+    if (descricao.trim() === "") {
+      setAviso({ tipo: "erro", texto: "Informe a descrição da despesa." });
+      return;
+    }
+    if (valor.trim() === "") {
+      setAviso({ tipo: "erro", texto: "Informe o valor da despesa." });
+      return;
+    }
+    if (recorrente === null) {
+      setAviso({ tipo: "erro", texto: "Responda se esta despesa é recorrente." });
+      return;
+    }
     setEnviando(true);
     try {
       const url = `/api/republicas/${republica.id}/despesas${edicao ? `/${edicao.id}` : ""}`;
@@ -126,6 +146,7 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
               ? undefined
               : participantesIds.map((id) => ({ moradorId: id, valor: partes[id] ?? "" })),
           moradorId,
+          recorrente,
         }),
       });
       const corpo = await resposta.json();
@@ -147,6 +168,7 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
       });
       setDescricao("");
       setValor("");
+      setRecorrente(null);
       setPartes({});
       // Volta ao padrão de todos participando: deixar uma exclusão valendo para
       // a próxima despesa é erro difícil de notar.
@@ -159,7 +181,7 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
   }
 
   return (
-    <form onSubmit={enviar} className="formulario">
+    <form onSubmit={enviar} className="cartao formulario" noValidate>
       <h2>{edicao ? "Editar despesa" : "Nova despesa"}</h2>
 
       <label className="campo">
@@ -207,6 +229,45 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
         aoMudarParte={(id, texto) => setPartes((atual) => ({ ...atual, [id]: texto }))}
         conferencia={conferencia}
       />
+
+      {/* C1: separada do rateio; sim ou não, obrigatório. */}
+      <fieldset className="participantes repete">
+        <legend>Deseja que esta despesa seja recorrente?</legend>
+        <p className="participantes-resumo">
+          Se escolher sim, você pode parar de repetir quando quiser, no detalhe da despesa ou
+          editando-a. O que já foi lançado continua salvo.
+        </p>
+        {[
+          {
+            valor: true,
+            titulo: "Sim, repete todo mês",
+            descricao: "Para contas fixas, como aluguel e internet.",
+          },
+          {
+            valor: false,
+            titulo: "Não, é uma despesa avulsa",
+            descricao: "Lançada uma vez só, como uma compra de mercado.",
+          },
+        ].map((opcao) => (
+          <div key={opcao.titulo} className="cartao participante">
+            <label className="participante-rotulo">
+              <input
+                type="radio"
+                name="recorrente"
+                checked={recorrente === opcao.valor}
+                onChange={() => setRecorrente(opcao.valor)}
+              />
+              <span className="repete-texto">
+                {opcao.titulo}
+                <small>{opcao.descricao}</small>
+                {opcao.valor && recorrente && diaDoMes && (
+                  <small className="repete-dia">↻ {textoRecorrencia(diaDoMes)}</small>
+                )}
+              </span>
+            </label>
+          </div>
+        ))}
+      </fieldset>
 
       <button
         type="submit"

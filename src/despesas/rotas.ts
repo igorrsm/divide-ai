@@ -8,6 +8,7 @@ import {
   excluirDespesa,
   listaDespesas,
   listaMoradores,
+  pararDeRepetir,
 } from "./servico";
 import { interpretaFiltros } from "./filtros";
 import { interpretaId } from "./validacao";
@@ -61,5 +62,13 @@ rotasDespesas.delete("/republicas/:republicaId/despesas/:despesaId", async (req,
   const republicaId = await idDaRepublica(req.params.republicaId);
   const despesaId = interpretaId(req.params.despesaId, "Id da despesa");
   await excluirDespesa(republicaId, despesaId, req.body?.moradorId);
+  res.status(204).end();
+});
+
+// Parar de repetir (C1): desativa a recorrência sem apagar; só quem pagou.
+rotasDespesas.delete("/republicas/:republicaId/despesas/:despesaId/recorrencia", async (req, res) => {
+  const republicaId = await idDaRepublica(req.params.republicaId);
+  const despesaId = interpretaId(req.params.despesaId, "Id da despesa");
+  await pararDeRepetir(republicaId, despesaId, req.body?.moradorId);
   res.status(204).end();
 });

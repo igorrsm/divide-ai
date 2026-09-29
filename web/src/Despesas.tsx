@@ -13,6 +13,7 @@ type ItemDespesa = {
   valorCentavos: number;
   data: string;
   pagador: { id: number; nome: string };
+  recorrente: boolean;
 };
 
 /** Lista de despesas da república (B3), da mais recente para a mais antiga. */
@@ -149,7 +150,10 @@ export default function Despesas() {
                   {despesa.pagador.nome.charAt(0)}
                 </span>
                 <span className="despesa-texto">
-                  <strong>{despesa.descricao}</strong>
+                  <strong>
+                    {despesa.descricao}
+                    {despesa.recorrente && <span className="marca-mensal">↻ Mensal</span>}
+                  </strong>
                   <small>
                     {despesa.pagador.nome} pagou · {formatarData(despesa.data)}
                   </small>

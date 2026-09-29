@@ -1362,3 +1362,42 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
   `node_modules` é o do Windows); a IA compilou os testes com o `tsc` e
   rodou com o `node --test` (111 de 111).
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Marcar despesa como recorrente (C1)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- C1 era do Eduardo; a Thalita assumiu. Critérios do cartão: marcar como
+  recorrente (mensal), a lista distingue recorrente de avulsa e desmarcar
+  volta a avulsa sem perder o histórico.
+
+**O que a IA produziu**
+- `interpretaRecorrente` e `diaDoMesDa` (funções puras, com testes); lançar
+  e editar aceitam `recorrente`, e a despesa se repete no dia da data dela,
+  na tabela `DespesaRecorrente` que já existia.
+- Desmarcar ou "Parar de repetir" (`DELETE .../despesas/:id/recorrencia`,
+  só quem pagou) não apaga: desativa e guarda `dataFim`.
+- Tela: pergunta obrigatória "Deseja que esta despesa seja recorrente?"
+  com Sim e Não; "↻ Mensal" na lista; "↻ Todo mês, no dia 05" e o botão
+  "Parar de repetir" no detalhe (`textoRecorrencia`, com testes).
+
+**Revisão humana**
+- A Thalita testou a tela em várias rodadas na própria máquina e rodou
+  lint, `npm test` (119 de 119) e build antes dos commits.
+- Pedidos dela: o dia com dois algarismos; a pergunta separada do rateio,
+  com Sim e Não obrigatórios, a descrição embaixo de cada opção e mais
+  espaço; um texto explicando que dá para parar de repetir depois; o
+  calendário do site também aqui; a descrição obrigatória com aviso no
+  estilo do site; e os formulários alinhados com a página e dentro de um
+  cartão (Nova e Editar despesa, Registrar pagamento e Criar república).
+
+**Observações**
+- Para usar o calendário da D3 sem refazê-lo, a C1 foi feita em cima da
+  branch da D3 (#51).
+- Ao juntar as duas, a IA apagou sem querer um `}` do `estilo.css`, e todo
+  estilo da C1 deixou de valer na tela da Thalita; ela notou os espaços
+  errados e a IA achou o erro.
+- A obrigatoriedade de responder se é recorrente vale na tela; a API
+  continua tratando a ausência como avulsa.
+- Tempo economizado ou perdido: não medido.
