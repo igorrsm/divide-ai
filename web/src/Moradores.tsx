@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import ConviteLink from "./ConviteLink";
 import { formatarData } from "./formatarData";
 import MarcarSaida from "./MarcarSaida";
 import { useMoradorAtual } from "./MoradorAtual";
@@ -117,7 +118,7 @@ export default function Moradores() {
         </p>
       )}
 
-      {souOrganizador ? (
+      {souOrganizador && (
         // noValidate: o aviso de e-mail inválido é o da API, igual em todo navegador.
         <form onSubmit={adicionar} className="cartao formulario adicionar-morador" noValidate>
           <h2>Adicionar morador</h2>
@@ -143,6 +144,9 @@ export default function Moradores() {
             {enviando ? "Adicionando..." : "Adicionar morador"}
           </button>
         </form>
+      )}
+      {souOrganizador ? (
+        <ConviteLink />
       ) : (
         organizador && (
           <p className="cartao aviso-organizador">

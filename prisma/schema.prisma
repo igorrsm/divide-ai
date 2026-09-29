@@ -21,6 +21,7 @@ model Republica {
   moradores  Morador[]
   despesas   Despesa[]
   pagamentos Pagamento[]
+  convites   Convite[]
 }
 
 model Morador {
@@ -97,4 +98,15 @@ model DespesaRecorrente {
   ativa         Boolean   @default(true)
   dataFim       DateTime?
   ultimaGeracao DateTime?
+}
+
+// Convite por link (A5): o organizador gera, e quem recebe completa o
+// cadastro uma vez só. Sem e-mail e sem login, fora de escopo do TP1.
+model Convite {
+  token       String    @id
+  criadoEm    DateTime  @default(now())
+  /// Preenchida quando o convite é usado; um convite usado não vale de novo.
+  usadoEm     DateTime?
+  republicaId Int
+  republica   Republica @relation(fields: [republicaId], references: [id])
 }

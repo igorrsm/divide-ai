@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { ErroDeValidacao, ErroNaoEncontrado } from "../erros";
-import { montaMorador, validaSaida } from "./validacao";
+import { montaMorador, validaConvite, validaSaida } from "./validacao";
 
 describe("montaMorador", () => {
   it("tira os espaços do nome e deixa o e-mail em minúsculas", () => {
@@ -54,5 +54,21 @@ describe("validaSaida", () => {
       () => validaSaida(null),
       new ErroNaoEncontrado("Morador não encontrado nesta república."),
     );
+  });
+});
+
+describe("validaConvite", () => {
+  const CONVITE = { republicaId: 1, usadoEm: null };
+
+  it("aceita o convite ainda não usado", () => {
+    assert.deepEqual(validaConvite(CONVITE), CONVITE);
+  });
+
+  it("recusa o convite usado e o que não existe", () => {
+    assert.throws(
+      () => validaConvite({ ...CONVITE, usadoEm: new Date("2026-09-28T12:00:00Z") }),
+      new ErroDeValidacao("Este convite já foi usado."),
+    );
+    assert.throws(() => validaConvite(null), new ErroNaoEncontrado("Convite não encontrado."));
   });
 });

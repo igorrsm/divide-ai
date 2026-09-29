@@ -11,6 +11,7 @@ async function main() {
   await prisma.despesaRecorrente.deleteMany();
   await prisma.despesa.deleteMany();
   await prisma.pagamento.deleteMany();
+  await prisma.convite.deleteMany();
   await prisma.morador.deleteMany();
   await prisma.republica.deleteMany();
 
