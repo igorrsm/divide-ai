@@ -28,6 +28,9 @@ model Morador {
   nome        String
   email       String    @unique
   organizador Boolean   @default(false)
+  /// Saída da casa (A4): preenchida quando o morador sai. Nada é apagado; ele
+  /// continua nas despesas e acertos antigos e no saldo enquanto houver o que acertar.
+  saiuEm      DateTime?
   republicaId Int
   republica   Republica @relation(fields: [republicaId], references: [id])
 
