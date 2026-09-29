@@ -39,7 +39,7 @@ export type DespesaMontada = {
  * não casa com o padrão de valor e é recusado em vez de arredondado em
  * silêncio.
  */
-function comoTexto(valor: unknown, campo: string): string {
+export function comoTexto(valor: unknown, campo: string): string {
   if (typeof valor === "string") return valor;
   if (typeof valor === "number" && Number.isFinite(valor)) return String(valor);
   throw new ErroDeValidacao(`${campo} é obrigatório.`);

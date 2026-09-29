@@ -134,11 +134,17 @@ a {
   font-weight: 700;
 }
 
-/* Formulários: campos altos para o toque, botão principal preto e amarelo. */
+/* Formulários: campos altos para o toque, botão principal preto e amarelo.
+   Ocupam a coluna inteira, alinhados com o cabeçalho e as listas. */
 .formulario {
   display: grid;
   gap: 14px;
-  max-width: 28rem;
+}
+
+/* Dentro do cartão (pedido da Thalita), o título não empurra o topo. */
+.cartao.formulario > h1:first-child,
+.cartao.formulario > h2:first-child {
+  margin: 0;
 }
 
 .campo {
@@ -201,6 +207,11 @@ a {
 
 .aviso-ok {
   background: var(--cor-fundo-ok);
+}
+
+/* Alerta que não impede de seguir, como o valor acima da dívida (D3). */
+.aviso-alerta {
+  background: var(--cor-destaque-clara);
 }
 
 /* Tela inicial: apresentação e atalhos em cartão (2 colunas em tela larga). */
@@ -792,6 +803,15 @@ a {
   background: var(--cor-destaque-clara);
 }
 
+.calendario-dia:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.calendario-dia:disabled:hover {
+  background: none;
+}
+
 .calendario-hoje {
   border-color: var(--cor-tinta);
 }
@@ -851,6 +871,98 @@ a {
 
 .conta-divisao.fecha {
   background: var(--cor-fundo-ok);
+}
+
+/* Acertos registrados (D3), embaixo do painel de saldos. */
+.botao-pagamento {
+  margin-bottom: 20px;
+}
+
+.acertos {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.acerto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.acerto small {
+  display: block;
+  font-size: 13px;
+}
+
+.acerto strong {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Despesa recorrente (C1): um bloco próprio, afastado do rateio. */
+.repete {
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.repete legend {
+  margin-bottom: 4px;
+}
+
+/* A explicação fica colada na pergunta; o espaço maior vem antes dos cartões. */
+.repete .participantes-resumo {
+  margin: 0;
+}
+
+.repete .participante-rotulo {
+  gap: 14px;
+}
+
+.repete input[type="radio"] {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  accent-color: var(--cor-tinta);
+  cursor: pointer;
+}
+
+/* Título em cima e a descrição embaixo, como uma legenda. */
+.repete-texto small {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.repete-texto .repete-dia {
+  font-weight: 700;
+}
+
+.marca-mensal {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border: var(--borda);
+  border-radius: 10px;
+  background: var(--cor-destaque-clara);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.recorrencia {
+  font-weight: 700;
+}
+
+/* Com "Parar de repetir", são três botões: em 375 px eles quebram a linha. */
+.acoes-despesa .acoes-botoes {
+  flex-wrap: wrap;
 }
 
 /* Moradores (A2) */

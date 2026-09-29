@@ -4,6 +4,7 @@ import { DESPESA_ATIVA } from "./ativa";
 import { diaDa } from "./dia";
 import type { FiltrosDespesas } from "./filtros";
 import { montaDespesa, type EntradaDespesa } from "./montagem";
+import { diaDoMesDa, interpretaRecorrente } from "./recorrencia";
 import { interpretaId } from "./validacao";
 
 export function buscaRepublica(id: number) {
@@ -38,11 +39,17 @@ export async function listaDespesas(republicaId: number, filtros: FiltrosDespesa
       valorCentavos: true,
       data: true,
       pagador: { select: { id: true, nome: true } },
+      recorrente: { select: { ativa: true } },
     },
     // No mesmo dia, a última lançada vem primeiro.
     orderBy: [{ data: "desc" }, { id: "desc" }],
   });
-  return despesas.map((despesa) => ({ ...despesa, data: diaDa(despesa.data) }));
+  // Recorrência parada (C1) conta como avulsa; o registro fica no banco.
+  return despesas.map(({ recorrente, ...despesa }) => ({
+    ...despesa,
+    data: diaDa(despesa.data),
+    recorrente: recorrente?.ativa === true,
+  }));
 }
 
 /**
@@ -68,10 +75,17 @@ export async function buscaDespesa(republicaId: number, despesaId: number) {
         },
         orderBy: { morador: { nome: "asc" } },
       },
+      recorrente: { select: { ativa: true, diaDoMes: true } },
     },
   });
   if (!despesa) throw new ErroNaoEncontrado("Despesa não encontrada.");
-  return { ...despesa, data: diaDa(despesa.data) };
+  const { recorrente, ...resto } = despesa;
+  return {
+    ...resto,
+    data: diaDa(despesa.data),
+    // C1: null quando é avulsa ou parou de repetir.
+    recorrencia: recorrente?.ativa ? { diaDoMes: recorrente.diaDoMes } : null,
+  };
 }
 
 export function listaMoradores(republicaId: number) {
@@ -99,9 +113,10 @@ export function listaMoradores(republicaId: number) {
  */
 export async function criarDespesa(
   republicaId: number,
-  entrada: EntradaDespesa,
+  entrada: EntradaDespesa & { recorrente?: unknown },
   hoje: Date = new Date(),
 ) {
+  const recorrente = interpretaRecorrente(entrada.recorrente);
   // Uma consulta só: serve para validar quem pagou e os participantes.
   const moradores = await prisma.morador.findMany({
     where: { republicaId },
@@ -119,6 +134,8 @@ export async function criarDespesa(
       ...campos,
       republicaId,
       participacoes: { create: participacoes },
+      // C1: repete no dia do mês da data da despesa.
+      ...(recorrente ? { recorrente: { create: { diaDoMes: diaDoMesDa(campos.data) } } } : {}),
     },
     include: {
       participacoes: {
@@ -157,10 +174,11 @@ async function exigePagador(republicaId: number, despesaId: number, moradorId: u
 export async function editarDespesa(
   republicaId: number,
   despesaId: number,
-  entrada: EntradaDespesa & { moradorId?: unknown },
+  entrada: EntradaDespesa & { moradorId?: unknown; recorrente?: unknown },
   hoje: Date = new Date(),
 ) {
   await exigePagador(republicaId, despesaId, entrada.moradorId);
+  const recorrente = interpretaRecorrente(entrada.recorrente);
   const moradores = await prisma.morador.findMany({
     where: { republicaId },
     select: { id: true },
@@ -171,10 +189,54 @@ export async function editarDespesa(
     moradores.map((morador) => morador.id),
     hoje,
   );
-  return prisma.despesa.update({
-    where: { id: despesaId },
-    data: { ...campos, participacoes: { deleteMany: {}, create: participacoes } },
+  const diaDoMes = diaDoMesDa(campos.data);
+  // Uma transação só: a despesa e a recorrência (C1) mudam juntas.
+  return prisma.$transaction(async (tx) => {
+    const despesa = await tx.despesa.update({
+      where: { id: despesaId },
+      data: {
+        ...campos,
+        participacoes: { deleteMany: {}, create: participacoes },
+        // Marcar cria ou reativa, no dia da data (que pode ter mudado).
+        ...(recorrente
+          ? {
+              recorrente: {
+                upsert: {
+                  create: { diaDoMes },
+                  update: { diaDoMes, ativa: true, dataFim: null },
+                },
+              },
+            }
+          : {}),
+      },
+    });
+    if (recorrente === false) await pararRecorrencia(tx, despesaId, hoje);
+    return despesa;
   });
+}
+
+type Transacao = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
+
+/**
+ * Desmarcar (C1) não apaga: desativa e guarda quando parou, para o histórico
+ * não se perder. Sem recorrência ativa, não faz nada.
+ */
+function pararRecorrencia(tx: Transacao, despesaId: number, hoje: Date) {
+  return tx.despesaRecorrente.updateMany({
+    where: { id: despesaId, ativa: true },
+    data: { ativa: false, dataFim: hoje },
+  });
+}
+
+/** "Parar de repetir" no detalhe (C1): só quem pagou, como editar e excluir. */
+export async function pararDeRepetir(
+  republicaId: number,
+  despesaId: number,
+  moradorId: unknown,
+  hoje: Date = new Date(),
+) {
+  await exigePagador(republicaId, despesaId, moradorId);
+  await prisma.$transaction((tx) => pararRecorrencia(tx, despesaId, hoje));
 }
 
 /** Exclusão lógica (B6): marca excluidaEm e mantém a linha no banco. */

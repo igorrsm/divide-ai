@@ -1321,6 +1321,87 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
 - Transação aninhada: A criação da república e do organizador ocorre em uma única operação do Prisma, garantindo que não exista república sem organizador nem morador órfão.
 - As funções de validação puras possuem 100% de cobertura de testes. Rotas e componentes React foram validados via build e script de teste funcional.
 
+## 2026-09-28 — Thalita — Registrar pagamento entre moradores (D3)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- O Eduardo não vai conseguir fazer as tarefas dele; a Thalita assumiu a D3,
+  a A2 e a C1, nessa ordem. Na D3, a IA seguiu os critérios do cartão e a
+  Thalita aprovou o plano antes do código.
+
+**O que a IA produziu**
+- `montaPagamento` (função pura, com testes): moradores da casa, valor em
+  centavos, data até hoje e recusa de pagamento para si mesmo.
+- `POST` e `GET /api/republicas/:id/pagamentos`; o saldo já lia os
+  pagamentos, então não mudou.
+- Tela `/saldos/pagamento`: quem pagou, para quem, valor e data; aviso
+  quando o valor passa da dívida (`avisoDeValor`, com testes), sem impedir
+  o registro. Em Saldos, o botão "Registrar pagamento", o aviso
+  "Pagamento registrado." e a lista "Acertos registrados".
+
+**Revisão humana**
+- A Thalita rodou lint, `npm test` (111 de 111) e build e testou os sete
+  cenários da tela na própria máquina. O endereço `/saldos/pagamento` (em
+  vez de `/pagamentos/novo`) foi proposto pela IA e aceito por ela.
+- A IA entendeu um "feito!" como aprovação e fez os commits antes dos
+  resultados dela; nada tinha ido para o GitHub. Os testes passaram, e a IA
+  corrigiu este registro antes do push.
+- Pedido da Thalita depois do teste: o calendário e a escolha de morador
+  iguais aos da página de despesas (E2). A IA criou `CampoData.tsx` (o
+  calendário do site, com dias futuros desativados e sem "Limpar") e
+  `EscolhaMorador.tsx` (pílulas de uma pessoa) e usou os dois no registrar
+  pagamento e, a pedido dela, também na nova despesa e na edição. "Para
+  quem" não mostra quem pagou. Entregue sem commit; ela testou a tela e
+  rodou lint, testes e build antes dos commits.
+
+**Observações**
+- O formulário tem mais de 100 linhas; entrou em três commits (campos e
+  envio, data e mesma pessoa, aviso da dívida), cada um funcionando.
+- No PC de casa, o `npm test` não roda no terminal da IA (o esbuild do
+  `node_modules` é o do Windows); a IA compilou os testes com o `tsc` e
+  rodou com o `node --test` (111 de 111).
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Marcar despesa como recorrente (C1)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- C1 era do Eduardo; a Thalita assumiu. Critérios do cartão: marcar como
+  recorrente (mensal), a lista distingue recorrente de avulsa e desmarcar
+  volta a avulsa sem perder o histórico.
+
+**O que a IA produziu**
+- `interpretaRecorrente` e `diaDoMesDa` (funções puras, com testes); lançar
+  e editar aceitam `recorrente`, e a despesa se repete no dia da data dela,
+  na tabela `DespesaRecorrente` que já existia.
+- Desmarcar ou "Parar de repetir" (`DELETE .../despesas/:id/recorrencia`,
+  só quem pagou) não apaga: desativa e guarda `dataFim`.
+- Tela: pergunta obrigatória "Deseja que esta despesa seja recorrente?"
+  com Sim e Não; "↻ Mensal" na lista; "↻ Todo mês, no dia 05" e o botão
+  "Parar de repetir" no detalhe (`textoRecorrencia`, com testes).
+
+**Revisão humana**
+- A Thalita testou a tela em várias rodadas na própria máquina e rodou
+  lint, `npm test` (119 de 119) e build antes dos commits.
+- Pedidos dela: o dia com dois algarismos; a pergunta separada do rateio,
+  com Sim e Não obrigatórios, a descrição embaixo de cada opção e mais
+  espaço; um texto explicando que dá para parar de repetir depois; o
+  calendário do site também aqui; a descrição obrigatória com aviso no
+  estilo do site; e os formulários alinhados com a página e dentro de um
+  cartão (Nova e Editar despesa, Registrar pagamento e Criar república).
+
+**Observações**
+- Para usar o calendário da D3 sem refazê-lo, a C1 foi feita em cima da
+  branch da D3 (#51).
+- Ao juntar as duas, a IA apagou sem querer um `}` do `estilo.css`, e todo
+  estilo da C1 deixou de valer na tela da Thalita; ela notou os espaços
+  errados e a IA achou o erro.
+- A obrigatoriedade de responder se é recorrente vale na tela; a API
+  continua tratando a ausência como avulsa.
+- Tempo economizado ou perdido: não medido.
+
 ## 2026-09-28 — Thalita — Adicionar morador (A2)
 
 Ferramenta: Claude em modo Cowork (Claude Opus 5.5).

@@ -4,6 +4,7 @@ import { formatarPercentual, TITULO_DIVISAO } from "./divisao";
 import { formatarData } from "./formatarData";
 import { formatarReais } from "./formatarReais";
 import { useMoradorAtual } from "./MoradorAtual";
+import { textoRecorrencia } from "./recorrencia";
 import { useRepublicaAtual } from "./RepublicaAtual";
 import Voltar, { useOrigem } from "./Voltar";
 
@@ -19,17 +20,49 @@ type Detalhe = {
     percentualCentesimos: number | null;
     morador: { id: number; nome: string };
   }[];
+  /** C1: null quando é avulsa. */
+  recorrencia: { diaDoMes: number } | null;
 };
 
 /** Editar e excluir (B6): só aparecem para quem pagou a despesa. */
-type PropsAcoes = { id: string; moradorId: number; origem: string | null };
+type PropsAcoes = {
+  id: string;
+  moradorId: number;
+  origem: string | null;
+  /** C1: mostra "Parar de repetir" quando a despesa se repete. */
+  recorrente: boolean;
+  aoPararDeRepetir: () => void;
+};
 
-function AcoesDespesa({ id, moradorId, origem }: PropsAcoes) {
+function AcoesDespesa({ id, moradorId, origem, recorrente, aoPararDeRepetir }: PropsAcoes) {
   const navigate = useNavigate();
   const { republica } = useRepublicaAtual();
   const [confirmando, setConfirmando] = useState(false);
   const [excluindo, setExcluindo] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [parando, setParando] = useState(false);
+
+  async function pararDeRepetir() {
+    setParando(true);
+    setErro(null);
+    try {
+      const resposta = await fetch(`/api/republicas/${republica.id}/despesas/${id}/recorrencia`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ moradorId }),
+      });
+      if (!resposta.ok) {
+        const corpo = await resposta.json().catch(() => ({}));
+        setErro(corpo.erro ?? "Não foi possível parar de repetir.");
+        return;
+      }
+      aoPararDeRepetir();
+    } catch {
+      setErro("A API não respondeu.");
+    } finally {
+      setParando(false);
+    }
+  }
 
   async function excluir() {
     setExcluindo(true);
@@ -90,6 +123,16 @@ function AcoesDespesa({ id, moradorId, origem }: PropsAcoes) {
           >
             Editar
           </Link>
+          {recorrente && (
+            <button
+              type="button"
+              className="botao-secundario"
+              onClick={pararDeRepetir}
+              disabled={parando}
+            >
+              {parando ? "Parando..." : "Parar de repetir"}
+            </button>
+          )}
           <button
             type="button"
             className="botao-secundario botao-perigo"
@@ -114,6 +157,7 @@ export default function DetalheDespesa() {
   const { republica } = useRepublicaAtual();
   const [despesa, setDespesa] = useState<Detalhe | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const [aviso, setAviso] = useState<string | null>(null);
   const { moradorId } = useMoradorAtual();
   // Tela de onde a pessoa veio (lista filtrada ou extrato). Aberto por um
   // link colado, não há origem e o Voltar vai para a lista.
@@ -160,7 +204,15 @@ export default function DetalheDespesa() {
             <span>
               {despesa.pagador.nome} pagou em {formatarData(despesa.data)}
             </span>
+            {despesa.recorrencia && (
+              <span className="recorrencia">↻ {textoRecorrencia(despesa.recorrencia.diaDoMes)}</span>
+            )}
           </div>
+          {aviso && (
+            <p role="status" className="aviso aviso-ok">
+              {aviso}
+            </p>
+          )}
 
           {quantos === 0 ? (
             // Despesas lançadas antes da B2 não têm participações.
@@ -216,7 +268,16 @@ export default function DetalheDespesa() {
           )}
 
           {id && moradorId === despesa.pagador.id && (
-            <AcoesDespesa id={id} moradorId={moradorId} origem={origem} />
+            <AcoesDespesa
+              id={id}
+              moradorId={moradorId}
+              origem={origem}
+              recorrente={despesa.recorrencia !== null}
+              aoPararDeRepetir={() => {
+                setDespesa({ ...despesa, recorrencia: null });
+                setAviso("Esta despesa não se repete mais. O histórico dela continua salvo.");
+              }}
+            />
           )}
         </>
       )}
