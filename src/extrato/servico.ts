@@ -1,7 +1,12 @@
 import { prisma } from "../db";
 import { DESPESA_ATIVA } from "../despesas/ativa";
 import { diaDa } from "../despesas/dia";
+import { buscaRepublica } from "../despesas/servico";
+import { hojeNaCasa } from "../despesas/validacao";
+import { buscaSaldos } from "../saldos/servico";
+import { sugerirTransferencias } from "../saldos/transferencias";
 import { montaExtrato } from "./calculo";
+import { fechamentoParaCsv } from "./csv";
 import { intervaloDoMes } from "./mes";
 
 /** Extrato de um mês da república (E1). Só busca; a conta é de montaExtrato. */
@@ -39,4 +44,25 @@ export async function buscaExtrato(republicaId: number, mes: string) {
       .map(({ id, nome }) => ({ id, nome })),
     despesas.map((despesa) => ({ ...despesa, data: diaDa(despesa.data) })),
   );
+}
+
+/**
+ * Fechamento do mês em CSV (E3): o extrato do mês, os saldos e os acertos
+ * sugeridos de hoje, com quem saiu da casa marcado. Só busca; o arquivo é
+ * montado por fechamentoParaCsv.
+ */
+export async function buscaFechamento(republicaId: number, mes: string, agora = new Date()) {
+  const saldos = await buscaSaldos(republicaId);
+  const saidos = await prisma.morador.findMany({
+    where: { republicaId, saiuEm: { not: null } },
+    select: { id: true, saiuEm: true },
+  });
+  return fechamentoParaCsv({
+    republica: (await buscaRepublica(republicaId))?.nome ?? "",
+    hoje: hojeNaCasa(agora),
+    extrato: await buscaExtrato(republicaId, mes),
+    saldos,
+    transferencias: sugerirTransferencias(saldos),
+    saidas: new Map(saidos.map((m) => [m.id, diaDa(m.saiuEm!)])),
+  });
 }
