@@ -1,6 +1,7 @@
 import { prisma } from "../db";
 import { DESPESA_ATIVA } from "../despesas/ativa";
 import { calcularSaldos } from "./calculo";
+import { sugerirTransferencias } from "./transferencias";
 
 /**
  * Saldos de todos os moradores da república, em ordem alfabética de nome.
@@ -28,4 +29,9 @@ export async function buscaSaldos(republicaId: number) {
   });
 
   return calcularSaldos(moradores, despesas, pagamentos);
+}
+
+/** Sugestão de acertos que zera os saldos (D5), a partir dos saldos acima. */
+export async function buscaTransferencias(republicaId: number) {
+  return sugerirTransferencias(await buscaSaldos(republicaId));
 }

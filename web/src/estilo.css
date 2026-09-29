@@ -996,3 +996,12 @@ a {
   box-shadow: none;
   line-height: 1.4;
 }
+
+/* Sugestão de acertos (D5): o botão não estica como nas ações da despesa. */
+.dica-sugestao {
+  margin: 0 0 4px;
+}
+
+.sugestao .botao-secundario {
+  flex: 0 0 auto;
+}
