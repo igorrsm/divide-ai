@@ -1470,3 +1470,42 @@ Ferramenta: Claude Code (Claude Opus 5.5).
 - Três chamadas simultâneas à rota criaram um lançamento só; isso foi
   testado à mão, sem teste automatizado.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Igor — Desativar morador que saiu da casa (A4)
+
+Ferramenta: Claude Code (Claude Opus 5.5).
+
+**Pedido à IA**
+- Terceiro cartão do fechamento do backlog: o organizador marca que um
+  morador saiu, sem apagar o histórico. Primeira migration da rodada; o
+  time foi avisado antes (regra do `CLAUDE.md`).
+
+**O que a IA produziu**
+- Migration `Morador.saiuEm`; `validaSaida` (função pura, com testes) e a
+  rota `DELETE .../moradores/:moradorId`, só para o organizador, que não
+  pode marcar a própria saída.
+- As regras nas outras consultas: despesa nova só com quem mora na casa;
+  edição mantém quem já estava na despesa; saldos mostram quem saiu até
+  ele zerar; extrato mostra quem ainda morava lá no mês; pagamento aceita
+  quem saiu, para ele acertar a dívida.
+- Na C2, `quemSaiuDoModelo` (com testes): o modelo com alguém que saiu não
+  gera lançamento e a tela avisa.
+- No front, `moradores` (só ativos) e `todos` no `useMoradorAtual`, a
+  confirmação de saída com o saldo (`MarcarSaida.tsx`) e "(saiu)" nos saldos.
+
+**Revisão humana**
+- No planejamento, o Igor decidiu que a C2 não gera (e avisa) quando o
+  modelo tem alguém que saiu, em vez de redividir, e que desfazer a saída
+  fica fora da história.
+- O Igor testou a tela antes dos commits (os oito passos do PR). Não alterou
+  o código gerado; a revisão de código fica com a Thalita no PR.
+
+**Observações**
+- Durante a implementação a IA corrigiu três pontos antes do teste: a data
+  de saída era gravada em UTC (às 23h de Brasília já seria o dia seguinte);
+  o extrato poderia deixar o total por morador sem fechar com o da casa num
+  caso raro; e a tela dizia "Nada a gerar" junto com o aviso de pulado.
+- Nos testes pela API, a IA subiu um servidor sem perceber que o `npm run
+  dev` do Igor já estava rodando; as chamadas foram atendidas por um deles,
+  com o mesmo código. Nenhum processo do Igor foi encerrado.
+- Tempo economizado ou perdido: não medido.
