@@ -1733,3 +1733,48 @@ Ferramenta: Claude Code (Claude Opus 5.5).
   do Igor. A IA não conferiu um por um; o "abre no LibreOffice" e o
   "legível em 375 px" não têm teste registrado.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-29 — Thalita — Revisão dos PRs #59 a #64
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- Revisar, pela ordem, os PRs do Igor (#59 D5, #60 C2, #61 A4, #62 A5, #63
+  E3 e #64 docs): ler o código e a descrição, conferir os critérios das
+  issues, preparar o passo a passo de teste e o texto de cada aprovação.
+
+**O que a IA produziu**
+- Leitura de cada PR num clone do repositório, com a conferência dos
+  critérios, dos commits de até 100 linhas e do IA.md sem linha removida.
+- Um print da tela de Saldos do #59, montado com o CSS do PR, porque a IA
+  não conseguia rodar o app.
+- O passo a passo de teste de cada PR e o texto de cada aprovação, enviados
+  só depois do ok da Thalita.
+- Sugestões para o backlog:
+  - mover `centavosParaTexto` para um arquivo de utilidades (#59);
+  - gerar um mês pulado e mostrar a origem do lançamento gerado (#60);
+  - "marcar que voltou" (#61);
+  - prazo para o link de convite (#62);
+  - fórmula no Excel e saldos de hoje no CSV (#63, que viraram a issue #70).
+
+**Revisão humana**
+- A Thalita testou cada PR na própria máquina (lint, `npm test`, build e o
+  roteiro de tela) antes de cada aprovação.
+- Ela pegou textos só no masculino que tinham passado pela IA do Igor e pela
+  revisão da IA: "ele" e "dele" no #61, e "Você foi convidado" no #62.
+  Também confirmou na tela que o e-mail único impede adicionar de novo quem
+  saiu.
+- Decisões dela: revisar pela ordem dos números, pedir ao Igor uma passada
+  pelas telas juntas no #63 e registrar esta revisão num PR próprio.
+
+**Observações**
+- Erro da IA: sugeriu fazer um merge só, pelo #63, achando que ele iria para
+  a `main`. Na verdade, cada PR da pilha apontava para a branch do anterior.
+  A IA corrigiu a orientação antes de qualquer merge. No fim, o Lucas e o
+  Igor mudaram as bases para a `main` e mesclaram na ordem.
+- A primeira tentativa de enviar a aprovação do #59 pelo navegador foi
+  bloqueada por uma trava de segurança do ambiente da IA. A IA parou e deixou
+  o texto pronto.
+- O instalador de pacotes estava bloqueado no ambiente da IA, então lint,
+  testes e build de cada PR foram rodados só pela Thalita.
+- Tempo economizado ou perdido: não medido.
