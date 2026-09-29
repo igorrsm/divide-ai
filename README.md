@@ -26,8 +26,8 @@ ser relançadas manualmente todo mês.
 
 - **Frontend:** React 18 + TypeScript, Vite, React Router
 - **Backend:** Node.js + Express + TypeScript, API REST
-- **Banco de dados:** SQLite + ORM Prisma, com migração programada para PostgreSQL
-- **Agente de IA:** Claude Code
+- **Banco de dados:** SQLite + ORM Prisma
+- **Agentes de IA:** Claude Code e Claude (Cowork), da Anthropic; Antigravity, do Google
 
 Justificativa: adotamos uma linguagem única (TypeScript) em todo o stack, para
 que todos os membros consigam atuar e revisar tanto backend quanto frontend,
@@ -35,28 +35,30 @@ conforme exigido no enunciado. React e Node.js são as tecnologias web mais
 utilizadas do mercado (44,7% e 48,7% — Stack Overflow Developer Survey 2025).
 
 O projeto começa em SQLite para eliminar atrito de instalação e garantir que os
-quatro membros consigam executá-lo desde o primeiro dia. Está prevista a
-migração para PostgreSQL (banco mais utilizado do mercado, 55,6% na mesma
-pesquisa), orquestrado por Docker Compose, ainda durante o desenvolvimento.
-Como todo o acesso a dados passa pelo ORM Prisma, a migração se restringe ao
-provider e à string de conexão, sem alteração no código da aplicação. A decisão
-é deliberada: queremos ter contato com as duas ferramentas e registrar a
-migração como parte do aprendizado.
+quatro membros consigam executá-lo desde o primeiro dia. A migração para
+PostgreSQL (banco mais utilizado do mercado, 55,6% na mesma pesquisa), com
+Docker Compose, estava prevista, mas ficou fora do TP1: o time priorizou as
+histórias. Como todo o acesso a dados passa pelo ORM Prisma, ela se restringe
+ao provider, à string de conexão e ao adaptador do banco (em `src/db.ts` e
+`prisma/seed.ts`); as consultas não mudam.
 
 ## Como rodar localmente
 
 ```bash
 git clone https://github.com/igorrsm/divide-ai.git
 cd divide-ai
+echo 'DATABASE_URL="file:./dev.db"' > .env
 npm install
 npx prisma migrate dev      # cria o arquivo do banco e as tabelas
-npm run dev
+npx prisma generate         # gera o cliente do Prisma em src/generated/
+npx prisma db seed          # República Demo: Ana (organizadora), Bruno e Carla
+npm run dev                 # API na porta 3000 e tela em http://localhost:5173
 ```
 
 Pré-requisito: Node.js 24, conforme o `.nvmrc` (com o nvm, rode `nvm install` na pasta do projeto).
 
-> Após a migração para PostgreSQL, esta seção passa a incluir
-> `docker compose up -d` e a configuração do arquivo `.env`.
+O seed apaga e recria os dados, então pode ser rodado de novo para voltar ao estado
+inicial. `npm test` roda os testes e `npm run lint` o ESLint.
 
 ## Histórias de usuário
 
