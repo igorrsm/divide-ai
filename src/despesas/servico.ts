@@ -4,7 +4,8 @@ import { DESPESA_ATIVA } from "./ativa";
 import { diaDa } from "./dia";
 import type { FiltrosDespesas } from "./filtros";
 import { montaDespesa, type EntradaDespesa } from "./montagem";
-import { diaDoMesDa, interpretaRecorrente } from "./recorrencia";
+import { intervaloDoMes } from "../extrato/mes";
+import { diaDoMesDa, interpretaRecorrente, lancamentosDoMes } from "./recorrencia";
 import { interpretaId } from "./validacao";
 
 export function buscaRepublica(id: number) {
@@ -243,4 +244,65 @@ export async function pararDeRepetir(
 export async function excluirDespesa(republicaId: number, despesaId: number, moradorId: unknown) {
   await exigePagador(republicaId, despesaId, moradorId);
   await prisma.despesa.update({ where: { id: despesaId }, data: { excluidaEm: new Date() } });
+}
+
+/**
+ * Gera os lançamentos do mês a partir das despesas recorrentes (C2), por ação
+ * explícita do morador, sem agendador. Cada lançamento é uma despesa comum,
+ * cópia do modelo (mesmo pagador e mesmas participações, então a soma bate).
+ *
+ * A trava da idempotência é a atualização de `ultimaGeracao`: ela só pega a
+ * linha se o mês ainda não foi gerado, e o lançamento só é criado nesse caso.
+ * Assim, nem dois cliques ao mesmo tempo duplicam.
+ */
+export async function gerarRecorrentes(republicaId: number, mes: string, agora = new Date()) {
+  const modelos = await prisma.despesa.findMany({
+    where: { republicaId, ...DESPESA_ATIVA, recorrente: { isNot: null } },
+    select: {
+      id: true,
+      descricao: true,
+      valorCentavos: true,
+      data: true,
+      tipoDivisao: true,
+      pagadorId: true,
+      recorrente: { select: { diaDoMes: true, ativa: true, ultimaGeracao: true } },
+      participacoes: {
+        select: { moradorId: true, valorCentavos: true, percentualCentesimos: true },
+      },
+    },
+  });
+  const lancamentos = lancamentosDoMes(
+    mes,
+    modelos.flatMap((m) => (m.recorrente ? [{ id: m.id, data: m.data, ...m.recorrente }] : [])),
+    agora,
+  );
+  const { inicio } = intervaloDoMes(mes);
+
+  return prisma.$transaction(async (tx) => {
+    const criados = [];
+    for (const { modeloId, data } of lancamentos) {
+      const marcou = await tx.despesaRecorrente.updateMany({
+        where: { id: modeloId, OR: [{ ultimaGeracao: null }, { ultimaGeracao: { lt: inicio } }] },
+        data: { ultimaGeracao: inicio },
+      });
+      if (marcou.count === 0) continue;
+      const { descricao, valorCentavos, tipoDivisao, pagadorId, participacoes } = modelos.find(
+        (m) => m.id === modeloId,
+      )!;
+      const despesa = await tx.despesa.create({
+        data: {
+          descricao,
+          valorCentavos,
+          tipoDivisao,
+          pagadorId,
+          data,
+          republicaId,
+          participacoes: { create: participacoes },
+        },
+        select: { id: true, descricao: true, valorCentavos: true, data: true },
+      });
+      criados.push({ ...despesa, data: diaDa(despesa.data) });
+    }
+    return criados;
+  });
 }

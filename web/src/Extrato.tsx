@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import ConteudoExtrato, { type DadosExtrato } from "./ConteudoExtrato";
 import { hojeNaCasa } from "./diasDoMes";
+import GerarRecorrentes from "./GerarRecorrentes";
 import { formatarMes, mesVizinho } from "./mes";
 import { useMoradorAtual } from "./MoradorAtual";
 import { useRepublicaAtual } from "./RepublicaAtual";
@@ -19,6 +20,8 @@ export default function Extrato() {
   const mes = PADRAO_MES.test(bruto) ? bruto : hoje;
   const [extrato, setExtrato] = useState<DadosExtrato | null>(null);
   const [erro, setErro] = useState(false);
+  // Sobe depois de gerar as recorrentes (C2), para buscar o extrato de novo.
+  const [versao, setVersao] = useState(0);
   const { moradorId } = useMoradorAtual();
   const { republica } = useRepublicaAtual();
 
@@ -41,7 +44,7 @@ export default function Extrato() {
     return () => {
       ativo = false;
     };
-  }, [republica.id, mes]);
+  }, [republica.id, mes, versao]);
 
   // Enquanto o mês novo não chega, não mostra os números do mês anterior.
   const doMes = extrato?.mes === mes ? extrato : null;
@@ -65,6 +68,8 @@ export default function Extrato() {
           </span>
         )}
       </nav>
+      {/* key: o aviso de um mês não fica aparecendo no outro. */}
+      <GerarRecorrentes key={mes} mes={mes} aoGerar={() => setVersao((v) => v + 1)} />
 
       {erro ? (
         <p role="status" className="aviso aviso-erro">
