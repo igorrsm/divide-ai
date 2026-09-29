@@ -97,10 +97,11 @@ a velocidade planejada não ficar inflada.
 - **Primeira leva (14 pontos, mesclada):** a Thalita tinha terminado as atividades
   dela e puxou B5 (#47), B6 (#40), E1 (#42) e E2 (#44), todas mescladas em 28/09. A
   T14 (layout base, tarefa técnica) foi criada em 26/09 e mesclada no #17 em 27/09.
-- **Segunda leva (23 pontos, em revisão em 29/09):** o time decidiu fechar o backlog
-  restante. O Igor implementou com a IA, uma história por vez, e a Thalita revisa:
-  D5 (#59), C2 (#60), A4 (#61), A5 (#62) e E3 (#63). Os PRs estão empilhados e entram
-  nessa ordem.
+- **Segunda leva (23 pontos, mesclada):** o time decidiu fechar o backlog restante.
+  O Igor implementou com a IA, uma história por vez, e a Thalita revisou e testou a
+  tela: D5 (#59), C2 (#60), A4 (#61), A5 (#62) e E3 (#63), todas mescladas em 29/09.
+  Os PRs estavam empilhados; a base de cada um passou para a `main` depois do merge
+  do anterior. As sugestões da revisão da E3 ficaram na issue #70.
 - **Fora do TP1:** B7 (anexar comprovante), porque upload está fora do escopo.
 
 ### Ainda no sprint
