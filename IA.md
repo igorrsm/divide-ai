@@ -1809,4 +1809,7 @@ Ferramenta: Claude Code (Claude Opus 5.5).
 - A IA testou os passos de "Como rodar" num clone limpo e simulou a demo pela
   API. O rateio (50,01 e 50,00), os saldos, a sugestão e a geração sem
   repetição batem com o roteiro. A demo não foi testada pela tela.
+- A Thalita, na revisão, corrigiu três pontos: a pergunta de recorrência é
+  obrigatória, o rateio aparece no formulário e não no detalhe, e o `echo`
+  do `.env` grava em UTF-16 no PowerShell. Também faltava o T3 dela.
 - Tempo economizado ou perdido: não medido.

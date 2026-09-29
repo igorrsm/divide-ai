@@ -24,7 +24,7 @@ deve R$ 875,00.
 | Tempo | Tela | O que fazer e o que mostrar |
 |---|---|---|
 | 1 min | Início | Em "Quem é você?", escolher **Ana** (organizadora). O cabeçalho mostra a República Demo |
-| 2 min | Despesas → "Lançar despesa" | "Pizza", R$ 100,01, Ana pagou, só **Bruno e Carla** participam, "Por igual". No detalhe: Bruno R$ 50,01 e Carla R$ 50,00. **A sobra de 1 centavo vai para o participante de menor id, porque quem pagou não participa** |
+| 2 min | Despesas → "Lançar despesa" | "Pizza", R$ 100,01, Ana pagou, só **Bruno e Carla** participam, "Por igual", e "Não" em "Deseja que esta despesa seja recorrente?" (é obrigatória). Ao salvar, o próprio formulário mostra o rateio: Bruno R$ 50,01 e Carla R$ 50,00. **A sobra de 1 centavo vai para o participante de menor id, porque quem pagou não participa** |
 | 1 min | Despesas | Lista com os filtros: período no calendário do site e moradores em pílulas |
 | 2 min | Saldos | Ana tem R$ 1.700,01 a receber, Bruno deve R$ 775,01 e Carla R$ 925,00. **A soma é zero.** Em "Como acertar", clicar em "Registrar" na linha do Bruno: o pagamento abre preenchido. Salvar: Bruno fica quitado e o acerto aparece na lista |
 | 2 min | Despesas → "Ver extrato do mês" | Em setembro, "Gerar as recorrentes": o aluguel de 05/09 entra. Clicar de novo mostra "Nada a gerar neste mês." Mostrar "A pagar" e "Pago" por morador e "⬇ Exportar CSV" |
@@ -48,7 +48,7 @@ Commits na `main` em 29/09, sem contar os merges. São 277 no total.
 
 | Membro | Commits | Cartões |
 |---|---|---|
-| Thalita | ~153 (55%) | A2, A3, B3, B5, B6, C1, D2, D3, E1, E2 e o layout base (T14) |
+| Thalita | ~153 (55%) | A2, A3, B3, B5, B6, C1, D2, D3, E1, E2, o healthcheck (T3) e o layout base (T14) |
 | Igor | ~84 (30%) | D1, D5, C2, A4, A5, E3, CI, template de PR, `IA.md`, diagramas UML |
 | Lucas | ~31 (11%) | B1, B2, B4 e revisões de PR |
 | Eduardo | ~9 (3%) | A1 |

@@ -56,6 +56,7 @@ npm run dev                 # API na porta 3000 e tela em http://localhost:5173
 ```
 
 Pré-requisito: Node.js 24, conforme o `.nvmrc` (com o nvm, rode `nvm install` na pasta do projeto).
+No Windows, crie o `.env` pelo editor: no PowerShell, o `echo` grava em UTF-16.
 
 O seed apaga e recria os dados, então pode ser rodado de novo para voltar ao estado
 inicial. `npm test` roda os testes e `npm run lint` o ESLint.
