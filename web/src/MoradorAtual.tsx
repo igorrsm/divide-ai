@@ -5,7 +5,7 @@ import { useApiForaDoAr } from "./StatusApi";
 // Chave do navegador onde fica guardado quem está usando o app.
 const CHAVE = "divide-ai:morador";
 
-export type Morador = { id: number; nome: string };
+export type Morador = { id: number; nome: string; email: string; organizador: boolean };
 
 type Contexto = {
   moradores: Morador[];
@@ -13,6 +13,8 @@ type Contexto = {
   escolher: (id: number) => void;
   /** true quando a última busca da lista de moradores falhou. */
   erro: boolean;
+  /** Busca a lista de novo, depois de adicionar um morador (A2). */
+  recarregar: () => void;
 };
 
 const ContextoMorador = createContext<Contexto>({
@@ -20,6 +22,7 @@ const ContextoMorador = createContext<Contexto>({
   moradorId: null,
   escolher: () => {},
   erro: false,
+  recarregar: () => {},
 });
 
 /** Morador escolhido em "Quem é você?" e a lista de moradores da república. */
@@ -53,6 +56,7 @@ export function ProvedorMoradorAtual({ children }: { children: ReactNode }) {
   const [moradores, setMoradores] = useState<Morador[]>([]);
   const [moradorId, setMoradorId] = useState<number | null>(lerSalvo);
   const [erro, setErro] = useState(false);
+  const [versao, setVersao] = useState(0);
   const foraDoAr = useApiForaDoAr();
 
   // Carrega de novo quando a API volta ou a república muda, para o seletor atualizar.
@@ -77,7 +81,7 @@ export function ProvedorMoradorAtual({ children }: { children: ReactNode }) {
         setMoradores([]);
         setErro(true);
       });
-  }, [republica.id, foraDoAr]);
+  }, [republica.id, foraDoAr, versao]);
 
   function escolher(id: number) {
     setMoradorId(id);
@@ -85,7 +89,9 @@ export function ProvedorMoradorAtual({ children }: { children: ReactNode }) {
   }
 
   return (
-    <ContextoMorador.Provider value={{ moradores, moradorId, escolher, erro }}>
+    <ContextoMorador.Provider
+      value={{ moradores, moradorId, escolher, erro, recarregar: () => setVersao((v) => v + 1) }}
+    >
       {children}
     </ContextoMorador.Provider>
   );

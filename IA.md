@@ -1401,3 +1401,36 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
 - A obrigatoriedade de responder se é recorrente vale na tela; a API
   continua tratando a ausência como avulsa.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Thalita — Adicionar morador (A2)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
+
+**Pedido à IA**
+- A2 era do Eduardo; a Thalita assumiu. Critérios do cartão: o morador
+  aparece na lista, e-mail repetido e e-mail inválido são recusados, lista
+  em ordem de entrada. A Thalita decidiu que só o organizador adiciona.
+
+**O que a IA produziu**
+- `montaMorador` (função pura, com testes), reaproveitando `interpretaEmail`
+  da A1; `POST /api/republicas/:id/moradores` com a trava do organizador
+  (403, no padrão da B6) e a recusa de e-mail repetido.
+- Tela Moradores em ordem de entrada, com e-mail e etiqueta "Organizador";
+  formulário só para o organizador; a lista do "Quem é você?" recarrega
+  depois de adicionar.
+
+**Revisão humana**
+- A Thalita testou os sete cenários na própria máquina e rodou lint,
+  `npm test` (105 de 105) e build antes dos commits.
+- Pedidos dela depois do teste: o recado para quem não é organizador no
+  estilo da página (virou um cartão com a inicial da Ana) e o formulário
+  alinhado com a lista e mais afastado do último morador.
+- A IA propôs esconder do extrato de um mês o morador que entrou depois
+  dele (precisaria de migration); a Thalita preferiu não fazer.
+
+**Observações**
+- O banco local da Thalita não tinha rodado o seed depois da migration da
+  A1, então ninguém era organizador; `npx prisma db seed` resolveu.
+- O `npm run dev` nem sempre percebe as mudanças que a IA grava pela pasta
+  compartilhada; reiniciar o servidor e recarregar com Ctrl+F5 resolve.
+- Tempo economizado ou perdido: não medido.

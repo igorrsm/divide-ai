@@ -964,3 +964,35 @@ a {
 .acoes-despesa .acoes-botoes {
   flex-wrap: wrap;
 }
+
+/* Moradores (A2) */
+.morador-email {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.etiqueta {
+  flex-shrink: 0;
+  padding: 2px 10px;
+  border: var(--borda);
+  border-radius: 12px;
+  background: var(--cor-destaque);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Formulário e recado do organizador com a largura da lista, e respiro acima. */
+.adicionar-morador {
+  max-width: none;
+  margin-top: 28px;
+}
+
+.aviso-organizador {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 28px 0 0;
+  background: var(--cor-destaque-clara);
+  box-shadow: none;
+  line-height: 1.4;
+}

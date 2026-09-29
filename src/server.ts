@@ -1,6 +1,7 @@
 import express, { type NextFunction, type Request, type Response } from "express";
 import { rotasDespesas } from "./despesas/rotas";
 import { rotasExtrato } from "./extrato/rotas";
+import { rotasMoradores } from "./moradores/rotas";
 import { rotasPagamentos } from "./pagamentos/rotas";
 import { rotasRepublicas } from "./republicas/rotas";
 import { rotasSaldos } from "./saldos/rotas";
@@ -17,6 +18,7 @@ app.use("/api", rotasDespesas);
 app.use("/api", rotasRepublicas);
 app.use("/api", rotasSaldos);
 app.use("/api", rotasExtrato);
+app.use("/api", rotasMoradores);
 app.use("/api", rotasPagamentos);
 
 // O Express 5 encaminha rejeição de handler async para cá.
