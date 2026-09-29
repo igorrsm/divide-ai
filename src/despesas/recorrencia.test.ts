@@ -5,6 +5,7 @@ import {
   diaDoMesDa,
   interpretaRecorrente,
   lancamentosDoMes,
+  quemSaiuDoModelo,
   type ModeloRecorrente,
 } from "./recorrencia";
 
@@ -87,5 +88,21 @@ describe("lancamentosDoMes", () => {
       () => lancamentosDoMes("2026-10", [ALUGUEL], AGORA),
       new ErroDeValidacao("Não dá para gerar lançamentos de um mês que ainda não começou."),
     );
+  });
+});
+
+describe("quemSaiuDoModelo", () => {
+  const SAIDOS = new Map([
+    [3, "Carla"],
+    [5, "Eva"],
+  ]);
+
+  it("ninguém saiu: lista vazia", () => {
+    assert.deepEqual(quemSaiuDoModelo(1, [1, 2], SAIDOS), []);
+  });
+
+  it("acha quem saiu entre o pagador e os participantes, sem repetir", () => {
+    assert.deepEqual(quemSaiuDoModelo(5, [1, 3, 5], SAIDOS), ["Carla", "Eva"]);
+    assert.deepEqual(quemSaiuDoModelo(3, [1, 2], SAIDOS), ["Carla"]);
   });
 });
