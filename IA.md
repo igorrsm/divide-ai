@@ -1434,3 +1434,39 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
 - O `npm run dev` nem sempre percebe as mudanças que a IA grava pela pasta
   compartilhada; reiniciar o servidor e recarregar com Ctrl+F5 resolve.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Igor — Gerar os lançamentos das recorrentes (C2)
+
+Ferramenta: Claude Code (Claude Opus 5.5).
+
+**Pedido à IA**
+- Segundo cartão do fechamento do backlog: gerar os lançamentos do mês a
+  partir das despesas recorrentes (C1), por ação explícita, sem agendador.
+  Critério do cartão: gerar duas vezes o mesmo mês não duplica.
+
+**O que a IA produziu**
+- `lancamentosDoMes` (função pura) e 6 testes: não duplicar, dia 31 em
+  fevereiro comum e bissexto, recorrência parada, mês do próprio modelo,
+  dia que ainda não chegou e mês futuro recusado.
+- `gerarRecorrentes` e a rota `POST .../recorrentes/gerar`. A trava da
+  idempotência é a atualização condicional de `ultimaGeracao` antes de
+  criar o lançamento, o que também segura dois cliques ao mesmo tempo.
+- O botão no Extrato (`GerarRecorrentes.tsx`), que recarrega o mês.
+
+**Revisão humana**
+- No planejamento, a IA achou um problema: o sistema recusa data futura e o
+  aluguel do seed era de 05/09, então a demo não teria nada a gerar. O Igor
+  escolheu mover o aluguel do seed para 05/08 (os saldos iniciais não mudam).
+- O Igor aprovou o plano e testou a tela antes dos commits: geração de
+  setembro, "Nada a gerar" na segunda vez e em agosto, saldos, 375 px. Não
+  alterou o código gerado; a revisão de código fica com a Thalita no PR.
+
+**Observações**
+- O caso de `dataFim` do plano ficou coberto pelo teste de recorrência
+  parada: a C1 só grava `dataFim` junto com `ativa = false`.
+- Limitações documentadas: gerar um mês anterior ao último gerado não gera,
+  e excluir um lançamento gerado não faz ele ser gerado de novo (não há
+  vínculo com o modelo sem migration).
+- Três chamadas simultâneas à rota criaram um lançamento só; isso foi
+  testado à mão, sem teste automatizado.
+- Tempo economizado ou perdido: não medido.
