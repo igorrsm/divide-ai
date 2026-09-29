@@ -64,3 +64,47 @@ Decidido em 22/09: as seis histórias do Sprint 1 passam para o Sprint 2.
 - **Velocidade do Sprint 1: 0.** O número entra na retrospectiva e na calibragem dos
   pontos. Os 30 pontos do Sprint 2 estão acima da meta de 17; o corte acima é o que
   protege a meta.
+
+## Sprint 2 · 23–29/09
+
+**Meta:** dá para saber quem deve a quem e registrar o acerto. **Atingida:** D1,
+D2 e D3 foram mescladas até 28/09.
+
+**Resultado: 30 de 30 pontos planejados entregues.** A ordem de corte não precisou
+ser usada.
+
+| Código | História | Entregue por | Pontos | PR | Mesclado em |
+|---|---|---|---|---|---|
+| B1 | Lançar despesa | Lucas | 3 | #15 | 26/09 |
+| A3 | Escolher qual morador eu sou | Thalita | 1 | #23 | 27/09 |
+| D1 | Saldo de cada morador | Igor | 5 | #25 | 27/09 |
+| D2 | Painel de saldos | Thalita | 3 | #31 | 27/09 |
+| B2 | Dividir a despesa igualmente | Lucas | 3 | #34 | 27/09 |
+| B3 | Lista de despesas e detalhe | Thalita | 2 | #36 | 27/09 |
+| B4 | Escolher quem participa | Lucas | 3 | #37 | 28/09 |
+| A1 | Criar república | Eduardo | 2 | #49 | 28/09 |
+| D3 | Registrar pagamento | Thalita | 3 | #51 | 28/09 |
+| C1 | Marcar despesa recorrente | Thalita | 3 | #53 | 28/09 |
+| A2 | Adicionar morador | Thalita | 2 | #52 | 28/09 |
+
+A D3, a A2 e a C1 eram do Eduardo, que não conseguiu fazê-las; a Thalita assumiu.
+
+### Puxadas durante o sprint
+
+No Notion, a propriedade "Entrada" separa o planejado do que foi puxado depois, para
+a velocidade planejada não ficar inflada.
+
+- **Primeira leva (14 pontos, mesclada):** a Thalita tinha terminado as atividades
+  dela e puxou B5 (#47), B6 (#40), E1 (#42) e E2 (#44), todas mescladas em 28/09. A
+  T14 (layout base, tarefa técnica) foi criada em 26/09 e mesclada no #17 em 27/09.
+- **Segunda leva (23 pontos, em revisão em 29/09):** o time decidiu fechar o backlog
+  restante. O Igor implementou com a IA, uma história por vez, e a Thalita revisa:
+  D5 (#59), C2 (#60), A4 (#61), A5 (#62) e E3 (#63). Os PRs estão empilhados e entram
+  nessa ordem.
+- **Fora do TP1:** B7 (anexar comprovante), porque upload está fora do escopo.
+
+### Ainda no sprint
+
+- T9 a T13 (diagramas, slides de IA, retrospectiva e ensaio da demo), para 29/09.
+- A T4 (CI), pendente desde o Sprint 0, entrou no #14 em 23/09 e passou a rodar os
+  testes no #18 em 27/09.
