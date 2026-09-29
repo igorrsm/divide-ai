@@ -6,10 +6,12 @@ import {
   criarDespesa,
   editarDespesa,
   excluirDespesa,
+  gerarRecorrentes,
   listaDespesas,
   listaMoradores,
   pararDeRepetir,
 } from "./servico";
+import { interpretaMes } from "../extrato/mes";
 import { interpretaFiltros } from "./filtros";
 import { interpretaId } from "./validacao";
 
@@ -71,4 +73,11 @@ rotasDespesas.delete("/republicas/:republicaId/despesas/:despesaId/recorrencia",
   const despesaId = interpretaId(req.params.despesaId, "Id da despesa");
   await pararDeRepetir(republicaId, despesaId, req.body?.moradorId);
   res.status(204).end();
+});
+
+// Gerar os lançamentos do mês (C2): { mes: "AAAA-MM" }; sem o campo, o mês atual.
+rotasDespesas.post("/republicas/:republicaId/recorrentes/gerar", async (req, res) => {
+  const republicaId = await idDaRepublica(req.params.republicaId);
+  const mes = interpretaMes(req.body?.mes);
+  res.json(await gerarRecorrentes(republicaId, mes));
 });
