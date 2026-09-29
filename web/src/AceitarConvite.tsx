@@ -82,7 +82,7 @@ export default function AceitarConvite() {
   return (
     // noValidate: o aviso de e-mail inválido é o da API, como na A2.
     <form onSubmit={enviar} className="cartao formulario" noValidate>
-      <h1>Você foi convidado para a {casa.nome}</h1>
+      <h1>Você recebeu um convite para a {casa.nome}</h1>
       <p className="participantes-resumo">Complete seu cadastro para entrar na casa.</p>
       <label className="campo">
         Seu nome
