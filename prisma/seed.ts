@@ -35,7 +35,7 @@ async function main() {
     data: {
       descricao: "Aluguel",
       valorCentavos: 240000, // R$ 2.400,00
-      data: new Date("2026-09-05"),
+      data: new Date("2026-08-05"), // agosto: setembro sai pela geração (C2)
       tipoDivisao: "IGUAL",
       republicaId: rep.id,
       pagadorId: ana.id,
