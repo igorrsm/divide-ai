@@ -1754,6 +1754,8 @@ Ferramenta: Claude Code (Claude Opus 5.5).
 **Revisão humana**
 - O Igor decidiu declarar a distribuição desigual na apresentação, sem commits
   artificiais, e manter os diagramas com ele, como planejado.
+- O Igor conferiu na página do PR que os dois diagramas renderizam certo no
+  GitHub, inclusive o `<<enumeration>>` que o validador acusava.
 
 **Observações**
 - Os cartões T9 e T10 citavam um `RelatorioService` que nunca existiu: o saldo
