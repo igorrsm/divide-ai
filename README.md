@@ -83,6 +83,24 @@ inicial. `npm test` roda os testes e `npm run lint` o ESLint.
 Simplificação de dívidas: em vez de A→B, B→C e C→A, o sistema calcula o menor
 número de transferências que zera todos os saldos.
 
+### Situação das histórias ao fim do TP1
+
+As histórias acima são as do início do trabalho. No backlog (Notion), cada uma virou
+um ou mais cartões, com código e critérios de aceitação. Todos estão mesclados na
+`main`.
+
+| História | Cartões (PR) | O que mudou em relação ao texto original |
+|---|---|---|
+| 1. Criar república e convidar | A1 (#49), A2 (#52), A3 (#23), A4 (#61), A5 (#62) | O convite é por link de uso único, sem envio de e-mail. Sem login: "Quem é você?" escolhe o morador |
+| 2. Cadastrar despesa | B1 (#15), B3 (#36), B6 (#40), E2 (#44) | **Sem categoria**: ficou fora do escopo. Há lista com filtros, edição e exclusão |
+| 3. Escolher quem participa | B4 (#37) | — |
+| 4. Dividir igual, por valores ou percentuais | B2 (#34), B5 (#47) | — |
+| 5. Ver o saldo consolidado | D1 (#25), D2 (#31) | — |
+| 6. Registrar acerto | D3 (#51) | — |
+| 7. Despesas recorrentes | C1 (#53), C2 (#60) | Os lançamentos do mês são gerados por um botão, não automaticamente (sem agendador) |
+| 8. Extrato do mês | E1 (#42), E3 (#63) | Também exporta o fechamento em CSV |
+| Extensão: simplificar dívidas | D5 (#59) | Sugestão gulosa; não promete o mínimo absoluto de transferências |
+
 ## Convenções de desenvolvimento
 
 - Commits seguindo Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`)
