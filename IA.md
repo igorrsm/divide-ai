@@ -1702,3 +1702,34 @@ Ferramenta: Claude Code (Claude Opus 5.5).
   data.
 - A branch é o ensaio geral do dia: tem D5, C2, A4, A5 e E3 juntos.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-09-29 — Igor — Merge do #63 e do #64 a partir da revisão da Thalita
+
+Ferramenta: Claude Code (Claude Opus 5.5).
+
+**Pedido à IA**
+- Avaliar os comentários dos PRs abertos, resolver os conflitos, mesclar e
+  atualizar os cartões no Notion, com o plano aprovado antes.
+
+**O que a IA produziu**
+- #63 (E3): conferiu que os ajustes de texto pedidos já tinham entrado pelo
+  #61 e pelo #62, e rodou na branch, com a `main` completa, lint, `npm test`
+  (145/145) e build. Comentou no PR e mesclou. As duas sugestões da revisão
+  (fórmula no Excel e saldos de hoje no CSV) foram para a issue #70.
+- #64: trouxe a `main` e resolveu o conflito no fim do IA.md mantendo os
+  dois lados, cada entrada com a sua linha "Tempo". A segunda leva do
+  `docs/sprints.md` passou a "mesclada", com os PRs #59 ao #63.
+- Notion: Status "Finalizado" e critérios marcados nos cartões D5, C2, A4,
+  A5 e E3.
+
+**Revisão humana**
+- O Igor testou juntas, na branch do #63, as telas da D5, C2, A4, A5 e E3
+  antes do merge, como a Thalita pediu, e aprovou o plano.
+
+**Observações**
+- A ordem de merge sugerida na revisão (#63 → #60) deixou de valer: o Lucas
+  mesclou o #60 ao #62 e mudou a base do #63 para a `main` antes.
+- Os critérios foram marcados com base nas aprovações da Thalita e no teste
+  do Igor. A IA não conferiu um por um; o "abre no LibreOffice" e o
+  "legível em 375 px" não têm teste registrado.
+- Tempo economizado ou perdido: não medido.
