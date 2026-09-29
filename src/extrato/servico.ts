@@ -9,7 +9,7 @@ export async function buscaExtrato(republicaId: number, mes: string) {
   const { inicio, fim } = intervaloDoMes(mes);
   const moradores = await prisma.morador.findMany({
     where: { republicaId },
-    select: { id: true, nome: true },
+    select: { id: true, nome: true, saiuEm: true },
     orderBy: { nome: "asc" },
   });
   const despesas = await prisma.despesa.findMany({
@@ -27,9 +27,16 @@ export async function buscaExtrato(republicaId: number, mes: string) {
     orderBy: [{ data: "desc" }, { id: "desc" }],
   });
 
+  // Quem saiu (A4) aparece nos meses em que ainda morava na casa, ou se está
+  // em alguma despesa do mês, para o total por morador fechar com o da casa.
+  const nasDespesas = new Set(
+    despesas.flatMap((d) => [d.pagador.id, ...d.participacoes.map((p) => p.moradorId)]),
+  );
   return montaExtrato(
     mes,
-    moradores,
+    moradores
+      .filter((m) => !m.saiuEm || m.saiuEm >= inicio || nasDespesas.has(m.id))
+      .map(({ id, nome }) => ({ id, nome })),
     despesas.map((despesa) => ({ ...despesa, data: diaDa(despesa.data) })),
   );
 }
