@@ -1003,3 +1003,12 @@ a {
   gap: 10px;
   margin-bottom: 20px;
 }
+
+/* Sugestão de acertos (D5): o botão não estica como nas ações da despesa. */
+.dica-sugestao {
+  margin: 0 0 4px;
+}
+
+.sugestao .botao-secundario {
+  flex: 0 0 auto;
+}
