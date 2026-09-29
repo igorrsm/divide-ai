@@ -81,6 +81,104 @@ Pré-requisito: Node.js 24, conforme o `.nvmrc` (com o nvm, rode `nvm install` n
 Simplificação de dívidas: em vez de A→B, B→C e C→A, o sistema calcula o menor
 número de transferências que zera todos os saldos.
 
+## Documentação (UML)
+
+### Diagrama de classes
+
+As classes de domínio são as tabelas de `prisma/schema.prisma`. O backend não tem
+classes de serviço: as regras são funções puras agrupadas por pasta, que aparecem aqui
+como os módulos `ModuloDespesas` (`src/despesas`), `ModuloSaldos` (`src/saldos`) e
+`ModuloExtrato` (`src/extrato`). Eles só leem as entidades, por isso a ligação é de
+dependência. Dinheiro é sempre `Int` em centavos, e o saldo não é guardado: é
+calculado a cada consulta.
+
+```mermaid
+classDiagram
+    direction LR
+    class Republica {
+        +Int id
+        +String nome
+        +DateTime criadaEm
+    }
+    class Morador {
+        +Int id
+        +String nome
+        +String email
+        +Boolean organizador
+        +DateTime saiuEm
+    }
+    class Despesa {
+        +Int id
+        +String descricao
+        +Int valorCentavos
+        +DateTime data
+        +TipoDivisao tipoDivisao
+        +DateTime excluidaEm
+    }
+    class DespesaRecorrente {
+        +Int diaDoMes
+        +Boolean ativa
+        +DateTime dataFim
+        +DateTime ultimaGeracao
+    }
+    class Participacao {
+        +Int valorCentavos
+        +Int percentualCentesimos
+    }
+    class Pagamento {
+        +Int valorCentavos
+        +DateTime data
+    }
+    class Convite {
+        +String token
+        +DateTime usadoEm
+    }
+    class TipoDivisao {
+        <<enumeration>>
+        IGUAL
+        VALOR
+        PERCENTUAL
+    }
+    class ModuloDespesas {
+        +montaDespesa(entrada, idsDaCasa, hoje) DespesaMontada
+        +ratearIgualmente(valorCentavos, participantesIds, pagadorId) Participacao[]
+        +ratearPorValores(valorCentavos, partes) Participacao[]
+        +ratearPorPercentuais(valorCentavos, partes, pagadorId) Participacao[]
+        +lancamentosDoMes(mes, modelos, agora) Lancamento[]
+    }
+    class ModuloSaldos {
+        +calcularSaldos(moradores, despesas, pagamentos) SaldoMorador[]
+        +sugerirTransferencias(saldos) Transferencia[]
+    }
+    class ModuloExtrato {
+        +montaExtrato(mes, moradores, despesas) Extrato
+        +fechamentoParaCsv(dados) String
+    }
+
+    Republica "1" *-- "*" Morador : moradores
+    Republica "1" *-- "*" Despesa : despesas
+    Republica "1" *-- "*" Pagamento : pagamentos
+    Republica "1" *-- "*" Convite : convites
+    Despesa "1" *-- "*" Participacao : participacoes
+    Despesa <|-- DespesaRecorrente
+    Despesa "*" --> "1" Morador : pagador
+    Participacao "*" --> "1" Morador : morador
+    Pagamento "*" --> "1" Morador : pagador
+    Pagamento "*" --> "1" Morador : recebedor
+    Despesa --> TipoDivisao
+    ModuloDespesas ..> Despesa
+    ModuloDespesas ..> Participacao
+    ModuloSaldos ..> Despesa
+    ModuloSaldos ..> Participacao
+    ModuloSaldos ..> Pagamento
+    ModuloExtrato ..> Despesa
+```
+
+`DespesaRecorrente` herda de `Despesa` (tabela por subclasse: o `id` é chave primária e
+estrangeira ao mesmo tempo). A soma das participações de uma despesa é igual ao valor
+dela: a sobra do arredondamento fica com quem pagou ou, se ele não participa, com o
+participante de menor id.
+
 ## Convenções de desenvolvimento
 
 - Commits seguindo Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`)
