@@ -1435,6 +1435,106 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5).
   compartilhada; reiniciar o servidor e recarregar com Ctrl+F5 resolve.
 - Tempo economizado ou perdido: não medido.
 
+## 2026-09-27 — Igor — Revisão do PR #33 (cores do painel de saldos)
+
+Registro feito em 29/09: na hora, o Igor preferiu juntar esta revisão com a
+rodada seguinte, para não abrir um PR só de docs.
+
+**Pedido à IA**
+- Avaliar o PR #33 da Thalita (cores fixas do painel de saldos passadas
+  para variáveis e o título antes do resumo), que atendia aos dois pontos
+  não bloqueantes da revisão do #31, e aprovar depois do teste de tela.
+
+**O que a IA produziu**
+- Validação numa cópia separada da branch (`git worktree`): lint,
+  `npm test` (21 de 21) e build.
+- Conferência de que nenhuma cor fixa ficou fora do `:root` e de que as
+  variáveis novas têm os mesmos valores das cores antigas.
+
+**Revisão humana**
+- O Igor testou a tela antes da aprovação e do merge.
+
+**Observações**
+- A numeração das iniciais ficou deslocada (`.inicial-0` usa
+  `--cor-inicial-1`). Não muda nada na tela; foi registrado como
+  observação.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Igor — Revisão dos PRs #51, #52 e #53 (D3, A2 e C1)
+
+Três PRs da Thalita, que assumiu as tarefas do Eduardo.
+
+**Pedido à IA**
+- Avaliar, testar e aprovar os três PRs, com o teste de tela do Igor antes
+  de cada aprovação.
+
+**O que a IA produziu**
+- Antes de validar: a `main` local estava 119 commits atrás da remota. A
+  IA atualizou, aplicou as migrations novas (`migrate deploy`), regenerou o
+  client e rodou o seed.
+- Validação de cada PR numa cópia separada (`git worktree`): lint,
+  `npm test` (111, 105 e 119), build, commits de até 100 linhas e o IA.md
+  sem linha removida em relação à `main`.
+- Simulação dos merges em sequência: #51 e #53 (feito em cima do #51)
+  entravam sem conflito; o #52 conflitaria depois deles em quatro arquivos.
+- Três observações não bloqueantes, postadas nas aprovações: um aviso sem
+  uso no #51, o `dataFim` apagado ao reativar a recorrência no #53 e o erro
+  genérico na corrida de e-mails iguais no #52.
+- Com o ok do Igor, a IA resolveu o conflito do #52 na branch da Thalita
+  (commit `7054045`), mantendo os dois lados, e atualizou os cartões D3, C1
+  e A2 no Notion.
+
+**Revisão humana**
+- O Igor testou a tela em duas rodadas: D3 e C1 juntas na branch do #53, e
+  depois a A2. Só então autorizou cada aprovação.
+- No teste, o Igor criou uma república sem querer; a IA explicou que a
+  república ativa fica no navegador e rodou o seed de novo para voltar ao
+  estado inicial.
+
+**Observações**
+- Erros da IA, corrigidos na hora: na resolução do conflito do #52, a
+  junção automática do `estilo.css` cortou uma regra no meio, porque a `}`
+  final era comum aos dois lados (refeito e chaves conferidas); e no Notion
+  o Status dos três cartões não mudou, porque a chamada que trocava o texto
+  ignorou a propriedade sem avisar. Uma consulta ao banco do Notion achou o
+  erro, e o Status foi trocado numa chamada separada.
+- Achado antigo: as entradas de 20/09 (Igor) e da A1 (Eduardo) neste
+  arquivo não têm a linha "Tempo economizado ou perdido".
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-28 — Igor — Quadro do Sprint 2 e planejamento do backlog restante
+
+**Pedido à IA**
+- Propor uma estrutura para os cartões que saíram do backlog e foram
+  finalizados fora do planejamento, e depois planejar o fechamento de todo
+  o backlog restante, um cartão por vez.
+
+**O que a IA produziu**
+- A proposta de manter esses cartões no Sprint 2, com a propriedade nova
+  "Entrada" (Planejada ou Puxada durante a sprint), para não misturar o
+  compromisso com o que entrou depois. A alternativa de uma classificação
+  à parte foi descartada: sprint é janela de tempo, não grupo de cartões.
+- Com as datas tiradas do GitHub: B5, B6, E1 e E2 (puxadas em 28/09) e a
+  T14 (criada em 26/09) marcadas como puxadas; o resto do Sprint 2 e o
+  Sprint 0 como planejados.
+- O plano do backlog restante: a ordem D5, C2, A4, A5 e E3 (por prioridade
+  e dependência), critérios de aceitação e issues #54 a #58, e a mensagem
+  de aviso das duas migrations (A4 e A5) para o time.
+
+**Revisão humana**
+- O Igor escolheu a estrutura, informou o motivo das puxadas (a Thalita já
+  tinha terminado as atividades dela) e decidiu: B7 (comprovante) para
+  "Fora do TP1", porque upload é proibido no `CLAUDE.md`; implementação com
+  a IA e revisão da Thalita; só o cartão em desenvolvimento "Em andamento".
+- As regras de corte antigas da D5, A5 e E3 ficaram nos cartões, com a
+  nota de que o Igor as revisou.
+
+**Observações**
+- O plano gratuito do Notion chegou ao limite: acabaram os blocos (há
+  período de graça até 02/10) e as consultas ao banco. A conferência do
+  Status passou a ser feita lendo cada cartão.
+- Tempo economizado ou perdido: não medido.
+
 ## 2026-09-28 — Igor — Sugestão de acertos (D5)
 
 Ferramenta: Claude Code (Claude Opus 5.5).
@@ -1601,4 +1701,35 @@ Ferramenta: Claude Code (Claude Opus 5.5).
   mês, porque o saldo soma todos os meses; o título diz "Saldos em" e a
   data.
 - A branch é o ensaio geral do dia: tem D5, C2, A4, A5 e E3 juntos.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-09-29 — Igor — Merge do #63 e do #64 a partir da revisão da Thalita
+
+Ferramenta: Claude Code (Claude Opus 5.5).
+
+**Pedido à IA**
+- Avaliar os comentários dos PRs abertos, resolver os conflitos, mesclar e
+  atualizar os cartões no Notion, com o plano aprovado antes.
+
+**O que a IA produziu**
+- #63 (E3): conferiu que os ajustes de texto pedidos já tinham entrado pelo
+  #61 e pelo #62, e rodou na branch, com a `main` completa, lint, `npm test`
+  (145/145) e build. Comentou no PR e mesclou. As duas sugestões da revisão
+  (fórmula no Excel e saldos de hoje no CSV) foram para a issue #70.
+- #64: trouxe a `main` e resolveu o conflito no fim do IA.md mantendo os
+  dois lados, cada entrada com a sua linha "Tempo". A segunda leva do
+  `docs/sprints.md` passou a "mesclada", com os PRs #59 ao #63.
+- Notion: Status "Finalizado" e critérios marcados nos cartões D5, C2, A4,
+  A5 e E3.
+
+**Revisão humana**
+- O Igor testou juntas, na branch do #63, as telas da D5, C2, A4, A5 e E3
+  antes do merge, como a Thalita pediu, e aprovou o plano.
+
+**Observações**
+- A ordem de merge sugerida na revisão (#63 → #60) deixou de valer: o Lucas
+  mesclou o #60 ao #62 e mudou a base do #63 para a `main` antes.
+- Os critérios foram marcados com base nas aprovações da Thalita e no teste
+  do Igor. A IA não conferiu um por um; o "abre no LibreOffice" e o
+  "legível em 375 px" não têm teste registrado.
 - Tempo economizado ou perdido: não medido.
