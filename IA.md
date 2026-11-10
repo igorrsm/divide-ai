@@ -1850,6 +1850,100 @@ Ferramenta: Claude Code (Claude Opus 5.5).
   do `.env` grava em UTF-16 no PowerShell. Também faltava o T3 dela.
 - Tempo economizado ou perdido: não medido.
 
+## 2026-11-10 — Lucas — TP2 · Separar o app do servidor (T2-01)
+
+Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
+
+**Pedido à IA**
+- Atualizar a `main` local com o repositório.
+- Ler a página "TP2 · Testes do Divide Aí" do Notion para ter o contexto.
+- Fazer a T2-01: separar `app.ts` (exporta o app) de `server.ts` (só faz o
+  `listen`). Critério de pronto: um teste importa o app sem abrir porta.
+
+**O que a IA produziu**
+- Um plano, aprovado antes de qualquer código, com duas opções para o teste:
+  instalar o `supertest` agora ou usar `app.listen(0)` com o `fetch` do Node.
+  O Lucas escolheu o `supertest`, que é a ferramenta proposta pelo grupo.
+- `src/app.ts`, com as rotas e o middleware de erros, sem `listen`;
+  `src/server.ts`, que só importa o app e escuta a porta.
+- `src/app.test.ts`, com dois testes: depois de importar o app não há servidor
+  escutando (`TCPServerWrap` em `process.getActiveResourcesInfo()`), e
+  `GET /api/health` responde 200 pelo `supertest`.
+- A troca do caminho do servidor no `CLAUDE.md`.
+
+**Revisão humana**
+- O Lucas aprovou o plano e escolheu a dependência. Ele não alterou o código
+  gerado; a revisão do código fica para o PR.
+
+**Observações**
+- O conector do Notion desta sessão estava em outro workspace e não achou a
+  página do TP2. O contexto veio de um resumo da página, que o Lucas colou na
+  conversa.
+- Prova do vermelho: com `app.listen(0)` de volta no fim do `app.ts`, o
+  primeiro teste falhou, e o processo não terminou sozinho (só o `timeout`
+  parou). O `app.ts` voltou igual ao de antes.
+- Ressalva: `TCPServerWrap` é um nome interno do Node. Se outra versão mudar
+  esse nome, o teste passa sem conferir nada. No Node 24 (`.nvmrc`) ele
+  funciona, como a prova do vermelho mostrou.
+- O `server.ts` ficou sem teste automatizado: a IA só o subiu uma vez, numa
+  porta de teste, e conferiu o `health` e os saldos do seed. Ele deve ficar
+  fora da conta de cobertura do `c8`.
+- O commit do `supertest` passa de 100 linhas por causa do
+  `package-lock.json`, que é gerado; a exceção está na mensagem.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-11-10 — Lucas — TP2 · Banco de teste e limpeza (T2-02)
+
+Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
+
+**Pedido à IA**
+- Fazer a T2-02: os testes de integração usam o `test.db`, nunca o `dev.db`,
+  e cada teste começa do zero.
+
+**O que a IA produziu**
+- Um plano, aprovado antes do código. Antes de propor a concorrência, a IA
+  mediu o `npm test`: 1,6 s em paralelo e 4,4 s com um arquivo por vez.
+- `limpaBanco` (`src/limpaBanco.ts`), com a ordem de apagar que estava no
+  seed, mais o reset do `sqlite_sequence`; o seed passou a usá-la.
+- `scripts/banco-de-teste.mts`: com `--import`, aponta o `DATABASE_URL` para
+  o `test.db` em cada processo de teste; com `--test-global-setup`, apaga o
+  `test.db` e roda `prisma migrate deploy` uma vez. O `npm test` passou a
+  rodar com `--test-concurrency=1` e agora leva uns 6 s.
+- `limpaBancoDeTeste` (`src/testes/banco.ts`), que recusa limpar se a
+  conexão não estiver no `test.db`, e três testes em
+  `src/testes/banco.test.ts`.
+- Um parágrafo no `CLAUDE.md` sobre como escrever teste de integração.
+
+**Revisão humana**
+- O Lucas aprovou o plano. Ele não alterou o código gerado; a revisão do
+  código fica para o PR.
+
+**Observações**
+- Erro da IA: para conferir que o seed seguia funcionando com a limpeza
+  extraída, ela rodou `prisma db seed` no `dev.db` do Lucas, sem perguntar e
+  fora do plano. Como tinha feito backup do `dev.db` antes de começar, ela
+  avisou e o restaurou (o hash ficou igual ao de antes).
+- Suposição furada: o plano previa um global setup em `.ts` importando uma
+  constante do `src/`. O global setup é carregado pelo Node direto, sem o
+  `tsx`, e o import sem extensão falhou. O arquivo virou `.mts` só com
+  módulos do Node, e a trava passou a conferir o arquivo aberto
+  (`PRAGMA database_list`) em vez da variável de ambiente.
+- Suposição confirmada: o processo de teste termina sem
+  `prisma.$disconnect()`.
+- Erro da IA no teste: o primeiro rascunho lançava a despesa sem
+  `pagadorId`, e a API respondeu 400. O assert passou a mostrar o corpo da
+  resposta.
+- Prova do vermelho, com o `dev.db` conferido por hash: sem o preload, a
+  conexão cai no `dev.db` e a trava barra a limpeza antes de qualquer
+  escrita; sem o reset do `sqlite_sequence`, a república recriada nasce com
+  id 2; sem a trava, o teste da recusa falha com um erro do Prisma em vez da
+  mensagem esperada.
+- Sem teste: o `globalSetup` (apagar e migrar) só é exercitado
+  indiretamente, porque todo teste depende dele; as tabelas `Pagamento` e
+  `Convite` estão vazias no teste da limpeza, então a parte delas não foi
+  conferida com dados.
+- Tempo economizado ou perdido: não medido.
+
 ## 2026-11-10 — Thalita — TP2: Cypress e `npm run e2e` (T2-07)
 
 Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do projeto.
