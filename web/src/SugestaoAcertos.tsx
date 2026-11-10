@@ -58,7 +58,11 @@ export default function SugestaoAcertos() {
           </p>
           <ul className="acertos">
             {sugestao.map((t) => (
-              <li key={`${t.pagador.id}-${t.recebedor.id}`} className="cartao acerto sugestao">
+              <li
+                key={`${t.pagador.id}-${t.recebedor.id}`}
+                className="cartao acerto sugestao"
+                data-cy={`sugestao-${t.pagador.id}-${t.recebedor.id}`}
+              >
                 <span>
                   <strong>{t.pagador.nome}</strong> paga{" "}
                   <strong>{formatarReais(t.valorCentavos)}</strong> para{" "}
@@ -73,6 +77,7 @@ export default function SugestaoAcertos() {
                       valor: centavosParaTexto(t.valorCentavos),
                     }}
                     className="botao-secundario"
+                    data-cy="registrar-sugestao"
                   >
                     Registrar
                   </Link>

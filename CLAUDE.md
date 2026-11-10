@@ -54,6 +54,7 @@ Prisma 7: o client vem de `src/generated/prisma/client` (não de `@prisma/client
 ## Convenções (README)
 
 - Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`, `chore:`).
+- Elemento usado por teste E2E tem atributo `data-cy`; a lista fica em `docs/data-cy.md`.
 - Máximo de 100 linhas por commit; exceções justificadas na mensagem.
 - Nenhum push direto na `main`: toda mudança entra por Pull Request revisado.
 

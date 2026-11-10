@@ -48,9 +48,9 @@ export default function Acertos() {
       ) : acertos.length === 0 ? (
         <p className="lista-vazia">Nenhum acerto registrado ainda.</p>
       ) : (
-        <ul className="acertos">
+        <ul className="acertos" data-cy="lista-acertos">
           {acertos.map((acerto) => (
-            <li key={acerto.id} className="cartao acerto">
+            <li key={acerto.id} className="cartao acerto" data-cy="acerto">
               <span>
                 {acerto.pagador.nome} pagou para {acerto.recebedor.nome}
                 <small>{formatarData(acerto.data)}</small>

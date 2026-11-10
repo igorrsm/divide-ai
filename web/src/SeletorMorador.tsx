@@ -10,7 +10,7 @@ export default function SeletorMorador() {
   if (foraDoAr || moradores.length === 0) return null;
 
   return (
-    <div className="seletor-morador" role="group" aria-labelledby="quem-e-voce">
+    <div className="seletor-morador" data-cy="seletor-morador" role="group" aria-labelledby="quem-e-voce">
       <span id="quem-e-voce" className="seletor-titulo">
         Quem é você?
       </span>
@@ -20,6 +20,7 @@ export default function SeletorMorador() {
             key={morador.id}
             type="button"
             className="seletor-opcao"
+            data-cy={`morador-${morador.id}`}
             aria-pressed={morador.id === moradorId}
             onClick={() => escolher(morador.id)}
           >
