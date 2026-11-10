@@ -157,3 +157,7 @@ src/generated/
 /.agents/skills/
 /.claude/skills/
 /.windsurf/skills/
+
+# Testes E2E (Cypress): arquivos gerados a cada execução (o e2e.db já cai no *.db)
+e2e/prints/
+e2e/downloads/
