@@ -2106,3 +2106,37 @@ Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
   primeiro commit e entrou no segundo.
 - A branch saiu da branch da T2-15 (#81), porque usa `src/testes/casa.ts`.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-10 — Igor — TP2 · Rascunho do roteiro de IA (T2-22)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Fazer a T2-22: consolidar o roteiro dos 5 minutos de IA da apresentação a
+  partir do registro.
+
+**O que a IA produziu**
+- A página "Roteiro de IA · TP2 (5 min, rascunho)" no Notion, filha da
+  página do TP2. Ela vem do `IA.md` (Igor, Lucas e, nas branches dos #76 e
+  #77, Thalita) e do banco "Registro de IA · TP2", e tem:
+  - ferramentas por pessoa;
+  - como garantimos o entendimento (prova do vermelho, plano antes do
+    código);
+  - cinco pontos positivos e sete negativos, cada um com PR ou entrada do
+    `IA.md`;
+  - a resposta sobre os casos importantes, com o que ainda falta.
+
+**Revisão humana**
+- O Igor pediu a tarefa; a escolha dos exemplos fica para o ensaio de
+  21/11.
+
+**Observações**
+- O roteiro é rascunho: ainda faltam as tarefas do Eduardo, do Lucas
+  (despesas e E2E-4) e da Thalita (E2E e erros do servidor). O cartão foi
+  para "Em andamento", não para "Em revisão".
+- Lacuna: todas as entradas do TP2, inclusive as do Igor, dizem "tempo não
+  medido", e o critério da T2-22 pede tempo ganho ou perdido. Ficou como
+  pendência para cada um estimar até 20/11.
+- O banco do Notion só tem linhas do Igor; os outros registraram só no
+  `IA.md`.
+- Tempo economizado ou perdido: não medido.
