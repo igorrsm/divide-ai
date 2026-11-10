@@ -157,3 +157,6 @@ src/generated/
 /.agents/skills/
 /.claude/skills/
 /.windsurf/skills/
+
+# Relatório de cobertura do c8 (npm run test:coverage)
+coverage/
