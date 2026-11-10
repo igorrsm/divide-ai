@@ -1849,3 +1849,33 @@ Ferramenta: Claude Code (Claude Opus 5.5).
   obrigatória, o rateio aparece no formulário e não no detalhe, e o `echo`
   do `.env` grava em UTF-16 no PowerShell. Também faltava o T3 dela.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-10 — Thalita — TP2: atributos `data-cy` nas telas (T2-08)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do projeto.
+
+**Pedido à IA**
+- Fazer o cartão T2-08: colocar `data-cy` em todos os elementos usados pelos
+  quatro cenários E2E (criar república e morador, despesa só para Bruno e
+  Carla, saldos do seed e acerto do Bruno).
+
+**O que a IA produziu**
+- Plano com a lista de atributos por tela, aprovado pela Thalita antes do
+  código. Os nomes usam os ids do seed (`participante-2`, `sugestao-2-1`), para
+  os testes não dependerem de texto nem de CSS.
+- Os atributos em 13 telas e componentes, sem mudar texto nem visual, e a
+  tabela `docs/data-cy.md` para o Eduardo e o Lucas consultarem.
+- A branch saiu da `main`, e não da branch do T2-07, para os dois PRs não
+  dependerem um do outro.
+
+**Revisão humana**
+- A Thalita testou na própria máquina, antes dos commits: lint, `npm test`
+  (145 testes), build, as telas no navegador (iguais a antes) e o
+  `participante-2` encontrado na caixinha do Bruno pelo F12.
+
+**Observações**
+- No teste de tela, todas as telas deram erro 500. Não era o código: o
+  `dev.db` da Thalita estava sem as duas últimas migrations da `main`. Um
+  `prisma migrate deploy` seguido do seed resolveu. O teste E2E não pega isso,
+  porque recria o `e2e.db` do zero.
+- Tempo economizado ou perdido: não medido.
