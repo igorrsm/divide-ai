@@ -138,3 +138,66 @@ describe("extrato: erros da rota", () => {
     assert.equal(resposta.status, 404);
   });
 });
+
+describe("GET /api/republicas/:id/extrato/csv", () => {
+  async function baixa(republicaId: number, mes: string) {
+    const resposta = await request(app).get(`/api/republicas/${republicaId}/extrato/csv?mes=${mes}`);
+    assert.equal(resposta.status, 200, resposta.text);
+    return resposta;
+  }
+
+  it("baixa como anexo, em UTF-8 com BOM, para o Excel em português", async () => {
+    const { republicaId } = await montaOutubro();
+
+    const resposta = await baixa(republicaId, "2026-10");
+
+    assert.equal(resposta.headers["content-type"], "text/csv; charset=utf-8");
+    assert.match(resposta.headers["content-disposition"], /attachment; filename="fechamento-2026-10.csv"/);
+    assert.ok(resposta.text.startsWith("﻿"), "o arquivo começa com o BOM");
+    assert.ok(resposta.text.endsWith("\r\n"));
+    assert.ok(!/[^\r]\n/.test(resposta.text), "toda quebra de linha é \\r\\n");
+  });
+
+  it("traz as despesas, os totais, os saldos de hoje e os acertos sugeridos", async () => {
+    const { republicaId } = await montaOutubro();
+
+    const linhas = (await baixa(republicaId, "2026-10")).text.slice(1).split("\r\n");
+
+    assert.equal(linhas[0], "Fechamento de outubro de 2026;Casa Azul");
+    for (const esperada of [
+      "31/10/2026;Mercado;Bruno;150,00",
+      "01/10/2026;Aluguel;Ana;2400,00",
+      "Total da casa;;;2550,00",
+      "Ana;800,00;2400,00",
+      "Carla;875,00;0,00",
+      // Saldos de hoje: inclui a luz de setembro (R$ 90,00 da Carla) e o acerto.
+      "Ana;1470,00;a receber",
+      "Bruno;-755,00;a pagar",
+      "Carla;-715,00;a pagar",
+      "Bruno;Ana;755,00",
+      "Carla;Ana;715,00",
+    ]) {
+      assert.ok(linhas.includes(esperada), `falta a linha "${esperada}"`);
+    }
+  });
+
+  it("põe entre aspas a descrição com ponto e vírgula e marca quem saiu", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno"]);
+    await lanca(republicaId, { descricao: 'Pizza; "grande"', valor: "60,00", pagadorId: ids.Bruno, data: "2026-10-03" });
+    await request(app)
+      .delete(`/api/republicas/${republicaId}/moradores/${ids.Bruno}`)
+      .send({ moradorId: ids.Ana })
+      .expect(200);
+
+    const texto = (await baixa(republicaId, "2026-10")).text;
+
+    assert.ok(texto.includes('03/10/2026;"Pizza; ""grande""";Bruno;60,00\r\n'));
+    assert.match(texto, /\r\nBruno \(saiu em \d{2}\/\d{2}\/\d{4}\);-?\d+,\d{2};/);
+  });
+
+  it("mês inválido responde 400 e república inexistente, 404", async () => {
+    const { republicaId } = await montaCasa();
+    assert.equal((await request(app).get(`/api/republicas/${republicaId}/extrato/csv?mes=2026-00`)).status, 400);
+    assert.equal((await request(app).get("/api/republicas/999/extrato/csv?mes=2026-10")).status, 404);
+  });
+});
