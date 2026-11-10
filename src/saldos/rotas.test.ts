@@ -97,3 +97,99 @@ describe("GET /api/republicas/:id/saldos", () => {
     assert.equal(soma(lista), 0);
   });
 });
+
+describe("GET /api/republicas/:id/saldos: o que muda o saldo depois", () => {
+  it("despesa excluída sai do saldo", async () => {
+    const { republicaId, ids } = await montaCasa("Bruno");
+    const despesaId = await lanca(republicaId, { valor: "50,00", pagadorId: ids.Bruno });
+
+    const excluida = await request(app)
+      .delete(`/api/republicas/${republicaId}/despesas/${despesaId}`)
+      .send({ moradorId: ids.Bruno });
+    assert.equal(excluida.status, 204);
+
+    assert.deepEqual(porNome(await saldos(republicaId)), { Ana: 0, Bruno: 0 });
+  });
+
+  it("acerto da dívida inteira deixa o devedor quitado e o credor sem nada a receber", async () => {
+    const { republicaId, ids } = await montaCasa("Bruno");
+    await lanca(republicaId, { valor: "100,00", pagadorId: ids.Ana });
+    assert.deepEqual(porNome(await saldos(republicaId)), { Ana: 5000, Bruno: -5000 });
+
+    const acerto = await request(app)
+      .post(`/api/republicas/${republicaId}/pagamentos`)
+      .send({ pagadorId: ids.Bruno, recebedorId: ids.Ana, valor: "50,00", data: DATA });
+    assert.equal(acerto.status, 201, JSON.stringify(acerto.body));
+
+    const lista = await saldos(republicaId);
+    assert.deepEqual(porNome(lista), { Ana: 0, Bruno: 0 });
+    assert.ok(lista.every((s) => s.situacao === "quitado"));
+  });
+
+  it("quem saiu aparece marcado enquanto deve e some depois de quitado", async () => {
+    const { republicaId, ids } = await montaCasa("Bruno", "Carla");
+    await lanca(republicaId, { valor: "90,00", pagadorId: ids.Ana, participantesIds: [ids.Ana, ids.Bruno] });
+    for (const alvo of [ids.Bruno, ids.Carla]) {
+      const saida = await request(app)
+        .delete(`/api/republicas/${republicaId}/moradores/${alvo}`)
+        .send({ moradorId: ids.Ana });
+      assert.equal(saida.status, 200, JSON.stringify(saida.body));
+    }
+
+    // A Carla saiu quitada e some; o Bruno saiu devendo e continua, marcado.
+    const antes = await saldos(republicaId);
+    assert.deepEqual(antes.map((s) => [s.nome, s.saldoCentavos, s.saiu]), [
+      ["Ana", 4500, false],
+      ["Bruno", -4500, true],
+    ]);
+
+    await request(app)
+      .post(`/api/republicas/${republicaId}/pagamentos`)
+      .send({ pagadorId: ids.Bruno, recebedorId: ids.Ana, valor: "45,00", data: DATA })
+      .expect(201);
+    assert.deepEqual(porNome(await saldos(republicaId)), { Ana: 0 });
+  });
+});
+
+describe("GET /api/republicas/:id/saldos/transferencias", () => {
+  it("sugere o maior devedor pagando ao maior credor, até zerar", async () => {
+    const { republicaId, ids } = await montaCasa("Bruno", "Carla");
+    await lanca(republicaId, { valor: "2400,00", pagadorId: ids.Ana });
+    await lanca(republicaId, {
+      valor: "150,00",
+      pagadorId: ids.Bruno,
+      participantesIds: [ids.Bruno, ids.Carla],
+    });
+
+    const resposta = await request(app).get(`/api/republicas/${republicaId}/saldos/transferencias`);
+
+    assert.equal(resposta.status, 200);
+    assert.deepEqual(resposta.body, [
+      { pagador: { id: ids.Carla, nome: "Carla" }, recebedor: { id: ids.Ana, nome: "Ana" }, valorCentavos: 87500 },
+      { pagador: { id: ids.Bruno, nome: "Bruno" }, recebedor: { id: ids.Ana, nome: "Ana" }, valorCentavos: 72500 },
+    ]);
+  });
+
+  it("com todos quitados, não sugere nada", async () => {
+    const { republicaId } = await montaCasa("Bruno");
+    const resposta = await request(app).get(`/api/republicas/${republicaId}/saldos/transferencias`);
+    assert.equal(resposta.status, 200);
+    assert.deepEqual(resposta.body, []);
+  });
+});
+
+describe("saldos: erros da rota", () => {
+  for (const caminho of ["saldos", "saldos/transferencias"]) {
+    it(`${caminho}: república inexistente responde 404`, async () => {
+      const resposta = await request(app).get(`/api/republicas/999/${caminho}`);
+      assert.equal(resposta.status, 404);
+      assert.equal(resposta.body.erro, "República não encontrada.");
+    });
+
+    it(`${caminho}: id que não é número responde 400`, async () => {
+      const resposta = await request(app).get(`/api/republicas/abc/${caminho}`);
+      assert.equal(resposta.status, 400);
+      assert.ok(resposta.body.erro);
+    });
+  }
+});
