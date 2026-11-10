@@ -30,7 +30,9 @@ export default function Layout() {
           <Link to="/" className="marca">
             Divide Aí
           </Link>
-          <span className="republica">{republica.nome}</span>
+          <span className="republica" data-cy="republica-atual">
+            {republica.nome}
+          </span>
         </div>
         <SeletorMorador />
       </header>
@@ -54,6 +56,7 @@ export default function Layout() {
             <Link
               key={item.para}
               to={item.para}
+              data-cy={`menu${item.para.replaceAll("/", "-")}`}
               className={ativo ? "menu-item ativo" : "menu-item"}
               aria-current={ativo ? "page" : undefined}
             >
