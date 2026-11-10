@@ -81,6 +81,20 @@ describe("GET /api/republicas/:id/extrato", () => {
     assert.equal(corpo.moradores.length, 3);
   });
 
+  it("despesa excluída sai do extrato", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno"]);
+    const despesaId = await lanca(republicaId, { valor: "60,00", pagadorId: ids.Bruno, data: "2026-10-05" });
+    await request(app)
+      .delete(`/api/republicas/${republicaId}/despesas/${despesaId}`)
+      .send({ moradorId: ids.Bruno })
+      .expect(204);
+
+    const corpo = await extrato(republicaId, "2026-10");
+
+    assert.equal(corpo.totalCentavos, 0);
+    assert.deepEqual(corpo.despesas, []);
+  });
+
   it("sem ?mes, usa o mês de hoje no calendário da casa", async () => {
     const { republicaId, ids } = await montaCasa();
     const hoje = hojeNaCasa();
@@ -90,5 +104,37 @@ describe("GET /api/republicas/:id/extrato", () => {
 
     assert.equal(corpo.mes, hoje.slice(0, 7));
     assert.equal(corpo.totalCentavos, 1000);
+  });
+
+  it("quem saiu aparece nos meses em que morava na casa e some depois", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno"]);
+    await request(app)
+      .delete(`/api/republicas/${republicaId}/moradores/${ids.Bruno}`)
+      .send({ moradorId: ids.Ana })
+      .expect(200);
+    const [ano, mes] = hojeNaCasa().slice(0, 7).split("-").map(Number);
+    const mesSeguinte = mes === 12 ? `${ano + 1}-01` : `${ano}-${String(mes + 1).padStart(2, "0")}`;
+
+    const nomes = async (m: string) =>
+      (await extrato(republicaId, m)).moradores.map((x: { nome: string }) => x.nome);
+
+    assert.deepEqual(await nomes(hojeNaCasa().slice(0, 7)), ["Ana", "Bruno"]);
+    assert.deepEqual(await nomes(mesSeguinte), ["Ana"]);
+  });
+});
+
+describe("extrato: erros da rota", () => {
+  for (const mes of ["2026-13", "outubro", "2026-1"]) {
+    it(`?mes=${mes} responde 400`, async () => {
+      const { republicaId } = await montaCasa();
+      const resposta = await request(app).get(`/api/republicas/${republicaId}/extrato?mes=${mes}`);
+      assert.equal(resposta.status, 400);
+      assert.match(resposta.body.erro, /Mês inválido/);
+    });
+  }
+
+  it("república inexistente responde 404", async () => {
+    const resposta = await request(app).get("/api/republicas/999/extrato?mes=2026-10");
+    assert.equal(resposta.status, 404);
   });
 });
