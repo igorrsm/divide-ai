@@ -1994,3 +1994,54 @@ Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
 - Sem teste: duas repúblicas no mesmo banco (os saldos não se misturam).
   Hoje isso só é garantido pelo `where: { republicaId }`.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-10 — Igor — TP2 · Integração de pagamentos (T2-15)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Fazer a T2-15: testes de integração de `POST` e `GET /pagamentos`,
+  passando pelo `test.db`, sem mock.
+
+**O que a IA produziu**
+- `src/testes/casa.ts`: `montaCasa`, `lanca`, `saldos` e `porNome`, tirados
+  do teste de saldos (T2-14) para outros testes usarem. Os e-mails levam o
+  nome da casa, para dar para montar duas repúblicas no mesmo teste.
+- `src/pagamentos/rotas.test.ts`, com 16 testes:
+  - grava em centavos e devolve a data como AAAA-MM-DD;
+  - pagar a dívida inteira tira a dívida do saldo dos dois;
+  - valor acima da dívida é aceito e inverte o saldo (decisão da D3);
+  - oito entradas inválidas respondem 400 com a mensagem certa e não gravam
+    nada;
+  - morador de outra república é recusado;
+  - a lista vem ordenada e só da própria casa;
+  - 404 e 400.
+- Cobertura: `src/pagamentos` foi a 100% de linhas; o total foi de 81,3%
+  para 82,05%.
+
+**Revisão humana**
+- O Igor pediu a tarefa.
+
+**Observações**
+- Prova do vermelho, nove quebras, cada uma derrubando o teste dela:
+  - devolver a data sem `diaDa`;
+  - gravar o valor em reais;
+  - inverter o sinal dos acertos;
+  - aceitar pagar a si mesmo;
+  - aceitar morador de fora;
+  - listar sem filtrar a república;
+  - ordenar só por id;
+  - aceitar data futura;
+  - pular a busca da república.
+
+  Desta vez cada rodada restaurou só o arquivo quebrado, com o teste já no
+  stage.
+- Erro da IA: o primeiro commit da extração dos helpers somava 120 linhas,
+  acima do limite de 100. Ela desfez o commit e o dividiu em dois (criar o
+  `casa.ts` e passar o teste de saldos a usá-lo).
+- A branch saiu da branch da T2-14 (#80), porque usa o `casa.ts`. O PR
+  aponta para ela e vai para a `main` depois do merge do #80.
+- Repetição consciente: "pagar a si mesmo" e "morador de fora" já têm teste
+  de unidade em `validacao.test.ts`. O de integração confere o que a
+  unidade não vê: a resposta 400 da rota e que nada foi gravado.
+- Tempo economizado ou perdido: não medido.
