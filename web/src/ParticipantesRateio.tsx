@@ -40,6 +40,7 @@ export default function ParticipantesRateio(props: Props) {
               key={modo.tipo}
               type="button"
               className="seletor-opcao"
+              data-cy={`divisao-${modo.tipo}`}
               aria-pressed={tipo === modo.tipo}
               onClick={() => props.aoMudarTipo(modo.tipo)}
             >
@@ -60,7 +61,12 @@ export default function ParticipantesRateio(props: Props) {
             return (
               <li key={morador.id} className="cartao participante">
                 <label className="participante-rotulo">
-                  <input type="checkbox" checked={marcado} onChange={() => alternar(morador.id)} />
+                  <input
+                    type="checkbox"
+                    data-cy={`participante-${morador.id}`}
+                    checked={marcado}
+                    onChange={() => alternar(morador.id)}
+                  />
                   <span>
                     {morador.nome}
                     {String(morador.id) === pagadorId && <small> (pagou)</small>}
