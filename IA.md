@@ -2140,3 +2140,59 @@ Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
 - O banco do Notion só tem linhas do Igor; os outros registraram só no
   `IA.md`.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-10 — Igor — TP2 · Revisão e merge dos PRs #76 e #77 (Thalita)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Revisar o #76 (Cypress, T2-07) e o #77 (`data-cy`, T2-08), resolver os
+  conflitos com a `main` e, com o ok do Igor, aprovar e mesclar.
+
+**O que a IA produziu**
+- Validação em worktrees separadas: lint, `npm test`, build, tamanho dos
+  commits e o `IA.md` sem linha removida.
+- Resolução dos conflitos com o #74 e o #75:
+  - `package.json`: manteve o `test` da `main` e juntou as dependências;
+  - lock: partiu do lock da Thalita, então o Cypress ficou na 16.2.1 que
+    ela testou;
+  - `IA.md`: juntou as entradas dos dois lados.
+- Depois do merge do #76, nova resolução do `IA.md` do #77.
+- E2E no WSL do Igor: o teste de fumaça passou. Uma spec descartável, com
+  os dois PRs juntos numa branch local, achou todos os `data-cy`; tirar o
+  `saldo-valor` derrubou o teste dela.
+- Aprovação e merge dos dois, sem squash, com sugestões que não bloqueiam:
+  - incluir o typecheck da pasta `e2e/`;
+  - `data-cy` explícito em `EscolhaMorador` e `CampoData`, em vez de
+    derivado do rótulo.
+
+**Revisão humana**
+- O Igor instalou as bibliotecas do Cypress no WSL (precisava de `sudo`) e
+  fez o teste de tela do #77 nas seis telas, inclusive em 360 px.
+- A aprovação foi bloqueada uma vez pela trava de permissões, porque o
+  Igor ainda não tinha autorizado aprovar e mesclar. Ela só seguiu depois
+  do pedido explícito dele.
+
+**Observações**
+- Erros da IA:
+  - Ao juntar o `IA.md`, a linha "Tempo economizado ou perdido" do fim da
+    entrada do Lucas sumiu de novo (já tinha acontecido no TP1). A contagem
+    acusou 48 em vez de 49, e a linha foi recolocada.
+  - No lockfile, o `npm install` gravou o nome da pasta da worktree
+    (`rev76`), porque o `package.json` não tem `"name"`. Partindo do lock
+    da `main`, ele também subia a versão do Cypress. A solução foi partir
+    do lock da branch e corrigir o nome.
+  - Na spec descartável, a IA procurou a Ana em "Para quem", que esconde
+    quem pagou. O teste falhou, e o print mostrou que o código estava
+    certo.
+  - Ao remover uma worktree, ela apagou a pasta antes dos links para o
+    `node_modules` do Igor, ao contrário do que tinha dito. Nada se perdeu,
+    porque o git não segue links, mas ela só conferiu depois.
+- Depois do merge do #76, o `IA.md` do #77 conflitou de novo: o git
+  alinhava as duas entradas da Thalita pela linha "Ferramenta", igual nas
+  duas. O arquivo foi montado como o `IA.md` da `main` mais a entrada do
+  T2-08.
+- O `dev.db` do Igor tinha o Bruno marcado como "saiu" e um morador "Igor",
+  sobras dos testes da A4 e da A2. O seed resolveu. O E2E não pega isso,
+  porque recria o próprio banco.
+- Tempo economizado ou perdido: não medido.
