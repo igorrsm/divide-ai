@@ -2045,3 +2045,64 @@ Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
   de unidade em `validacao.test.ts`. O de integração confere o que a
   unidade não vê: a resposta 400 da rota e que nada foi gravado.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-10 — Igor — TP2 · Integração do extrato e do CSV (T2-16)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Fazer a T2-16: testes de integração de `GET /extrato` e
+  `GET /extrato/csv`, passando pelo `test.db`, sem mock.
+
+**O que a IA produziu**
+- `src/extrato/rotas.test.ts`, com 14 testes. Um outubro montado pela API,
+  com despesas em 30/09, 01/10 e 31/10 e um acerto em 15/10.
+- Extrato:
+  - só o mês, do dia 1 ao último, em ordem decrescente;
+  - acertos fora;
+  - "A pagar" e "Pago" por morador;
+  - mês vazio zerado;
+  - despesa excluída fora;
+  - sem `?mes`, o mês de hoje da casa;
+  - quem saiu aparece no mês em que morava e some no seguinte;
+  - 400 para mês inválido e 404.
+- CSV:
+  - anexo `fechamento-AAAA-MM.csv`, UTF-8 com BOM, quebras `\r\n`;
+  - despesas, totais, saldos de hoje e acertos sugeridos;
+  - descrição com `;` e aspas entre aspas;
+  - quem saiu marcado;
+  - 400 e 404.
+- Cobertura: `src/extrato` foi a 100% de linhas; o total foi de 82,05% para
+  84,85%.
+
+**Revisão humana**
+- O Igor pediu a tarefa.
+
+**Observações**
+- Erro da IA na expectativa: o teste do CSV esperava a Carla com −755,00 e
+  o acerto "Carla;Ana;755,00", mas a conta certa é Bruno −755,00 e Carla
+  −715,00 (a luz de setembro, paga pela Carla, entra no saldo de hoje). O
+  teste falhou na primeira rodada e a IA refez a conta antes de corrigir a
+  expectativa, sem mexer no código. É o tipo de erro que só aparece porque
+  a expectativa foi escrita à mão, não copiada da saída.
+- Prova do vermelho, 13 quebras, cada uma derrubando o teste dela:
+  - começar o mês um dia antes;
+  - trocar "A pagar" por "Pago";
+  - tirar o `DESPESA_ATIVA`;
+  - ordenar crescente;
+  - cair em janeiro sem `?mes`;
+  - não filtrar quem saiu;
+  - aceitar mês 13;
+  - tirar o BOM;
+  - tirar o anexo;
+  - quebrar só com `\n`;
+  - não pôr aspas;
+  - não marcar quem saiu;
+  - zerar os saldos.
+- Sem prova do vermelho: "os acertos ficam fora do extrato". O serviço do
+  extrato nem lê a tabela de pagamentos, então não há linha para quebrar. O
+  teste só protege contra alguém passar a ler.
+- Para caber em 100 linhas por commit, o teste de despesa excluída saiu do
+  primeiro commit e entrou no segundo.
+- A branch saiu da branch da T2-15 (#81), porque usa `src/testes/casa.ts`.
+- Tempo economizado ou perdido: não medido.
