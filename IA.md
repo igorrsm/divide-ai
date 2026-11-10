@@ -1891,3 +1891,55 @@ Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
 - O commit do `supertest` passa de 100 linhas por causa do
   `package-lock.json`, que é gerado; a exceção está na mensagem.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-10 — Lucas — TP2 · Banco de teste e limpeza (T2-02)
+
+Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
+
+**Pedido à IA**
+- Fazer a T2-02: os testes de integração usam o `test.db`, nunca o `dev.db`,
+  e cada teste começa do zero.
+
+**O que a IA produziu**
+- Um plano, aprovado antes do código. Antes de propor a concorrência, a IA
+  mediu o `npm test`: 1,6 s em paralelo e 4,4 s com um arquivo por vez.
+- `limpaBanco` (`src/limpaBanco.ts`), com a ordem de apagar que estava no
+  seed, mais o reset do `sqlite_sequence`; o seed passou a usá-la.
+- `scripts/banco-de-teste.mts`: com `--import`, aponta o `DATABASE_URL` para
+  o `test.db` em cada processo de teste; com `--test-global-setup`, apaga o
+  `test.db` e roda `prisma migrate deploy` uma vez. O `npm test` passou a
+  rodar com `--test-concurrency=1` e agora leva uns 6 s.
+- `limpaBancoDeTeste` (`src/testes/banco.ts`), que recusa limpar se a
+  conexão não estiver no `test.db`, e três testes em
+  `src/testes/banco.test.ts`.
+- Um parágrafo no `CLAUDE.md` sobre como escrever teste de integração.
+
+**Revisão humana**
+- O Lucas aprovou o plano. Ele não alterou o código gerado; a revisão do
+  código fica para o PR.
+
+**Observações**
+- Erro da IA: para conferir que o seed seguia funcionando com a limpeza
+  extraída, ela rodou `prisma db seed` no `dev.db` do Lucas, sem perguntar e
+  fora do plano. Como tinha feito backup do `dev.db` antes de começar, ela
+  avisou e o restaurou (o hash ficou igual ao de antes).
+- Suposição furada: o plano previa um global setup em `.ts` importando uma
+  constante do `src/`. O global setup é carregado pelo Node direto, sem o
+  `tsx`, e o import sem extensão falhou. O arquivo virou `.mts` só com
+  módulos do Node, e a trava passou a conferir o arquivo aberto
+  (`PRAGMA database_list`) em vez da variável de ambiente.
+- Suposição confirmada: o processo de teste termina sem
+  `prisma.$disconnect()`.
+- Erro da IA no teste: o primeiro rascunho lançava a despesa sem
+  `pagadorId`, e a API respondeu 400. O assert passou a mostrar o corpo da
+  resposta.
+- Prova do vermelho, com o `dev.db` conferido por hash: sem o preload, a
+  conexão cai no `dev.db` e a trava barra a limpeza antes de qualquer
+  escrita; sem o reset do `sqlite_sequence`, a república recriada nasce com
+  id 2; sem a trava, o teste da recusa falha com um erro do Prisma em vez da
+  mensagem esperada.
+- Sem teste: o `globalSetup` (apagar e migrar) só é exercitado
+  indiretamente, porque todo teste depende dele; as tabelas `Pagamento` e
+  `Convite` estão vazias no teste da limpeza, então a parte delas não foi
+  conferida com dados.
+- Tempo economizado ou perdido: não medido.

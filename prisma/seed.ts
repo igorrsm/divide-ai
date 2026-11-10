@@ -1,19 +1,14 @@
 import "dotenv/config";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { limpaBanco } from "../src/limpaBanco";
 
 const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL ?? "file:./dev.db" });
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  // Limpa na ordem inversa das dependências, para o seed poder rodar várias vezes
-  await prisma.participacao.deleteMany();
-  await prisma.despesaRecorrente.deleteMany();
-  await prisma.despesa.deleteMany();
-  await prisma.pagamento.deleteMany();
-  await prisma.convite.deleteMany();
-  await prisma.morador.deleteMany();
-  await prisma.republica.deleteMany();
+  // Limpa tudo antes, para o seed poder rodar várias vezes
+  await limpaBanco(prisma);
 
   // Ids fixos: o seed apaga e recria, e sem isso o autoincremento avança a cada
   // execução, quebrando qualquer referência fixa no front.
