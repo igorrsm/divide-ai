@@ -19,6 +19,7 @@ jobs:
       # O client do Prisma é gerado e não vai para o repositório.
       - run: npx prisma generate
       - run: npm run lint
-      - run: npm test
+      # Cobertura do c8 sobre o npm test; o limite de 80% fica em .c8rc.json.
+      - run: npm run test:coverage
       # O build roda o typecheck antes do vite build.
       - run: npm run build
