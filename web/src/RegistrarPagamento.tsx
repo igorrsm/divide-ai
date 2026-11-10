@@ -107,6 +107,7 @@ export default function RegistrarPagamento() {
       <label className="campo">
         Valor em reais
         <input
+          data-cy="valor"
           value={valor}
           onChange={(e) => setValor(e.target.value)}
           placeholder="0,00"
@@ -123,6 +124,7 @@ export default function RegistrarPagamento() {
       <button
         type="submit"
         className="botao-principal"
+        data-cy="salvar-pagamento"
         disabled={enviando || foraDoAr || mesmaPessoa}
       >
         {enviando ? "Registrando..." : "Registrar pagamento"}
