@@ -62,11 +62,15 @@ export default function Moradores() {
           Não foi possível carregar os moradores.
         </p>
       ) : (
-        <ul className="saldos">
+        <ul className="saldos" data-cy="lista-moradores">
           {emOrdem.map((morador) => {
             const eu = morador.id === moradorId;
             return (
-              <li key={morador.id} className={eu ? "cartao saldo saldo-eu" : "cartao saldo"}>
+              <li
+                key={morador.id}
+                className={eu ? "cartao saldo saldo-eu" : "cartao saldo"}
+                data-cy="morador"
+              >
                 <span className={`inicial inicial-${morador.id % 4}`} aria-hidden="true">
                   {morador.nome.charAt(0)}
                 </span>
@@ -124,23 +128,34 @@ export default function Moradores() {
           <h2>Adicionar morador</h2>
           <label className="campo">
             Nome
-            <input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex.: Diego" />
+            <input
+              data-cy="nome-morador"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              placeholder="Ex.: Diego"
+            />
           </label>
           <label className="campo">
             E-mail
             <input
               type="email"
+              data-cy="email-morador"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Ex.: diego@exemplo.com"
             />
           </label>
           {aviso && (
-            <p role="status" className={`aviso aviso-${aviso.tipo}`}>
+            <p role="status" className={`aviso aviso-${aviso.tipo}`} data-cy="aviso-morador">
               {aviso.texto}
             </p>
           )}
-          <button type="submit" className="botao-principal" disabled={enviando || foraDoAr}>
+          <button
+            type="submit"
+            className="botao-principal"
+            data-cy="adicionar-morador"
+            disabled={enviando || foraDoAr}
+          >
             {enviando ? "Adicionando..." : "Adicionar morador"}
           </button>
         </form>

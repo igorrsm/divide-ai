@@ -25,6 +25,7 @@ export default function CampoData({ rotulo, valor, aoMudar, max }: Props) {
         <button
           type="button"
           className="campo-data"
+          data-cy={id.replace("rotulo-data-", "")}
           aria-labelledby={id}
           aria-expanded={aberto}
           onClick={() => setAberto(!aberto)}

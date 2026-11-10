@@ -102,7 +102,7 @@ export default function Saldos() {
       {/* O título vem antes do resumo, para leitor de tela anunciar a tela primeiro. */}
       <h1>Como está a casa</h1>
       {aviso && (
-        <p role="status" className="aviso aviso-ok">
+        <p role="status" className="aviso aviso-ok" data-cy="aviso-saldos">
           {aviso}
         </p>
       )}
@@ -112,7 +112,11 @@ export default function Saldos() {
           Registrar pagamento
         </button>
       ) : (
-        <Link to="/saldos/pagamento" className="botao-principal botao-pagamento">
+        <Link
+          to="/saldos/pagamento"
+          className="botao-principal botao-pagamento"
+          data-cy="abrir-pagamento"
+        >
           Registrar pagamento
         </Link>
       )}
@@ -120,7 +124,11 @@ export default function Saldos() {
         {saldos.map((saldo) => {
           const eu = saldo.moradorId === moradorId;
           return (
-            <li key={saldo.moradorId} className={eu ? "cartao saldo saldo-eu" : "cartao saldo"}>
+            <li
+              key={saldo.moradorId}
+              className={eu ? "cartao saldo saldo-eu" : "cartao saldo"}
+              data-cy={`saldo-${saldo.moradorId}`}
+            >
               <span className={`inicial inicial-${saldo.moradorId % 4}`} aria-hidden="true">
                 {saldo.nome.charAt(0)}
               </span>
@@ -129,7 +137,7 @@ export default function Saldos() {
                 {eu && <small> (você)</small>}
                 {saldo.saiu && <small> (saiu)</small>}
               </span>
-              <span className={`saldo-valor ${CLASSE_VALOR[saldo.situacao]}`}>
+              <span className={`saldo-valor ${CLASSE_VALOR[saldo.situacao]}`} data-cy="saldo-valor">
                 <strong>{valorComSinal(saldo.saldoCentavos)}</strong>
                 <small>{saldo.situacao}</small>
               </span>

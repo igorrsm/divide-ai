@@ -52,12 +52,17 @@ export default function CriarRepublica() {
     <>
       <h1>Criar república</h1>
       <form onSubmit={enviar} className="cartao formulario">
-        {avisoErro && <p role="alert" className="aviso aviso-erro">{avisoErro}</p>}
+        {avisoErro && (
+          <p role="alert" className="aviso aviso-erro" data-cy="aviso-erro">
+            {avisoErro}
+          </p>
+        )}
 
         <label className="campo">
           Nome da república
           <input
             type="text"
+            data-cy="nome-republica"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             placeholder="Ex.: República Solar"
@@ -68,6 +73,7 @@ export default function CriarRepublica() {
           Seu nome (organizador)
           <input
             type="text"
+            data-cy="nome-organizador"
             value={nomeOrganizador}
             onChange={(e) => setNomeOrganizador(e.target.value)}
             placeholder="Ex.: Eduardo"
@@ -78,13 +84,19 @@ export default function CriarRepublica() {
           Seu e-mail
           <input
             type="email"
+            data-cy="email-organizador"
             value={emailOrganizador}
             onChange={(e) => setEmailOrganizador(e.target.value)}
             placeholder="Ex.: eduardo@exemplo.com"
           />
         </label>
 
-        <button type="submit" className="botao-principal" disabled={enviando || foraDoAr}>
+        <button
+          type="submit"
+          className="botao-principal"
+          data-cy="criar-republica"
+          disabled={enviando || foraDoAr}
+        >
           {enviando ? "Criando..." : "Criar república"}
         </button>
       </form>

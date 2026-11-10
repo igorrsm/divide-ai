@@ -13,7 +13,7 @@ type Props = {
 export default function EscolhaMorador({ rotulo, moradores, valor, aoMudar }: Props) {
   const id = `rotulo-${rotulo.toLowerCase().replace(/\s+/g, "-")}`;
   return (
-    <div className="campo" role="group" aria-labelledby={id}>
+    <div className="campo" role="group" aria-labelledby={id} data-cy={id.replace("rotulo-", "")}>
       <span id={id}>{rotulo}</span>
       <div className="seletor-opcoes">
         {moradores.map((morador) => (
@@ -21,6 +21,7 @@ export default function EscolhaMorador({ rotulo, moradores, valor, aoMudar }: Pr
             key={morador.id}
             type="button"
             className="seletor-opcao"
+            data-cy={`morador-${morador.id}`}
             aria-pressed={String(morador.id) === valor}
             onClick={() => aoMudar(String(morador.id))}
           >

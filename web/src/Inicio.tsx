@@ -30,7 +30,12 @@ export default function Inicio() {
               <span>{atalho.texto}</span>
             </span>
           ) : (
-            <Link key={atalho.para} to={atalho.para} className="cartao atalho">
+            <Link
+              key={atalho.para}
+              to={atalho.para}
+              className="cartao atalho"
+              data-cy={`atalho${atalho.para.replaceAll("/", "-")}`}
+            >
               <strong>{atalho.titulo}</strong>
               <span>{atalho.texto}</span>
             </Link>
