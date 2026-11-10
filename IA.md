@@ -1944,6 +1944,39 @@ Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
   conferida com dados.
 - Tempo economizado ou perdido: não medido.
 
+## 2026-11-10 — Thalita — TP2: Cypress e `npm run e2e` (T2-07)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do projeto.
+
+**Pedido à IA**
+- Fazer o cartão T2-07 do TP2: instalar o framework de E2E e criar o
+  `npm run e2e`, que sobe a API e a tela a partir do seed. Critério de pronto:
+  um teste de fumaça abre a tela inicial e passa.
+
+**O que a IA produziu**
+- Plano, aprovado pela Thalita antes do código: Cypress (o quadro já previa os
+  atributos `data-cy` do T2-08) e um banco só para os testes.
+- Scripts `e2e` e `e2e:abrir`: recriam o `e2e.db` com o seed, sobem API e tela
+  com `start-server-and-test` e chamam o Cypress. O `cross-env` define o banco
+  também no `cmd` do Windows, e o `dev.db` não é tocado.
+- `cypress.config.ts`, o teste de fumaça `e2e/fumaca.cy.ts` e a seção
+  "Testes E2E" do README.
+
+**Revisão humana**
+- A Thalita testou na própria máquina, antes dos commits: `npm run e2e` (1
+  teste passando), `npm run e2e:abrir` (teste verde na janela do Cypress),
+  lint, `npm test` (145 testes) e build.
+
+**Observações**
+- Na primeira execução, o seed quebrou em `prisma.convite`: o cliente do Prisma
+  da máquina estava desatualizado. O `e2e:banco` passou a rodar
+  `prisma generate` antes do seed.
+- A IA não gerou o `package-lock.json`: o npm do ambiente dela era de outra
+  versão e mexia em linhas sem relação. O lock veio do `npm install` da Thalita.
+- O Cypress avisa que o Electron, navegador padrão, vai deixar de ser aceito
+  numa versão futura. Por ora fica assim, para não exigir o Chrome de todos.
+- Tempo economizado ou perdido: não medido.
+
 ## 2026-11-10 — Thalita — TP2: atributos `data-cy` nas telas (T2-08)
 
 Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do projeto.

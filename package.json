@@ -8,8 +8,11 @@
     "@types/supertest": "^7.2.1",
     "@vitejs/plugin-react": "^6.1.1",
     "concurrently": "^10.0.5",
+    "cross-env": "^10.1.0",
+    "cypress": "^16.2.1",
     "eslint": "^10.11.0",
     "prisma": "^7.10.0",
+    "start-server-and-test": "^3.0.13",
     "supertest": "^7.3.2",
     "tsx": "^4.23.13",
     "typescript": "~6.0.3",
@@ -32,6 +35,10 @@
     "lint": "eslint . --max-warnings 0",
     "test": "node --import tsx --import ./scripts/fuso-dos-testes.ts --import ./scripts/banco-de-teste.mts --test-global-setup=./scripts/banco-de-teste.mts --test --test-concurrency=1 \"src/**/*.test.ts\" \"web/src/**/*.test.ts\"",
     "dev": "concurrently -n api,web -c blue,magenta \"npm:dev:server\" \"npm:dev:web\"",
-    "build": "npm run typecheck && vite build web"
+    "build": "npm run typecheck && vite build web",
+    "e2e:banco": "prisma generate && cross-env DATABASE_URL=file:./e2e.db prisma migrate deploy && cross-env DATABASE_URL=file:./e2e.db prisma db seed",
+    "e2e:servidores": "cross-env DATABASE_URL=file:./e2e.db npm run dev",
+    "e2e": "npm run e2e:banco && start-server-and-test e2e:servidores \"http-get://localhost:3000/api/health|http://localhost:5173\" \"cypress run\"",
+    "e2e:abrir": "npm run e2e:banco && start-server-and-test e2e:servidores \"http-get://localhost:3000/api/health|http://localhost:5173\" \"cypress open --e2e\""
   }
 }
