@@ -60,6 +60,19 @@ No Windows, crie o `.env` pelo editor: no PowerShell, o `echo` grava em UTF-16.
 
 O seed apaga e recria os dados, então pode ser rodado de novo para voltar ao estado
 inicial. `npm test` roda os testes e `npm run lint` o ESLint.
+`npm run test:coverage` roda os mesmos testes com a cobertura do `c8`: a tabela sai
+no terminal e o relatório HTML em `coverage/index.html`.
+
+### Testes E2E (Cypress)
+
+```bash
+npm run e2e          # roda os testes E2E no terminal
+npm run e2e:abrir    # abre a janela do Cypress para ver o navegador
+```
+
+Os dois recriam o banco `e2e.db` com o seed, sobem a API e a tela e só então chamam
+o Cypress, então o `dev.db` não é tocado. Pare o `npm run dev` antes, porque as portas
+são as mesmas. Os testes ficam em `e2e/`.
 
 ## Histórias de usuário
 

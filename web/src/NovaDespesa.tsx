@@ -193,6 +193,7 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
       <label className="campo">
         Descrição
         <input
+          data-cy="descricao"
           value={descricao}
           onChange={(e) => setDescricao(e.target.value)}
           placeholder="Conta de luz"
@@ -203,6 +204,7 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
       <label className="campo">
         Valor em reais
         <input
+          data-cy="valor"
           value={valor}
           onChange={(e) => setValor(e.target.value)}
           placeholder="0,00"
@@ -260,6 +262,7 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
               <input
                 type="radio"
                 name="recorrente"
+                data-cy={opcao.valor ? "recorrente-sim" : "recorrente-nao"}
                 checked={recorrente === opcao.valor}
                 onChange={() => setRecorrente(opcao.valor)}
               />
@@ -284,6 +287,7 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
           (conferencia !== null && !conferencia.fecha)
         }
         className="botao-principal"
+        data-cy="lancar-despesa"
       >
         {foraDoAr
           ? "Servidor indisponível"
@@ -303,20 +307,28 @@ export default function NovaDespesa({ edicao }: { edicao?: DespesaEmEdicao }) {
         </p>
       )}
       {aviso && !(foraDoAr && aviso.tipo === "erro") && (
-        <p role="status" className={aviso.tipo === "erro" ? "aviso aviso-erro" : "aviso aviso-ok"}>
+        <p
+          role="status"
+          className={aviso.tipo === "erro" ? "aviso aviso-erro" : "aviso aviso-ok"}
+          data-cy="aviso-despesa"
+        >
           {aviso.texto}
         </p>
       )}
 
       {rateio && (
-        <section className="rateio">
+        <section className="rateio" data-cy="rateio">
           <h3>
             {TITULO_DIVISAO[rateio.tipoDivisao]} entre {rateio.participacoes.length}{" "}
             {rateio.participacoes.length > 1 ? "moradores" : "morador"}
           </h3>
           <ul className="rateio-lista">
             {rateio.participacoes.map((participacao) => (
-              <li key={participacao.moradorId} className="cartao rateio-item">
+              <li
+                key={participacao.moradorId}
+                className="cartao rateio-item"
+                data-cy={`rateio-${participacao.moradorId}`}
+              >
                 <span>
                   {nomeDe(participacao.moradorId)}
                   {participacao.moradorId === rateio.pagadorId && <small> (pagou)</small>}

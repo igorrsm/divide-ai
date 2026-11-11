@@ -1944,6 +1944,106 @@ Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
   conferida com dados.
 - Tempo economizado ou perdido: não medido.
 
+## 2026-11-10 — Thalita — TP2: Cypress e `npm run e2e` (T2-07)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do projeto.
+
+**Pedido à IA**
+- Fazer o cartão T2-07 do TP2: instalar o framework de E2E e criar o
+  `npm run e2e`, que sobe a API e a tela a partir do seed. Critério de pronto:
+  um teste de fumaça abre a tela inicial e passa.
+
+**O que a IA produziu**
+- Plano, aprovado pela Thalita antes do código: Cypress (o quadro já previa os
+  atributos `data-cy` do T2-08) e um banco só para os testes.
+- Scripts `e2e` e `e2e:abrir`: recriam o `e2e.db` com o seed, sobem API e tela
+  com `start-server-and-test` e chamam o Cypress. O `cross-env` define o banco
+  também no `cmd` do Windows, e o `dev.db` não é tocado.
+- `cypress.config.ts`, o teste de fumaça `e2e/fumaca.cy.ts` e a seção
+  "Testes E2E" do README.
+
+**Revisão humana**
+- A Thalita testou na própria máquina, antes dos commits: `npm run e2e` (1
+  teste passando), `npm run e2e:abrir` (teste verde na janela do Cypress),
+  lint, `npm test` (145 testes) e build.
+
+**Observações**
+- Na primeira execução, o seed quebrou em `prisma.convite`: o cliente do Prisma
+  da máquina estava desatualizado. O `e2e:banco` passou a rodar
+  `prisma generate` antes do seed.
+- A IA não gerou o `package-lock.json`: o npm do ambiente dela era de outra
+  versão e mexia em linhas sem relação. O lock veio do `npm install` da Thalita.
+- O Cypress avisa que o Electron, navegador padrão, vai deixar de ser aceito
+  numa versão futura. Por ora fica assim, para não exigir o Chrome de todos.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-11-10 — Thalita — TP2: atributos `data-cy` nas telas (T2-08)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do projeto.
+
+**Pedido à IA**
+- Fazer o cartão T2-08: colocar `data-cy` em todos os elementos usados pelos
+  quatro cenários E2E (criar república e morador, despesa só para Bruno e
+  Carla, saldos do seed e acerto do Bruno).
+
+**O que a IA produziu**
+- Plano com a lista de atributos por tela, aprovado pela Thalita antes do
+  código. Os nomes usam os ids do seed (`participante-2`, `sugestao-2-1`), para
+  os testes não dependerem de texto nem de CSS.
+- Os atributos em 13 telas e componentes, sem mudar texto nem visual, e a
+  tabela `docs/data-cy.md` para o Eduardo e o Lucas consultarem.
+- A branch saiu da `main`, e não da branch do T2-07, para os dois PRs não
+  dependerem um do outro.
+
+**Revisão humana**
+- A Thalita testou na própria máquina, antes dos commits: lint, `npm test`
+  (145 testes), build, as telas no navegador (iguais a antes) e o
+  `participante-2` encontrado na caixinha do Bruno pelo F12.
+
+**Observações**
+- No teste de tela, todas as telas deram erro 500. Não era o código: o
+  `dev.db` da Thalita estava sem as duas últimas migrations da `main`. Um
+  `prisma migrate deploy` seguido do seed resolveu. O teste E2E não pega isso,
+  porque recria o `e2e.db` do zero.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-11-10 — Igor — TP2 · Validação do início, .mailmap e cobertura (T2-03 a T2-06)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Ler o enunciado do TP2 e a página do Notion, validar o que o grupo já tinha
+  feito (#74 a #77) e planejar a fatia do Igor; depois, fazer o `.mailmap` e
+  a medição de cobertura.
+
+**O que a IA produziu**
+- Um plano, aprovado antes do código. Na validação, apontou que o #76
+  (Cypress) saiu da `main` antes do #75 e vai conflitar no `package.json`.
+- `.mailmap` com os nomes do README: o `git shortlog -sn` caiu de 8 linhas
+  para 4.
+- `c8` com `npm run test:coverage`, `.c8rc.json` com o escopo combinado e o
+  CI chamando a cobertura no lugar do `npm test`.
+- Medição de partida: 74,84% de linhas. Os serviços puxam para baixo
+  (`pagamentos/servico.ts` 18%, `moradores` 26%, `extrato` 26%, `saldos`
+  29%, `despesas` 33%); as funções puras ficam perto de 100%.
+
+**Revisão humana**
+- O Igor escolheu o escopo (sem as telas `.tsx`, confirmado pelo professor)
+  e a ordem: `.mailmap` e cobertura antes da integração.
+
+**Observações**
+- Prova do vermelho do limite: com `check-coverage` ligado, o comando sai
+  com código 1 e "Coverage for lines (74.84%) does not meet global threshold
+  (80%)". Por isso o limite fica desligado até a integração; ligar é trocar
+  um `false` por `true`.
+- Suposição confirmada: o `c8` lê os source maps do `tsx` e acerta as linhas
+  dos `.ts`, sem configuração extra.
+- Atenção para a leitura do número: `rotas.ts` já aparece com ~70% só porque
+  o `app.ts` importa todas as rotas; isso é código carregado, não testado.
+- Suposição: o nome completo da Thalita no `.mailmap` veio do README
+  ("Thalita Fernandes Pires"); ela deve conferir.
+- Tempo economizado ou perdido: não medido.
+
 ## 2026-11-10 — Igor — TP2 · Integração de saldos e sugestão de acertos (T2-14)
 
 Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
