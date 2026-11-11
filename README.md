@@ -60,6 +60,8 @@ No Windows, crie o `.env` pelo editor: no PowerShell, o `echo` grava em UTF-16.
 
 O seed apaga e recria os dados, então pode ser rodado de novo para voltar ao estado
 inicial. `npm test` roda os testes e `npm run lint` o ESLint.
+`npm run test:coverage` roda os mesmos testes com a cobertura do `c8`: a tabela sai
+no terminal e o relatório HTML em `coverage/index.html`.
 
 ### Testes E2E (Cypress)
 

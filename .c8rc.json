@@ -1,0 +1,21 @@
+{
+  "all": true,
+  "include": [
+    "src/**/*.ts",
+    "web/src/**/*.ts"
+  ],
+  "exclude": [
+    "src/generated/**",
+    "src/testes/**",
+    "src/server.ts",
+    "**/*.test.ts",
+    "**/*.d.ts"
+  ],
+  "reporter": [
+    "text",
+    "html"
+  ],
+  "reports-dir": "coverage",
+  "check-coverage": false,
+  "lines": 80
+}

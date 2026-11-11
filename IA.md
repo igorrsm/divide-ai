@@ -2006,3 +2006,40 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do proj
   `prisma migrate deploy` seguido do seed resolveu. O teste E2E não pega isso,
   porque recria o `e2e.db` do zero.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-10 — Igor — TP2 · Validação do início, .mailmap e cobertura (T2-03 a T2-06)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Ler o enunciado do TP2 e a página do Notion, validar o que o grupo já tinha
+  feito (#74 a #77) e planejar a fatia do Igor; depois, fazer o `.mailmap` e
+  a medição de cobertura.
+
+**O que a IA produziu**
+- Um plano, aprovado antes do código. Na validação, apontou que o #76
+  (Cypress) saiu da `main` antes do #75 e vai conflitar no `package.json`.
+- `.mailmap` com os nomes do README: o `git shortlog -sn` caiu de 8 linhas
+  para 4.
+- `c8` com `npm run test:coverage`, `.c8rc.json` com o escopo combinado e o
+  CI chamando a cobertura no lugar do `npm test`.
+- Medição de partida: 74,84% de linhas. Os serviços puxam para baixo
+  (`pagamentos/servico.ts` 18%, `moradores` 26%, `extrato` 26%, `saldos`
+  29%, `despesas` 33%); as funções puras ficam perto de 100%.
+
+**Revisão humana**
+- O Igor escolheu o escopo (sem as telas `.tsx`, confirmado pelo professor)
+  e a ordem: `.mailmap` e cobertura antes da integração.
+
+**Observações**
+- Prova do vermelho do limite: com `check-coverage` ligado, o comando sai
+  com código 1 e "Coverage for lines (74.84%) does not meet global threshold
+  (80%)". Por isso o limite fica desligado até a integração; ligar é trocar
+  um `false` por `true`.
+- Suposição confirmada: o `c8` lê os source maps do `tsx` e acerta as linhas
+  dos `.ts`, sem configuração extra.
+- Atenção para a leitura do número: `rotas.ts` já aparece com ~70% só porque
+  o `app.ts` importa todas as rotas; isso é código carregado, não testado.
+- Suposição: o nome completo da Thalita no `.mailmap` veio do README
+  ("Thalita Fernandes Pires"); ela deve conferir.
+- Tempo economizado ou perdido: não medido.
