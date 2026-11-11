@@ -2043,3 +2043,54 @@ Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
 - Suposição: o nome completo da Thalita no `.mailmap` veio do README
   ("Thalita Fernandes Pires"); ela deve conferir.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-10 — Igor — TP2 · Integração de saldos e sugestão de acertos (T2-14)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Fazer a T2-14: testes de integração de `GET /saldos` e
+  `GET /saldos/transferencias`, passando pelo `test.db`, sem mock.
+
+**O que a IA produziu**
+- `src/saldos/rotas.test.ts`, com 13 testes. A casa é montada pela própria
+  API (república, moradores, despesas, acertos e saída), como a tela faz.
+  Os testes cobrem:
+  - ordem alfabética;
+  - soma zero;
+  - sobra de 2 centavos no menor id com o pagador fora do rateio;
+  - despesa excluída;
+  - acerto que quita;
+  - quem saiu aparece enquanto deve;
+  - sugestão gulosa;
+  - 404 e 400 nas duas rotas.
+- Cobertura: `src/saldos` foi a 100% de linhas, e o total do escopo foi de
+  74,84% para 81,3%. Os serviços de pagamentos e moradores também subiram
+  (63% e 64%), porque os testes passam pelas rotas deles para montar a casa.
+
+**Revisão humana**
+- O Igor pediu a tarefa e a atualização do Notion.
+
+**Observações**
+- Prova do vermelho, uma quebra por regra, cada uma derrubando o teste
+  correspondente:
+  - sobra para o maior id;
+  - ordenar por id;
+  - ignorar as participações;
+  - tirar o `DESPESA_ATIVA`;
+  - inverter o sinal dos acertos;
+  - não esconder quem saiu quitado;
+  - guloso pelo menor valor;
+  - pular a busca da república.
+- Erro da IA: para desfazer as quebras, ela rodou `git checkout -q src`,
+  que também apagou a segunda metade do arquivo de teste, ainda não
+  commitada. As quatro rodadas seguintes rodaram sem os testes novos, e uma
+  delas "passou" por isso. Ela percebeu pelo `git diff --stat`, recriou o
+  trecho, colocou no stage e refez a prova restaurando só o arquivo
+  quebrado. Lição: na prova do vermelho, restaurar o arquivo exato.
+- Atenção para a leitura da cobertura: parte da subida em pagamentos e
+  moradores é efeito colateral da montagem da casa. As regras deles ainda
+  precisam dos testes próprios (T2-15, T2-11).
+- Sem teste: duas repúblicas no mesmo banco (os saldos não se misturam).
+  Hoje isso só é garantido pelo `where: { republicaId }`.
+- Tempo economizado ou perdido: não medido.
