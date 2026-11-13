@@ -556,3 +556,42 @@ describe("POST /api/republicas/:id/recorrentes/gerar", () => {
     assert.equal(lista.length, 2, "o modelo e o lançamento de outubro");
   });
 });
+
+describe("POST /api/republicas/:id/recorrentes/gerar: o que não gera", () => {
+  it("modelo com alguém que saiu da casa é pulado e avisa quem", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno"]);
+    await lanca(republicaId, { descricao: "Aluguel", valor: "900,00", pagadorId: ids.Ana, data: "2026-08-05", recorrente: true });
+    await sai(republicaId, ids.Ana, ids.Bruno);
+
+    const resposta = await gera(republicaId, "2026-09");
+
+    assert.deepEqual(resposta.body, { gerados: [], pulados: [{ descricao: "Aluguel", quem: ["Bruno"] }] });
+  });
+
+  it("modelo do próprio mês, recorrência parada e despesa excluída não geram", async () => {
+    const { republicaId, ids } = await montaCasa();
+    const recorrente = { valor: "50,00", pagadorId: ids.Ana, recorrente: true };
+    await lanca(republicaId, { ...recorrente, descricao: "Do mês", data: "2026-09-10" });
+    const parada = await lanca(republicaId, { ...recorrente, descricao: "Parada", data: "2026-08-05" });
+    const excluida = await lanca(republicaId, { ...recorrente, descricao: "Excluída", data: "2026-08-05" });
+    await request(app)
+      .delete(`/api/republicas/${republicaId}/despesas/${parada}/recorrencia`)
+      .send({ moradorId: ids.Ana })
+      .expect(204);
+    await exclui(republicaId, excluida, ids.Ana).expect(204);
+
+    assert.deepEqual((await gera(republicaId, "2026-09")).body, { gerados: [], pulados: [] });
+  });
+
+  it("mês futuro ou inválido responde 400, e república inexistente, 404", async () => {
+    const { republicaId } = await montaCasa();
+
+    const futuro = await gera(republicaId, "2999-01");
+    assert.equal(futuro.status, 400);
+    assert.match(futuro.body.erro, /ainda não começou/);
+    const invalido = await gera(republicaId, "2026-13");
+    assert.equal(invalido.status, 400);
+    assert.match(invalido.body.erro, /Mês inválido/);
+    assert.equal((await gera(999, "2026-09")).status, 404);
+  });
+});
