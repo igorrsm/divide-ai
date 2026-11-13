@@ -13,6 +13,7 @@ beforeEach(limpaBancoDeTeste);
 type Detalhe = {
   valorCentavos: number;
   tipoDivisao: string;
+  pagador: { nome: string };
   participacoes: { valorCentavos: number; percentualCentesimos: number | null; morador: { nome: string } }[];
   recorrencia: { diaDoMes: number } | null;
 };
@@ -497,5 +498,61 @@ describe("GET /api/republicas/:id/despesas com filtros", () => {
       assert.equal(resposta.status, 400, consulta);
       assert.match(resposta.body.erro, mensagem, consulta);
     }
+  });
+});
+
+function gera(republicaId: number | string, mes: string) {
+  return request(app).post(`/api/republicas/${republicaId}/recorrentes/gerar`).send({ mes });
+}
+
+describe("POST /api/republicas/:id/recorrentes/gerar", () => {
+  it("gera o mês como cópia do modelo: mesmo pagador e mesmas partes", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno", "Carla"]);
+    await lanca(republicaId, {
+      descricao: "Aluguel", valor: "900,00", pagadorId: ids.Bruno, data: "2026-08-05", recorrente: true,
+      tipoDivisao: "VALOR",
+      partes: [
+        { moradorId: ids.Ana, valor: "500,00" },
+        { moradorId: ids.Bruno, valor: "300,00" },
+        { moradorId: ids.Carla, valor: "100,00" },
+      ],
+    });
+
+    const resposta = await gera(republicaId, "2026-09");
+
+    assert.equal(resposta.status, 200, JSON.stringify(resposta.body));
+    assert.deepEqual(resposta.body.pulados, []);
+    const [gerado] = resposta.body.gerados;
+    assert.deepEqual(
+      { descricao: gerado.descricao, valorCentavos: gerado.valorCentavos, data: gerado.data },
+      { descricao: "Aluguel", valorCentavos: 90000, data: "2026-09-05" },
+    );
+    const gravado = await detalhe(republicaId, gerado.id);
+    assert.equal(gravado.pagador.nome, "Bruno");
+    assert.equal(gravado.tipoDivisao, "VALOR");
+    assert.deepEqual(partes(gravado), { Ana: 50000, Bruno: 30000, Carla: 10000 });
+    // O lançamento é uma despesa comum: não repete por conta própria.
+    assert.equal(gravado.recorrencia, null);
+  });
+
+  it("o dia 31 vira o último dia nos meses mais curtos", async () => {
+    const { republicaId, ids } = await montaCasa();
+    await lanca(republicaId, { valor: "50,00", pagadorId: ids.Ana, data: "2026-01-31", recorrente: true });
+
+    const { gerados } = (await gera(republicaId, "2026-02")).body;
+
+    assert.deepEqual(gerados.map((g: { data: string }) => g.data), ["2026-02-28"]);
+  });
+
+  it("gerar o mesmo mês de novo não duplica, nem gera um mês anterior ao último gerado", async () => {
+    const { republicaId, ids } = await montaCasa();
+    await lanca(republicaId, { valor: "50,00", pagadorId: ids.Ana, data: "2026-08-05", recorrente: true });
+
+    assert.equal((await gera(republicaId, "2026-10")).body.gerados.length, 1);
+    assert.equal((await gera(republicaId, "2026-10")).body.gerados.length, 0);
+    // Por desenho: ultimaGeracao guarda só o último mês gerado.
+    assert.equal((await gera(republicaId, "2026-09")).body.gerados.length, 0);
+    const lista = (await request(app).get(`/api/republicas/${republicaId}/despesas`)).body;
+    assert.equal(lista.length, 2, "o modelo e o lançamento de outubro");
   });
 });
