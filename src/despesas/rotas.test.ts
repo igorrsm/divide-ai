@@ -283,3 +283,82 @@ describe("GET /api/republicas/:id/moradores", () => {
     assert.equal((await request(app).get("/api/republicas/999/despesas")).status, 404);
   });
 });
+
+// T2-13: editar, excluir, filtros e recorrentes.
+
+/** Corpo completo de uma edição; a tela manda todos os campos de novo. */
+function edita(republicaId: number, despesaId: number, corpo: Record<string, unknown>) {
+  return request(app)
+    .put(`/api/republicas/${republicaId}/despesas/${despesaId}`)
+    .send({ descricao: "Despesa", data: DATA, ...corpo });
+}
+
+function exclui(republicaId: number, despesaId: number, moradorId?: number) {
+  return request(app).delete(`/api/republicas/${republicaId}/despesas/${despesaId}`).send({ moradorId });
+}
+
+describe("PUT /api/republicas/:id/despesas/:despesaId", () => {
+  it("só quem pagou edita: outro morador recebe 403, sem moradorId 400, e nada muda", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno"]);
+    const despesaId = await lanca(republicaId, { valor: "90,00", pagadorId: ids.Ana });
+    const novo = { valor: "120,00", pagadorId: ids.Ana };
+
+    const deOutro = await edita(republicaId, despesaId, { ...novo, moradorId: ids.Bruno });
+    assert.equal(deOutro.status, 403);
+    assert.match(deOutro.body.erro, /Só quem pagou/);
+    const semQuem = await edita(republicaId, despesaId, novo);
+    assert.equal(semQuem.status, 400);
+    assert.match(semQuem.body.erro, /Quem é você/);
+
+    const gravada = await detalhe(republicaId, despesaId);
+    assert.equal(gravada.valorCentavos, 9000);
+    assert.deepEqual(partes(gravada), { Ana: 4500, Bruno: 4500 });
+  });
+
+  it("quem pagou edita e o rateio é refeito do zero", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno", "Carla"]);
+    const despesaId = await lanca(republicaId, { valor: "90,00", pagadorId: ids.Ana });
+
+    const resposta = await edita(republicaId, despesaId, {
+      moradorId: ids.Ana, valor: "100,00", pagadorId: ids.Ana, participantesIds: [ids.Ana, ids.Bruno],
+    });
+
+    assert.equal(resposta.status, 200, JSON.stringify(resposta.body));
+    const gravada = await detalhe(republicaId, despesaId);
+    // A Carla saiu do rateio: a participação antiga dela não pode sobrar.
+    assert.deepEqual(partes(gravada), { Ana: 5000, Bruno: 5000 });
+    assert.equal(soma(gravada), 10000);
+  });
+
+  it("quem saiu continua se já estava na despesa, mas não entra numa nova parte", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno", "Carla"]);
+    const despesaId = await lanca(republicaId, {
+      valor: "90,00", pagadorId: ids.Ana, participantesIds: [ids.Ana, ids.Carla],
+    });
+    await sai(republicaId, ids.Ana, ids.Carla);
+    await sai(republicaId, ids.Ana, ids.Bruno);
+    const base = { moradorId: ids.Ana, valor: "60,00", pagadorId: ids.Ana };
+
+    const mantendo = await edita(republicaId, despesaId, { ...base, participantesIds: [ids.Ana, ids.Carla] });
+    assert.equal(mantendo.status, 200, JSON.stringify(mantendo.body));
+    assert.deepEqual(partes(await detalhe(republicaId, despesaId)), { Ana: 3000, Carla: 3000 });
+
+    const incluindo = await edita(republicaId, despesaId, { ...base, participantesIds: [ids.Ana, ids.Bruno] });
+    assert.equal(incluindo.status, 400);
+    assert.match(incluindo.body.erro, /não é morador desta república/);
+  });
+
+  it("despesa excluída ou de outra casa responde 404", async () => {
+    const azul = await montaCasa();
+    const verde = await montaCasa([], "Casa Verde", "Duda");
+    const excluida = await lanca(azul.republicaId, { valor: "10,00", pagadorId: azul.ids.Ana });
+    await exclui(azul.republicaId, excluida, azul.ids.Ana).expect(204);
+    const daVerde = await lanca(verde.republicaId, { valor: "10,00", pagadorId: verde.ids.Duda });
+
+    for (const despesaId of [excluida, daVerde]) {
+      const resposta = await edita(azul.republicaId, despesaId, { moradorId: azul.ids.Ana, valor: "20,00", pagadorId: azul.ids.Ana });
+      assert.equal(resposta.status, 404);
+      assert.equal(resposta.body.erro, "Despesa não encontrada.");
+    }
+  });
+});
