@@ -2296,3 +2296,43 @@ Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
   sobras dos testes da A4 e da A2. O seed resolveu. O E2E não pega isso,
   porque recria o próprio banco.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-12 — Lucas — TP2 · Integração de despesas: lançar e consultar (T2-12)
+
+Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
+
+**Pedido à IA**
+- Fazer a T2-12: testes de integração de lançar despesa com rateio igual e
+  com participantes, passando pelo `test.db`, sem mock.
+
+**O que a IA produziu**
+- Um plano, aprovado antes do código. Ele incluía a divisão por valores e
+  percentuais (B5), que o nome da tarefa não cita; o Lucas aprovou a
+  inclusão.
+- `src/despesas/rotas.test.ts`, com 22 testes em quatro blocos, um commit
+  cada: rateio igual; quem pode entrar e as recusas; divisão por valores e
+  percentuais; lista, detalhe e moradores. Cada lançamento é relido pelo
+  detalhe, e cada recusa confere que nada foi gravado. Reaproveita o
+  `src/testes/casa.ts` do Igor.
+- Cobertura: `despesas/servico.ts` de 37,24% para 57,47%; o total do
+  escopo de 84,85% para 88,56%. O que falta no serviço é da T2-13.
+
+**Revisão humana**
+- O Lucas aprovou o plano. Ele não alterou o código gerado; a revisão do
+  código fica para o PR.
+
+**Observações**
+- Prova do vermelho com 22 quebras, cada uma desfeita restaurando só o
+  arquivo quebrado (a lição do erro do Igor na T2-14). Vinte derrubaram o
+  teste esperado; os achados, incluindo as duas que não derrubaram:
+  - A deduplicação de participantes existe em dois lugares (o filtro de
+    `interpretaParticipantes` e o `Set` do rateio). Tirar só um não derruba
+    o teste; sem os dois, a chave composta do banco ainda recusa (500).
+  - Sem a checagem de lista vazia, o rateio ainda recusa com 400, mas com
+    outra mensagem. O teste só falha porque confere a mensagem.
+  - **Sem prova:** o desempate por id da lista no mesmo dia. Sem ele, o
+    SQLite já devolve a mais nova primeiro, então o teste passa pelo
+    comportamento do banco, não pelo código.
+- Erro de plano da IA: ela previa derrubar o teste da lista repetida
+  tirando só o `Set`, sem ter visto a segunda deduplicação.
+- Tempo economizado ou perdido: não medido.
