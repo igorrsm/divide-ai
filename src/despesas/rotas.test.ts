@@ -157,3 +157,57 @@ describe("POST /api/republicas/:id/despesas: entrada inválida", () => {
     assert.equal((await posta("abc", corpo)).status, 400);
   });
 });
+
+describe("POST /api/republicas/:id/despesas: divisão por valores e percentuais", () => {
+  it("por valores: grava a parte informada de cada participante", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno", "Carla"]);
+    const despesaId = await lanca(republicaId, {
+      valor: "150,00",
+      pagadorId: ids.Ana,
+      participantesIds: [ids.Ana, ids.Bruno],
+      tipoDivisao: "VALOR",
+      partes: [{ moradorId: ids.Ana, valor: "100,00" }, { moradorId: ids.Bruno, valor: "50,00" }],
+    });
+
+    const gravada = await detalhe(republicaId, despesaId);
+
+    assert.equal(gravada.tipoDivisao, "VALOR");
+    assert.deepEqual(partes(gravada), { Ana: 10000, Bruno: 5000 });
+    assert.ok(gravada.participacoes.every((p) => p.percentualCentesimos === null));
+  });
+
+  it("por valores que não fecham com o total: responde 400 e não grava nada", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno"]);
+    const resposta = await posta(republicaId, {
+      descricao: "Luz", valor: "150,00", data: DATA, pagadorId: ids.Ana, tipoDivisao: "VALOR",
+      partes: [{ moradorId: ids.Ana, valor: "100,00" }, { moradorId: ids.Bruno, valor: "49,99" }],
+    });
+
+    assert.equal(resposta.status, 400);
+    assert.match(resposta.body.erro, /diferente do total/);
+    await semDespesas(republicaId);
+  });
+
+  it("por percentuais: grava o percentual e a sobra de centavos fica com quem pagou", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno", "Carla"]);
+    // R$ 100,01 em 33,33% / 33,33% / 33,34%: os arredondamentos para baixo
+    // dão 3333 + 3333 + 3334 = 10000, e o centavo que sobra vai para o Bruno.
+    const despesaId = await lanca(republicaId, {
+      valor: "100,01",
+      pagadorId: ids.Bruno,
+      tipoDivisao: "PERCENTUAL",
+      partes: [
+        { moradorId: ids.Ana, valor: "33,33" },
+        { moradorId: ids.Bruno, valor: "33,33" },
+        { moradorId: ids.Carla, valor: "33,34" },
+      ],
+    });
+
+    const gravada = await detalhe(republicaId, despesaId);
+
+    assert.equal(gravada.tipoDivisao, "PERCENTUAL");
+    assert.deepEqual(partes(gravada), { Ana: 3333, Bruno: 3334, Carla: 3334 });
+    assert.deepEqual(gravada.participacoes.map((p) => p.percentualCentesimos), [3333, 3333, 3334]);
+    assert.equal(soma(gravada), 10001);
+  });
+});
