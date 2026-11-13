@@ -449,3 +449,53 @@ describe("DELETE /api/republicas/:id/despesas/:despesaId", () => {
     assert.equal((await exclui(republicaId, despesaId, ids.Ana)).status, 404);
   });
 });
+
+describe("GET /api/republicas/:id/despesas com filtros", () => {
+  async function filtra(republicaId: number, consulta: string) {
+    const resposta = await request(app).get(`/api/republicas/${republicaId}/despesas?${consulta}`);
+    assert.equal(resposta.status, 200, JSON.stringify(resposta.body));
+    return resposta.body.map((d: { descricao: string }) => d.descricao);
+  }
+
+  it("de e até limitam o período, e o até vale o dia inteiro", async () => {
+    const { republicaId, ids } = await montaCasa();
+    for (const data of ["2026-09-30", "2026-10-01", "2026-10-31", "2026-11-01"]) {
+      await lanca(republicaId, { descricao: data, valor: "10,00", pagadorId: ids.Ana, data });
+    }
+
+    assert.deepEqual(await filtra(republicaId, "de=2026-10-01&ate=2026-10-31"), ["2026-10-31", "2026-10-01"]);
+    assert.deepEqual(await filtra(republicaId, "de=2026-10-31"), ["2026-11-01", "2026-10-31"]);
+    assert.deepEqual(await filtra(republicaId, "ate=2026-09-30"), ["2026-09-30"]);
+  });
+
+  it("moradores: vale a despesa que algum deles pagou ou da qual participa", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno", "Carla"]);
+    const { Ana, Bruno, Carla } = ids;
+    await lanca(republicaId, { descricao: "Aluguel", valor: "90,00", pagadorId: Ana });
+    await lanca(republicaId, { descricao: "Mercado", valor: "20,00", pagadorId: Bruno, participantesIds: [Bruno, Carla] });
+    await lanca(republicaId, { descricao: "Remédio", valor: "10,00", pagadorId: Carla, participantesIds: [Carla] });
+    // A Ana pagou, mas só o Bruno participa.
+    await lanca(republicaId, { descricao: "Presente", valor: "30,00", pagadorId: Ana, participantesIds: [Bruno] });
+
+    assert.deepEqual(await filtra(republicaId, `moradores=${Ana}`), ["Presente", "Aluguel"]);
+    assert.deepEqual(await filtra(republicaId, `moradores=${Bruno}`), ["Presente", "Mercado", "Aluguel"]);
+    assert.deepEqual(await filtra(republicaId, `moradores=${Ana},${Bruno}`), ["Presente", "Mercado", "Aluguel"]);
+  });
+
+  it("filtro inválido responde 400 com a mensagem", async () => {
+    const { republicaId } = await montaCasa();
+    const duda = (await montaCasa([], "Casa Verde", "Duda")).ids.Duda;
+    const casos: [string, RegExp][] = [
+      ["de=2026-10-31&ate=2026-10-01", /não pode ser depois da data final/],
+      ["de=2026-02-30", /Data inicial inválida/],
+      ["ate=31/10/2026", /Data final inválida/],
+      [`moradores=${duda}`, /não é desta república/],
+      ["moradores=abc", /Morador inválido/],
+    ];
+    for (const [consulta, mensagem] of casos) {
+      const resposta = await request(app).get(`/api/republicas/${republicaId}/despesas?${consulta}`);
+      assert.equal(resposta.status, 400, consulta);
+      assert.match(resposta.body.erro, mensagem, consulta);
+    }
+  });
+});
