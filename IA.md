@@ -2145,3 +2145,154 @@ Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
   de unidade em `validacao.test.ts`. O de integração confere o que a
   unidade não vê: a resposta 400 da rota e que nada foi gravado.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-10 — Igor — TP2 · Integração do extrato e do CSV (T2-16)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Fazer a T2-16: testes de integração de `GET /extrato` e
+  `GET /extrato/csv`, passando pelo `test.db`, sem mock.
+
+**O que a IA produziu**
+- `src/extrato/rotas.test.ts`, com 14 testes. Um outubro montado pela API,
+  com despesas em 30/09, 01/10 e 31/10 e um acerto em 15/10.
+- Extrato:
+  - só o mês, do dia 1 ao último, em ordem decrescente;
+  - acertos fora;
+  - "A pagar" e "Pago" por morador;
+  - mês vazio zerado;
+  - despesa excluída fora;
+  - sem `?mes`, o mês de hoje da casa;
+  - quem saiu aparece no mês em que morava e some no seguinte;
+  - 400 para mês inválido e 404.
+- CSV:
+  - anexo `fechamento-AAAA-MM.csv`, UTF-8 com BOM, quebras `\r\n`;
+  - despesas, totais, saldos de hoje e acertos sugeridos;
+  - descrição com `;` e aspas entre aspas;
+  - quem saiu marcado;
+  - 400 e 404.
+- Cobertura: `src/extrato` foi a 100% de linhas; o total foi de 82,05% para
+  84,85%.
+
+**Revisão humana**
+- O Igor pediu a tarefa.
+
+**Observações**
+- Erro da IA na expectativa: o teste do CSV esperava a Carla com −755,00 e
+  o acerto "Carla;Ana;755,00", mas a conta certa é Bruno −755,00 e Carla
+  −715,00 (a luz de setembro, paga pela Carla, entra no saldo de hoje). O
+  teste falhou na primeira rodada e a IA refez a conta antes de corrigir a
+  expectativa, sem mexer no código. É o tipo de erro que só aparece porque
+  a expectativa foi escrita à mão, não copiada da saída.
+- Prova do vermelho, 13 quebras, cada uma derrubando o teste dela:
+  - começar o mês um dia antes;
+  - trocar "A pagar" por "Pago";
+  - tirar o `DESPESA_ATIVA`;
+  - ordenar crescente;
+  - cair em janeiro sem `?mes`;
+  - não filtrar quem saiu;
+  - aceitar mês 13;
+  - tirar o BOM;
+  - tirar o anexo;
+  - quebrar só com `\n`;
+  - não pôr aspas;
+  - não marcar quem saiu;
+  - zerar os saldos.
+- Sem prova do vermelho: "os acertos ficam fora do extrato". O serviço do
+  extrato nem lê a tabela de pagamentos, então não há linha para quebrar. O
+  teste só protege contra alguém passar a ler.
+- Para caber em 100 linhas por commit, o teste de despesa excluída saiu do
+  primeiro commit e entrou no segundo.
+- A branch saiu da branch da T2-15 (#81), porque usa `src/testes/casa.ts`.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-11-10 — Igor — TP2 · Rascunho do roteiro de IA (T2-22)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Fazer a T2-22: consolidar o roteiro dos 5 minutos de IA da apresentação a
+  partir do registro.
+
+**O que a IA produziu**
+- A página "Roteiro de IA · TP2 (5 min, rascunho)" no Notion, filha da
+  página do TP2. Ela vem do `IA.md` (Igor, Lucas e, nas branches dos #76 e
+  #77, Thalita) e do banco "Registro de IA · TP2", e tem:
+  - ferramentas por pessoa;
+  - como garantimos o entendimento (prova do vermelho, plano antes do
+    código);
+  - cinco pontos positivos e sete negativos, cada um com PR ou entrada do
+    `IA.md`;
+  - a resposta sobre os casos importantes, com o que ainda falta.
+
+**Revisão humana**
+- O Igor pediu a tarefa; a escolha dos exemplos fica para o ensaio de
+  21/11.
+
+**Observações**
+- O roteiro é rascunho: ainda faltam as tarefas do Eduardo, do Lucas
+  (despesas e E2E-4) e da Thalita (E2E e erros do servidor). O cartão foi
+  para "Em andamento", não para "Em revisão".
+- Lacuna: todas as entradas do TP2, inclusive as do Igor, dizem "tempo não
+  medido", e o critério da T2-22 pede tempo ganho ou perdido. Ficou como
+  pendência para cada um estimar até 20/11.
+- O banco do Notion só tem linhas do Igor; os outros registraram só no
+  `IA.md`.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-11-10 — Igor — TP2 · Revisão e merge dos PRs #76 e #77 (Thalita)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Revisar o #76 (Cypress, T2-07) e o #77 (`data-cy`, T2-08), resolver os
+  conflitos com a `main` e, com o ok do Igor, aprovar e mesclar.
+
+**O que a IA produziu**
+- Validação em worktrees separadas: lint, `npm test`, build, tamanho dos
+  commits e o `IA.md` sem linha removida.
+- Resolução dos conflitos com o #74 e o #75:
+  - `package.json`: manteve o `test` da `main` e juntou as dependências;
+  - lock: partiu do lock da Thalita, então o Cypress ficou na 16.2.1 que
+    ela testou;
+  - `IA.md`: juntou as entradas dos dois lados.
+- Depois do merge do #76, nova resolução do `IA.md` do #77.
+- E2E no WSL do Igor: o teste de fumaça passou. Uma spec descartável, com
+  os dois PRs juntos numa branch local, achou todos os `data-cy`; tirar o
+  `saldo-valor` derrubou o teste dela.
+- Aprovação e merge dos dois, sem squash, com sugestões que não bloqueiam:
+  - incluir o typecheck da pasta `e2e/`;
+  - `data-cy` explícito em `EscolhaMorador` e `CampoData`, em vez de
+    derivado do rótulo.
+
+**Revisão humana**
+- O Igor instalou as bibliotecas do Cypress no WSL (precisava de `sudo`) e
+  fez o teste de tela do #77 nas seis telas, inclusive em 360 px.
+- A aprovação foi bloqueada uma vez pela trava de permissões, porque o
+  Igor ainda não tinha autorizado aprovar e mesclar. Ela só seguiu depois
+  do pedido explícito dele.
+
+**Observações**
+- Erros da IA:
+  - Ao juntar o `IA.md`, a linha "Tempo economizado ou perdido" do fim da
+    entrada do Lucas sumiu de novo (já tinha acontecido no TP1). A contagem
+    acusou 48 em vez de 49, e a linha foi recolocada.
+  - No lockfile, o `npm install` gravou o nome da pasta da worktree
+    (`rev76`), porque o `package.json` não tem `"name"`. Partindo do lock
+    da `main`, ele também subia a versão do Cypress. A solução foi partir
+    do lock da branch e corrigir o nome.
+  - Na spec descartável, a IA procurou a Ana em "Para quem", que esconde
+    quem pagou. O teste falhou, e o print mostrou que o código estava
+    certo.
+  - Ao remover uma worktree, ela apagou a pasta antes dos links para o
+    `node_modules` do Igor, ao contrário do que tinha dito. Nada se perdeu,
+    porque o git não segue links, mas ela só conferiu depois.
+- Depois do merge do #76, o `IA.md` do #77 conflitou de novo: o git
+  alinhava as duas entradas da Thalita pela linha "Ferramenta", igual nas
+  duas. O arquivo foi montado como o `IA.md` da `main` mais a entrada do
+  T2-08.
+- O `dev.db` do Igor tinha o Bruno marcado como "saiu" e um morador "Igor",
+  sobras dos testes da A4 e da A2. O seed resolveu. O E2E não pega isso,
+  porque recria o próprio banco.
+- Tempo economizado ou perdido: não medido.
