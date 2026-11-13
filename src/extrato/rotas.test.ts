@@ -97,7 +97,7 @@ describe("GET /api/republicas/:id/extrato", () => {
 
   it("sem ?mes, usa o mês de hoje no calendário da casa", async () => {
     const { republicaId, ids } = await montaCasa();
-    const hoje = hojeNaCasa();
+    const hoje = hojeNaCasa(new Date());
     await lanca(republicaId, { valor: "10,00", pagadorId: ids.Ana, data: hoje });
 
     const corpo = await extrato(republicaId);
@@ -112,13 +112,13 @@ describe("GET /api/republicas/:id/extrato", () => {
       .delete(`/api/republicas/${republicaId}/moradores/${ids.Bruno}`)
       .send({ moradorId: ids.Ana })
       .expect(200);
-    const [ano, mes] = hojeNaCasa().slice(0, 7).split("-").map(Number);
+    const [ano, mes] = hojeNaCasa(new Date()).slice(0, 7).split("-").map(Number);
     const mesSeguinte = mes === 12 ? `${ano + 1}-01` : `${ano}-${String(mes + 1).padStart(2, "0")}`;
 
     const nomes = async (m: string) =>
       (await extrato(republicaId, m)).moradores.map((x: { nome: string }) => x.nome);
 
-    assert.deepEqual(await nomes(hojeNaCasa().slice(0, 7)), ["Ana", "Bruno"]);
+    assert.deepEqual(await nomes(hojeNaCasa(new Date()).slice(0, 7)), ["Ana", "Bruno"]);
     assert.deepEqual(await nomes(mesSeguinte), ["Ana"]);
   });
 });
