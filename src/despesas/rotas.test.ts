@@ -211,3 +211,75 @@ describe("POST /api/republicas/:id/despesas: divisão por valores e percentuais"
     assert.equal(soma(gravada), 10001);
   });
 });
+
+describe("GET /api/republicas/:id/despesas e /despesas/:despesaId", () => {
+  it("lista da mais recente para a mais antiga, só da própria casa", async () => {
+    const azul = await montaCasa(["Bruno"]);
+    const verde = await montaCasa([], "Casa Verde", "Duda");
+    const { Ana, Bruno } = azul.ids;
+    await lanca(azul.republicaId, { descricao: "Luz", valor: "90,00", pagadorId: Bruno, data: "2026-09-10" });
+    await lanca(azul.republicaId, { descricao: "Aluguel", valor: "900,00", pagadorId: Ana, data: "2026-10-01", recorrente: true });
+    await lanca(azul.republicaId, { descricao: "Mercado", valor: "50,00", pagadorId: Bruno, data: "2026-10-01" });
+    await lanca(verde.republicaId, { descricao: "Gás", valor: "30,00", pagadorId: verde.ids.Duda });
+
+    const lista = (await request(app).get(`/api/republicas/${azul.republicaId}/despesas`)).body;
+
+    // No mesmo dia, a lançada por último vem antes.
+    assert.deepEqual(
+      lista.map((d: { descricao: string; data: string; pagador: { nome: string }; recorrente: boolean }) =>
+        [d.descricao, d.data, d.pagador.nome, d.recorrente]),
+      [
+        ["Mercado", "2026-10-01", "Bruno", false],
+        ["Aluguel", "2026-10-01", "Ana", true],
+        ["Luz", "2026-09-10", "Bruno", false],
+      ],
+    );
+  });
+
+  it("detalhe traz o rateio por nome, o tipo da divisão e a recorrência", async () => {
+    // Carla entra antes do Bruno: por id a ordem seria Ana, Carla, Bruno.
+    const { republicaId, ids } = await montaCasa(["Carla", "Bruno"]);
+    const recorrente = await lanca(republicaId, { valor: "90,00", pagadorId: ids.Ana, data: "2026-10-05", recorrente: true });
+    const avulsa = await lanca(republicaId, { valor: "90,00", pagadorId: ids.Ana });
+
+    const gravada = await detalhe(republicaId, recorrente);
+
+    assert.deepEqual(gravada.participacoes.map((p) => p.morador.nome), ["Ana", "Bruno", "Carla"]);
+    assert.equal(gravada.tipoDivisao, "IGUAL");
+    assert.deepEqual(gravada.recorrencia, { diaDoMes: 5 });
+    assert.equal((await detalhe(republicaId, avulsa)).recorrencia, null);
+  });
+
+  it("detalhe de despesa de outra casa ou inexistente responde 404", async () => {
+    const azul = await montaCasa();
+    const verde = await montaCasa([], "Casa Verde", "Duda");
+    const daVerde = await lanca(verde.republicaId, { valor: "30,00", pagadorId: verde.ids.Duda });
+
+    for (const despesaId of [daVerde, 999]) {
+      const resposta = await request(app).get(`/api/republicas/${azul.republicaId}/despesas/${despesaId}`);
+      assert.equal(resposta.status, 404);
+      assert.equal(resposta.body.erro, "Despesa não encontrada.");
+    }
+    assert.equal((await request(app).get(`/api/republicas/${azul.republicaId}/despesas/abc`)).status, 400);
+  });
+});
+
+describe("GET /api/republicas/:id/moradores", () => {
+  it("lista em ordem alfabética, com quem saiu e a data da saída", async () => {
+    const { republicaId, ids } = await montaCasa(["Carla", "Bruno"]);
+    await sai(republicaId, ids.Ana, ids.Bruno);
+
+    const lista = (await request(app).get(`/api/republicas/${republicaId}/moradores`)).body;
+
+    assert.deepEqual(lista.map((m: { nome: string }) => m.nome), ["Ana", "Bruno", "Carla"]);
+    const [ana, bruno, carla] = lista;
+    assert.equal(ana.organizador, true);
+    assert.match(bruno.saiuEm, /^\d{4}-\d{2}-\d{2}$/);
+    assert.equal(carla.saiuEm, null);
+  });
+
+  it("república inexistente responde 404 na lista de moradores e na de despesas", async () => {
+    assert.equal((await request(app).get("/api/republicas/999/moradores")).status, 404);
+    assert.equal((await request(app).get("/api/republicas/999/despesas")).status, 404);
+  });
+});
