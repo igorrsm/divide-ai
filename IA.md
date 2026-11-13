@@ -2336,3 +2336,49 @@ Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
 - Erro de plano da IA: ela previa derrubar o teste da lista repetida
   tirando só o `Set`, sem ter visto a segunda deduplicação.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-12 — Lucas — TP2 · Integração de despesas: editar, excluir, filtros e recorrentes (T2-13)
+
+Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
+
+**Pedido à IA**
+- Fazer a T2-13: testes de integração de editar, excluir, filtrar e gerar
+  as recorrentes do mês, passando pelo `test.db`, sem mock.
+
+**O que a IA produziu**
+- Um plano, aprovado antes do código. Ele deixou de fora da integração a
+  regra "o dia que ainda não chegou fica para depois", porque a rota usa a
+  data real e o caso não dá para montar em todo dia do mês; a regra segue
+  coberta pelo teste de unidade do `lancamentosDoMes`.
+- 18 testes a mais em `src/despesas/rotas.test.ts` (40 no arquivo), em seis
+  commits: editar; recorrência na edição e o parar de repetir; excluir;
+  filtros; geração; o que a geração pula ou recusa. Alguns testes leem o
+  banco direto (`excluidaEm`, `ativa` e `dataFim` da recorrência), porque a
+  API não mostra isso.
+- Cobertura: `despesas/servico.ts` de 57,47% para 100% de linhas, a pasta
+  `src/despesas` toda em 100%, e o total do escopo de 88,56% para 96,29%.
+
+**Revisão humana**
+- O Lucas aprovou o plano. Ele não alterou o código gerado; a revisão do
+  código fica para o PR.
+
+**Observações**
+- Prova do vermelho com 28 quebras, cada uma desfeita restaurando só o
+  arquivo quebrado. Vinte e seis derrubaram o teste esperado. As outras
+  duas confirmaram um achado: a idempotência da geração tem duas travas, a
+  pura (`lancamentosDoMes`) e a atualização condicional do `ultimaGeracao`.
+  Tirar qualquer uma sozinha não derruba o teste; só sem as duas a segunda
+  geração duplica.
+- Erro de plano da IA: ela previa derrubar o teste da idempotência tirando
+  só a condição do `ultimaGeracao`, sem ter visto a trava pura.
+- Erro da IA na prova do vermelho: a primeira versão de uma quebra (tirar o
+  `OR` da edição) usou um `sed` amplo demais, que também alterou o filtro
+  por moradores da lista e derrubou 12 testes sem relação com a edição. Ela
+  refez a quebra só nas linhas do `editarDespesa`, que derrubou só o teste
+  certo.
+- Na quebra que apaga a despesa de verdade, o `delete` passou sem erro (as
+  participações vão em cascata); só o teste que lê o banco percebeu.
+- Sem teste: dois cliques simultâneos na geração (a trava do banco, linha
+  323 do `servico.ts`, é o único ramo que nenhum teste percorre) e o "dia
+  que ainda não chegou" pela rota.
+- Tempo economizado ou perdido: não medido.
