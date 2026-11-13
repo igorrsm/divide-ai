@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { beforeEach, describe, it } from "node:test";
 import request from "supertest";
 import { app } from "../app";
+import { prisma } from "../db";
 import { limpaBancoDeTeste } from "../testes/banco";
 import { DATA, lanca, montaCasa } from "../testes/casa";
 
@@ -360,5 +361,60 @@ describe("PUT /api/republicas/:id/despesas/:despesaId", () => {
       assert.equal(resposta.status, 404);
       assert.equal(resposta.body.erro, "Despesa não encontrada.");
     }
+  });
+});
+
+/** A linha da recorrência no banco: a API não mostra quando ela parou. */
+function recorrenciaNoBanco(despesaId: number) {
+  return prisma.despesaRecorrente.findUnique({ where: { id: despesaId } });
+}
+
+describe("recorrência na edição e no \"parar de repetir\"", () => {
+  it("marcar na edição cria a recorrência no dia da data, e mudar a data muda o dia", async () => {
+    const { republicaId, ids } = await montaCasa();
+    const despesaId = await lanca(republicaId, { valor: "900,00", pagadorId: ids.Ana, data: "2026-10-01" });
+    const base = { moradorId: ids.Ana, valor: "900,00", pagadorId: ids.Ana, recorrente: true };
+
+    await edita(republicaId, despesaId, { ...base, data: "2026-10-05" }).expect(200);
+    assert.deepEqual((await detalhe(republicaId, despesaId)).recorrencia, { diaDoMes: 5 });
+
+    await edita(republicaId, despesaId, { ...base, data: "2026-10-20" }).expect(200);
+    assert.deepEqual((await detalhe(republicaId, despesaId)).recorrencia, { diaDoMes: 20 });
+  });
+
+  it("desmarcar não apaga: desativa com data de fim, e marcar de novo reativa", async () => {
+    const { republicaId, ids } = await montaCasa();
+    const despesaId = await lanca(republicaId, { valor: "900,00", pagadorId: ids.Ana, recorrente: true });
+    const base = { moradorId: ids.Ana, valor: "900,00", pagadorId: ids.Ana };
+
+    await edita(republicaId, despesaId, { ...base, recorrente: false }).expect(200);
+
+    assert.equal((await detalhe(republicaId, despesaId)).recorrencia, null);
+    const lista = (await request(app).get(`/api/republicas/${republicaId}/despesas`)).body;
+    assert.equal(lista[0].recorrente, false);
+    const parada = await recorrenciaNoBanco(despesaId);
+    assert.equal(parada?.ativa, false);
+    assert.ok(parada?.dataFim, "guarda quando parou");
+
+    await edita(republicaId, despesaId, { ...base, recorrente: true }).expect(200);
+    const reativada = await recorrenciaNoBanco(despesaId);
+    assert.equal(reativada?.ativa, true);
+    assert.equal(reativada?.dataFim, null);
+  });
+
+  it("DELETE .../recorrencia: só quem pagou, e para de repetir sem apagar", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno"]);
+    const despesaId = await lanca(republicaId, { valor: "900,00", pagadorId: ids.Ana, recorrente: true });
+    const parar = (moradorId: number) =>
+      request(app).delete(`/api/republicas/${republicaId}/despesas/${despesaId}/recorrencia`).send({ moradorId });
+
+    assert.equal((await parar(ids.Bruno)).status, 403);
+    assert.equal((await recorrenciaNoBanco(despesaId))?.ativa, true);
+
+    assert.equal((await parar(ids.Ana)).status, 204);
+    assert.equal((await detalhe(republicaId, despesaId)).recorrencia, null);
+    const parada = await recorrenciaNoBanco(despesaId);
+    assert.equal(parada?.ativa, false);
+    assert.ok(parada?.dataFim);
   });
 });
