@@ -418,3 +418,34 @@ describe("recorrência na edição e no \"parar de repetir\"", () => {
     assert.ok(parada?.dataFim);
   });
 });
+
+describe("DELETE /api/republicas/:id/despesas/:despesaId", () => {
+  it("quem pagou exclui: some da lista e do detalhe, mas a linha fica no banco", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno"]);
+    const despesaId = await lanca(republicaId, { valor: "90,00", pagadorId: ids.Ana });
+
+    assert.equal((await exclui(republicaId, despesaId, ids.Ana)).status, 204);
+
+    await semDespesas(republicaId);
+    const resposta = await request(app).get(`/api/republicas/${republicaId}/despesas/${despesaId}`);
+    assert.equal(resposta.status, 404);
+    // Exclusão lógica: a despesa e o rateio continuam gravados, com a marca.
+    const noBanco = await prisma.despesa.findUnique({ where: { id: despesaId }, include: { participacoes: true } });
+    assert.ok(noBanco?.excluidaEm, "marca quando foi excluída");
+    assert.equal(noBanco?.participacoes.length, 2);
+  });
+
+  it("outro morador recebe 403, sem moradorId 400, e excluir de novo é 404", async () => {
+    const { republicaId, ids } = await montaCasa(["Bruno"]);
+    const despesaId = await lanca(republicaId, { valor: "90,00", pagadorId: ids.Ana });
+
+    const deOutro = await exclui(republicaId, despesaId, ids.Bruno);
+    assert.equal(deOutro.status, 403);
+    assert.match(deOutro.body.erro, /Só quem pagou/);
+    assert.equal((await exclui(republicaId, despesaId)).status, 400);
+    assert.equal((await detalhe(republicaId, despesaId)).valorCentavos, 9000);
+
+    await exclui(republicaId, despesaId, ids.Ana).expect(204);
+    assert.equal((await exclui(republicaId, despesaId, ids.Ana)).status, 404);
+  });
+});
