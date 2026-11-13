@@ -2296,3 +2296,52 @@ Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
   sobras dos testes da A4 e da A2. O seed resolveu. O E2E não pega isso,
   porque recria o próprio banco.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-12 — Lucas — TP2 · Revisão e merge dos PRs #78 a #82 (Igor)
+
+Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code. A sessão
+começou em 10/11 e terminou em 12/11.
+
+**Pedido à IA**
+- Revisar e aprovar todos os PRs abertos; depois, mesclar os aprovados.
+- Corrigir na branch do Igor o erro que barrava o #82.
+
+**O que a IA produziu**
+- Revisão dos cinco PRs, com cada um rodado localmente: o `shortlog` com o
+  `.mailmap` (#78), a cobertura e o limite do c8 (#79) e a pilha
+  #80 → #81 → #82. Os valores esperados dos testes foram recalculados na
+  mão contra as regras do domínio. Os resultados foram para os comentários
+  de revisão.
+- Achado no #82: o teste chamava `hojeNaCasa()` sem o argumento obrigatório.
+  Os testes passavam por acaso (`format(undefined)` usa a data atual), mas o
+  typecheck falhava, e o CI ainda não tinha rodado porque a base do PR não
+  era a `main`. A IA não aprovou o #82 e deixou um comentário.
+- Merges sem squash: #78, #79, #80, #81 e #82. No #80, a IA trouxe a `main`
+  para a branch e resolveu o conflito do fim do `IA.md` mantendo as duas
+  entradas, com uma conferência por contagem de linhas de que nada se
+  perdeu.
+- No #82, o commit `fix:` com as três chamadas corrigidas, na branch do Igor.
+
+**Revisão humana**
+- O Lucas pediu a revisão e as aprovações e decidiu os merges a partir do
+  relatório da IA. A leitura dos diffs foi feita pela IA; se o Lucas os
+  leu, não foi nesta sessão.
+- O Lucas escolheu fazer a correção do #82 na branch do Igor, em vez de
+  esperar por ele, e trocou a base do #82 no GitHub.
+
+**Observações**
+- O classificador de permissões barrou duas ações: fechar e reabrir o #81
+  (para disparar o CI) e trocar a base do #82 pela API. No #81, depois do
+  pedido do Lucas para mesclar "se possível", a IA disparou o CI trazendo a
+  `main` para a branch do Igor, o que deixou um commit a mais lá. No #82,
+  ela segurou o push até o Lucas trocar a base.
+- O `gh pr edit` falha neste ambiente, por causa do "Projects (classic)"
+  descontinuado. A troca de base do #81 foi feita pela API REST.
+- Lição: o workflow do CI não roda quando só a base do PR muda. Em PR
+  empilhado, trocar a base e só depois dar o push.
+- Erro da IA: a primeira mensagem do commit do #82 dizia "com o acordo do
+  grupo", sem que isso tivesse sido verificado. Ela corrigiu a mensagem
+  antes do push.
+- As revisões no GitHub saíram pela conta do Lucas e dizem que foram feitas
+  com o Claude Code.
+- Tempo economizado ou perdido: não medido.
