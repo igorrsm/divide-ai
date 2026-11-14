@@ -2431,3 +2431,30 @@ Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
   323 do `servico.ts`, é o único ramo que nenhum teste percorre) e o "dia
   que ainda não chegou" pela rota.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-14 — Igor — TP2 · Typecheck dos testes E2E no CI
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Fazer a sugestão que ficou da revisão do #76: o typecheck passar também
+  pela pasta `e2e/`, antes de os quatro cenários E2E serem escritos.
+
+**O que a IA produziu**
+- Um terceiro `tsc --noEmit -p e2e/tsconfig.json` no script `typecheck`,
+  que o `build` e o CI já rodam, e a descrição no `CLAUDE.md`.
+
+**Revisão humana**
+- O Igor escolheu a tarefa entre as sugeridas e aprovou o plano antes da
+  mudança.
+
+**Observações**
+- Na primeira tentativa, o `tsc` do `e2e/` falhou com "Cannot find type
+  definition file for 'cypress'": o `node_modules` do Igor era anterior ao
+  #76. Um `npm ci` resolveu; o CI já instala do zero.
+- Prova do vermelho: um `e2e/quebra.cy.ts` com `const n: number =
+  "texto"` fez o `npm run typecheck` falhar com TS2322; sem o arquivo,
+  passou. Lint também passou.
+- O `cypress.config.ts`, na raiz, continua fora de todo `tsconfig` e só
+  passa pelo lint, como o `prisma.config.ts`.
+- Tempo economizado ou perdido: não medido.
