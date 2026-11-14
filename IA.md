@@ -2487,6 +2487,14 @@ Notion.
   testes de centavos inteiros, 403, recorrentes sem duplicar e 400/404, e
   a cobertura atualizada. Com o ok do Igor, saiu a pendência de conferir o
   horário no Moodle, que o grupo vai saber quando o professor publicar.
+- O tempo ganho ou perdido nas 5 linhas do Igor no banco de registro
+  (+60, +80, +100, +80 e +120 min, total de cerca de 7 h) e a frase
+  correspondente no roteiro. **Os números foram propostos pela IA**, a
+  partir do tamanho de cada PR e dos erros registrados aqui, porque o
+  tempo não foi medido no dia e os horários dos commits não servem (os PRs
+  se sobrepõem e incluem merges feitos depois). O Igor pediu ajuda por
+  estar sem ideias e aceitou os valores como estavam, sem ajuste. No
+  Notion e no roteiro eles aparecem como estimativa retroativa de 14/11.
 
 **Revisão humana**
 - O Igor aprovou as mudanças no kanban antes de elas serem aplicadas. O
