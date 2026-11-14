@@ -2432,6 +2432,82 @@ Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
   que ainda não chegou" pela rota.
 - Tempo economizado ou perdido: não medido.
 
+## 2026-11-14 — Igor — TP2 · Limite de cobertura ligado no CI (T2-04)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Avaliar o que o Igor podia adiantar sem pegar tarefa de outro membro e,
+  com o ok dele, ligar o limite de 80% de cobertura que o #79 deixou
+  desligado.
+
+**O que a IA produziu**
+- A medição na `main` depois dos #84 e #85: 232 testes passando e 96,29%
+  de linhas no escopo do `.c8rc.json` (88,11% de desvios).
+- A troca de `"check-coverage": false` para `true` no `.c8rc.json` e a
+  frase correspondente no `CLAUDE.md`.
+
+**Revisão humana**
+- O Igor escolheu a tarefa entre as sugeridas e aprovou o plano antes da
+  mudança.
+
+**Observações**
+- Prova do vermelho: com o limite em 97%, o `npm run test:coverage` saiu
+  com código 1 ("Coverage for lines (96.29%) does not meet global
+  threshold (97%)"); com 80%, saiu com 0.
+- O limite vale só para linhas. Desvios (88,11%) e funções ficam sem
+  limite, como já estava no #79.
+- Os testes de integração do Eduardo (T2-10 e T2-11) ainda não entraram;
+  eles só podem subir a cobertura, então o limite não os atrapalha.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-11-14 — Igor — TP2 · Kanban do Notion e roteiro de IA (T2-22)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal, com o conector do
+Notion.
+
+**Pedido à IA**
+- Conferir se o kanban "Tarefas · TP2" estava em dia com o repositório e,
+  depois, atualizar o rascunho do roteiro de IA com o que entrou desde 10/11.
+
+**O que a IA produziu**
+- Comparação dos cartões com os PRs: T2-03 e T2-05 estavam "Em revisão",
+  mas o #79 foi mesclado em 11/11; T2-12 e T2-13 estavam "Feito" sem PR.
+  Com o ok do Igor: T2-03 e T2-05 em "Feito", T2-04 em "Em revisão" com o
+  #86, e os #84 e #85 nos cartões do Lucas.
+- No roteiro: cobertura de 74,84% para 96,29%, 83 testes de integração e
+  80 quebras na prova do vermelho (30 do Igor, 50 do Lucas); dois pontos
+  positivos novos (o erro do `hojeNaCasa()` achado na revisão do #82 e as
+  travas em dobro que a prova do vermelho revelou); negativos novos do
+  `IA.md` (linha do tempo que sumiu no merge, "com o acordo do grupo" não
+  verificado, `sed` amplo demais, plano que não viu a segunda trava, leitura
+  dos diffs só pela IA na revisão); 403 e recorrente sem duplicar passaram
+  para "cobertos", e o que segue sem teste foi listado.
+- Na página do TP2: a tabela "Casos importantes" (T2-21) com o nome dos
+  testes de centavos inteiros, 403, recorrentes sem duplicar e 400/404, e
+  a cobertura atualizada. Com o ok do Igor, saiu a pendência de conferir o
+  horário no Moodle, que o grupo vai saber quando o professor publicar.
+- O tempo ganho ou perdido nas 5 linhas do Igor no banco de registro
+  (+60, +80, +100, +80 e +120 min, total de cerca de 7 h) e a frase
+  correspondente no roteiro. **Os números foram propostos pela IA**, a
+  partir do tamanho de cada PR e dos erros registrados aqui, porque o
+  tempo não foi medido no dia e os horários dos commits não servem (os PRs
+  se sobrepõem e incluem merges feitos depois). O Igor pediu ajuda por
+  estar sem ideias e aceitou os valores como estavam, sem ajuste. No
+  Notion e no roteiro eles aparecem como estimativa retroativa de 14/11.
+
+**Revisão humana**
+- O Igor aprovou as mudanças no kanban antes de elas serem aplicadas. O
+  roteiro continua rascunho; a escolha dos exemplos fica para o ensaio.
+
+**Observações**
+- O banco "Registro de IA · TP2" continua só com as 5 linhas do Igor, todas
+  sem tempo; o critério da T2-22 pede tempo ganho ou perdido.
+- A primeira tentativa de preencher o PR dos cartões usou o nome errado da
+  propriedade (`userDefined:PR`) e foi recusada pelo Notion; a segunda, com
+  `PR`, passou. Nada foi gravado errado.
+- Tempo economizado ou perdido: não medido.
+
 ## 2026-11-14 — Igor — TP2 · Typecheck dos testes E2E no CI
 
 Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
