@@ -30,7 +30,7 @@
     "react-router-dom": "^7.18.4"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p web/tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p web/tsconfig.json && tsc --noEmit -p e2e/tsconfig.json",
     "dev:server": "tsx watch src/server.ts",
     "dev:web": "vite web",
     "lint": "eslint . --max-warnings 0",

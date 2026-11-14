@@ -16,6 +16,6 @@
     "html"
   ],
   "reports-dir": "coverage",
-  "check-coverage": false,
+  "check-coverage": true,
   "lines": 80
 }
