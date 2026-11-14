@@ -2431,3 +2431,35 @@ Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
   323 do `servico.ts`, é o único ramo que nenhum teste percorre) e o "dia
   que ainda não chegou" pela rota.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-14 — Thalita — TP2: E2E de criar república e adicionar morador (E2E-1)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do projeto.
+
+**Pedido à IA**
+- Fazer o cartão E2E-1: um teste E2E que cria uma república pela tela e
+  adiciona um morador. Critério de pronto: passar 5 vezes seguidas.
+
+**O que a IA produziu**
+- Plano, aprovado pela Thalita antes do código.
+- `e2e/criar-republica.cy.ts`: abre o início, cria a casa pelo atalho, confere
+  a casa no cabeçalho e o organizador marcado em "Quem é você?", adiciona um
+  morador em Moradores e confere o aviso, a lista com os dois e o morador
+  novo no "Quem é você?". Usa só os `data-cy` do T2-08.
+- Os e-mails levam um número que muda a cada execução: o e-mail é único no
+  banco, e a casa criada continua no `e2e.db` até o próximo seed. Sem isso, a
+  segunda execução na janela do Cypress falharia.
+
+**Revisão humana**
+- A Thalita testou na própria máquina, antes do commit: `npm run e2e` 5 vezes
+  seguidas (os 2 arquivos passando nas 5), o teste rodado 4 vezes seguidas na
+  janela do Cypress (verde em todas), lint, `npm test` (232 testes) e build.
+
+**Observações**
+- Antes do teste, o `npm` da Thalita foi bloqueado pelo nvm (o arquivo do npm
+  tinha mudado desde que foi marcado como confiável). A IA recomendou
+  reinstalar o Node em vez de só marcar o arquivo como confiável de novo; a
+  desinstalação só passou num PowerShell de administrador.
+- Fechar a janela do Cypress com Ctrl+C mostra um erro do
+  `start-server-and-test`; é só o encerramento, não falha de teste.
+- Tempo economizado ou perdido: não medido.
