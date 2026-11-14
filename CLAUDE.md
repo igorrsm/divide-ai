@@ -16,12 +16,12 @@ Node 24 (`.nvmrc`; o README pede o mesmo).
 npm run dev         # Express (porta 3000) e Vite (porta 5173) juntos
 npm run dev:server  # só o backend: tsx watch src/server.ts
 npm run dev:web     # só o frontend: vite web
-npm run typecheck   # tsc no backend (tsconfig.json) e no frontend (web/tsconfig.json)
+npm run typecheck   # tsc no backend (tsconfig.json), no frontend (web/tsconfig.json) e nos E2E (e2e/tsconfig.json)
 npm run lint        # ESLint; falha com qualquer warning
 npm run build       # typecheck + vite build web
 ```
 
-O backend fica em `src/` e o frontend em `web/`, cada um com seu `tsconfig.json`. O TypeScript está fixado em `~6.0.3` porque `typescript-eslint` só aceita `<6.1.0`; não suba a versão sem conferir. `web/vite.config.mts` e `eslint.config.mjs` usam extensão ESM para não exigir `"type": "module"` no `package.json`. O typecheck do backend cobre só `src/` (sem `src/generated/`); `prisma/seed.ts` e `prisma.config.ts` passam apenas pelo lint.
+O backend fica em `src/` e o frontend em `web/`, cada um com seu `tsconfig.json`. O TypeScript está fixado em `~6.0.3` porque `typescript-eslint` só aceita `<6.1.0`; não suba a versão sem conferir. `web/vite.config.mts` e `eslint.config.mjs` usam extensão ESM para não exigir `"type": "module"` no `package.json`. O typecheck do backend cobre só `src/` (sem `src/generated/`); O dos testes E2E cobre `e2e/` com os tipos do Cypress, para um cenário com erro de tipo não passar no CI (que roda o typecheck dentro do `build`). `prisma/seed.ts`, `prisma.config.ts` e `cypress.config.ts` passam apenas pelo lint.
 
 Testes de integração (TP2): o `npm test` aponta o `DATABASE_URL` para `./test.db` e o recria pelas migrations antes de tudo (`scripts/banco-de-teste.mts`, carregado com `--import` e com `--test-global-setup`; é `.mts` e só importa módulos do Node porque o global setup não passa pelo `tsx`). Cada arquivo de integração usa `beforeEach(limpaBancoDeTeste)` (`src/testes/banco.ts`), que apaga tudo e reinicia os ids, mas recusa se a conexão não estiver no `test.db`; por isso rode os testes pelo `npm test`, e não com `node --test` direto. A ordem de apagar as tabelas fica em `limpaBanco` (`src/limpaBanco.ts`), usada também pelo seed: model novo entra lá. Os arquivos rodam um por vez (`--test-concurrency=1`), porque todos usam o mesmo `test.db`. O app vem de `src/app.ts` e as requisições, do `supertest` (exemplo em `src/testes/banco.test.ts`). Não use mock do Prisma.
 
