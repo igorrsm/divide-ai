@@ -2483,6 +2483,10 @@ Notion.
   verificado, `sed` amplo demais, plano que não viu a segunda trava, leitura
   dos diffs só pela IA na revisão); 403 e recorrente sem duplicar passaram
   para "cobertos", e o que segue sem teste foi listado.
+- Na página do TP2: a tabela "Casos importantes" (T2-21) com o nome dos
+  testes de centavos inteiros, 403, recorrentes sem duplicar e 400/404, e
+  a cobertura atualizada. Com o ok do Igor, saiu a pendência de conferir o
+  horário no Moodle, que o grupo vai saber quando o professor publicar.
 
 **Revisão humana**
 - O Igor aprovou as mudanças no kanban antes de elas serem aplicadas. O
