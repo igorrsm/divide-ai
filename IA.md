@@ -2431,3 +2431,32 @@ Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
   323 do `servico.ts`, é o único ramo que nenhum teste percorre) e o "dia
   que ainda não chegou" pela rota.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-14 — Igor — TP2 · Limite de cobertura ligado no CI (T2-04)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Avaliar o que o Igor podia adiantar sem pegar tarefa de outro membro e,
+  com o ok dele, ligar o limite de 80% de cobertura que o #79 deixou
+  desligado.
+
+**O que a IA produziu**
+- A medição na `main` depois dos #84 e #85: 232 testes passando e 96,29%
+  de linhas no escopo do `.c8rc.json` (88,11% de desvios).
+- A troca de `"check-coverage": false` para `true` no `.c8rc.json` e a
+  frase correspondente no `CLAUDE.md`.
+
+**Revisão humana**
+- O Igor escolheu a tarefa entre as sugeridas e aprovou o plano antes da
+  mudança.
+
+**Observações**
+- Prova do vermelho: com o limite em 97%, o `npm run test:coverage` saiu
+  com código 1 ("Coverage for lines (96.29%) does not meet global
+  threshold (97%)"); com 80%, saiu com 0.
+- O limite vale só para linhas. Desvios (88,11%) e funções ficam sem
+  limite, como já estava no #79.
+- Os testes de integração do Eduardo (T2-10 e T2-11) ainda não entraram;
+  eles só podem subir a cobertura, então o limite não os atrapalha.
+- Tempo economizado ou perdido: não medido.
