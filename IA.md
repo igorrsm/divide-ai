@@ -2460,3 +2460,38 @@ Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
 - Os testes de integração do Eduardo (T2-10 e T2-11) ainda não entraram;
   eles só podem subir a cobertura, então o limite não os atrapalha.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-14 — Igor — TP2 · Kanban do Notion e roteiro de IA (T2-22)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal, com o conector do
+Notion.
+
+**Pedido à IA**
+- Conferir se o kanban "Tarefas · TP2" estava em dia com o repositório e,
+  depois, atualizar o rascunho do roteiro de IA com o que entrou desde 10/11.
+
+**O que a IA produziu**
+- Comparação dos cartões com os PRs: T2-03 e T2-05 estavam "Em revisão",
+  mas o #79 foi mesclado em 11/11; T2-12 e T2-13 estavam "Feito" sem PR.
+  Com o ok do Igor: T2-03 e T2-05 em "Feito", T2-04 em "Em revisão" com o
+  #86, e os #84 e #85 nos cartões do Lucas.
+- No roteiro: cobertura de 74,84% para 96,29%, 83 testes de integração e
+  80 quebras na prova do vermelho (30 do Igor, 50 do Lucas); dois pontos
+  positivos novos (o erro do `hojeNaCasa()` achado na revisão do #82 e as
+  travas em dobro que a prova do vermelho revelou); negativos novos do
+  `IA.md` (linha do tempo que sumiu no merge, "com o acordo do grupo" não
+  verificado, `sed` amplo demais, plano que não viu a segunda trava, leitura
+  dos diffs só pela IA na revisão); 403 e recorrente sem duplicar passaram
+  para "cobertos", e o que segue sem teste foi listado.
+
+**Revisão humana**
+- O Igor aprovou as mudanças no kanban antes de elas serem aplicadas. O
+  roteiro continua rascunho; a escolha dos exemplos fica para o ensaio.
+
+**Observações**
+- O banco "Registro de IA · TP2" continua só com as 5 linhas do Igor, todas
+  sem tempo; o critério da T2-22 pede tempo ganho ou perdido.
+- A primeira tentativa de preencher o PR dos cartões usou o nome errado da
+  propriedade (`userDefined:PR`) e foi recusada pelo Notion; a segunda, com
+  `PR`, passou. Nada foi gravado errado.
+- Tempo economizado ou perdido: não medido.
