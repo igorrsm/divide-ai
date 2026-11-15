@@ -4,6 +4,7 @@ import request from "supertest";
 import { app } from "../app";
 import { prisma } from "../db";
 import { limpaBancoDeTeste } from "../testes/banco";
+import { montaCasa } from "../testes/casa";
 
 beforeEach(limpaBancoDeTeste);
 
@@ -72,3 +73,33 @@ describe("POST /api/republicas", () => {
     assert.equal(await prisma.republica.count(), 1);
   });
 });
+
+describe("GET /api/republicas/:id", () => {
+  it("devolve os dados da república sem a lista de moradores", async () => {
+    const { republicaId } = await montaCasa(["Bruno"]);
+
+    const resposta = await request(app).get(`/api/republicas/${republicaId}`);
+
+    assert.equal(resposta.status, 200, JSON.stringify(resposta.body));
+    assert.deepEqual(resposta.body, {
+      id: republicaId,
+      nome: "Casa Azul",
+      criadaEm: resposta.body.criadaEm,
+    });
+    assert.ok(resposta.body.criadaEm);
+    assert.equal("moradores" in (resposta.body as object), false);
+  });
+
+  it("república inexistente responde 404", async () => {
+    const resposta = await request(app).get("/api/republicas/999");
+    assert.equal(resposta.status, 404, JSON.stringify(resposta.body));
+    assert.match(resposta.body.erro, /República não encontrada/);
+  });
+
+  it("id que não é número responde 400", async () => {
+    const resposta = await request(app).get("/api/republicas/abc");
+    assert.equal(resposta.status, 400, JSON.stringify(resposta.body));
+    assert.match(resposta.body.erro, /República inválid/);
+  });
+});
+
