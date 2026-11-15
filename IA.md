@@ -2613,3 +2613,33 @@ Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
   falha trava e esconde o erro; as provas rodaram com
   `screenshotOnRunFailure=false`.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-15 — Eduardo — TP2 · Integração de repúblicas (T2-10)
+
+Ferramenta: Antigravity (modelo: Gemini 3.8 Flash).
+
+**Pedido à IA**
+- Ler as especificações da tarefa T2-10 e do repositório, propor o plano de testes e divisão em commits de até 100 linhas.
+- Implementar testes de integração para criação de repúblicas (`POST /api/republicas`), busca por id (`GET /api/republicas/:id`) e convite por link (`POST /api/republicas/:republicaId/convites`, `GET /api/convites/:token`, `POST /api/convites/:token`).
+- Executar e comprovar as provas do vermelho.
+
+**O que a IA produziu**
+- Identificou que o repositório local precisava de atualização e instalação do `supertest` no ambiente WSL com Node 24.
+- `src/republicas/rotas.test.ts`: 13 testes de integração cobrindo criação com dados normalizados (201), criação atômica no banco, 8 casos de entrada inválida (400), e-mail já existente (400) com validação de que nada é criado, busca por id (200), república inexistente (404) e id não numérico (400).
+- `src/moradores/convites.test.ts`: 10 testes de integração cobrindo geração de convite por organizador com token UUID (201), bloqueio de morador comum (403), falta de moradorId (400), república inexistente (404), consulta de dados do convite válido (200), consulta de token inexistente (404), uso do convite criando morador na república (201), uso único com recusa 400 em reutilização e em consulta posterior, e-mail duplicado não consumindo o convite, e dados inválidos (400).
+- Divisão em commits atômicos estritamente abaixo do limite de 100 linhas (74, 31, 77 e 89 linhas).
+
+**Revisão humana**
+- O Eduardo aprovou o plano detalhado antes da implementação de qualquer linha de teste.
+- Provas do vermelho executadas e validadas:
+  1. `src/republicas/servico.ts` (linha 49): `organizador: true` alterado para `false` derrubou o teste `cria a república e o organizador em transação, com dados normalizados` (`AssertionError: organizador false !== true`).
+  2. `src/republicas/rotas.ts` (linha 11): remoção da checagem de república inexistente derrubou o teste `república inexistente responde 404` (`AssertionError: 200 !== 404`).
+  3. `src/moradores/validacao.ts` (linha 47): remoção do check de convite já usado derrubou o teste de uso único `uso único: usar o mesmo token de novo responde 400 e consulta posterior dá 400` (`AssertionError: 200 !== 400`).
+- Todas as alterações temporárias foram revertidas e verificadas.
+
+**Observações**
+- No teste de tipo (`npm run typecheck`), a asserção `resposta.body.moradores` em `GET /api/republicas/:id` gerou erro TS2339 porque o tipo retornado pela API não inclui `moradores`. Foi ajustado para `"moradores" in (resposta.body as object)` com `false`, garantindo type safety e sem falsos positivos.
+- Verificação de segurança em camadas descoberta durante a prova do vermelho: `validaConvite` protege requisições em nível de rota/aplicação enquanto `updateMany({ where: { token, usadoEm: null } })` garante proteção atômica contra concorrência no banco. O teste cobre ambos os aspectos.
+- A cobertura de linhas em `src/republicas` subiu de 85,95% para 100%, e em `src/moradores` subiu de 77,51% para 99,04%.
+- Tempo economizado: ~45 minutos.
+
