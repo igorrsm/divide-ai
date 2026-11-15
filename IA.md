@@ -2567,6 +2567,53 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do proj
   `start-server-and-test`; é só o encerramento, não falha de teste.
 - Tempo economizado ou perdido: não medido.
 
+## 2026-11-14 — Lucas — TP2 · Revisão e merge do #88 e o E2E de registrar acerto (E2E-4)
+
+Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
+
+**Pedido à IA**
+- Revisar e aprovar o #88 da Thalita (E2E-1); depois, resolver o conflito
+  dele e mesclar.
+- Fazer o E2E-4: registrar o acerto do Bruno pela sugestão de "Como
+  acertar" e conferir que ele fica quitado e o acerto aparece na lista.
+
+**O que a IA produziu**
+- Revisão do #88, rodando o E2E aqui: os dois arquivos verdes, o teste
+  repetido 4 vezes sem recriar o banco e uma prova do vermelho (sem o
+  `recarregar()` do `Moradores.tsx`, a lista fica com 1 morador). Depois,
+  a resolução do conflito no fim do `IA.md` (todas as entradas mantidas,
+  conferidas por contagem de linhas) e o merge com o CI verde.
+- Um plano para o E2E-4, aprovado antes do código.
+- `e2e/registrar-acerto.cy.ts` e a tarefa `voltaAoSeed` no
+  `cypress.config.ts`, que volta o `e2e.db` ao seed com a API no ar.
+- Uma linha no `CLAUDE.md` sobre o `voltaAoSeed`, para o E2E-2 e o E2E-3.
+
+**Revisão humana**
+- O Lucas aprovou o plano e, depois, a troca do `cy.exec` pelo `cy.task`.
+  Ele não alterou o código gerado; a revisão do código fica para o PR.
+
+**Observações**
+- Suposição furada: o plano previa voltar ao seed com `cy.exec`, que não
+  existe no Cypress 16.2.1. A IA parou e pediu aprovação para usar o
+  `cy.task`, que mexe no `cypress.config.ts`, compartilhado.
+- O `npm run e2e` só roda o seed uma vez, antes de todos os arquivos. Sem o
+  `voltaAoSeed`, o E2E-4 dependeria da ordem dos arquivos e falharia na
+  segunda execução seguida.
+- O `Intl` põe um espaço não separável depois do "R$". O teste compara o
+  texto com uma expressão em que cada espaço aceita qualquer espaço.
+- Prova do vermelho, com o `dev.db` conferido por hash: o formulário
+  ignorando o estado da navegação, o sinal do acerto invertido no saldo,
+  a sugestão mandando a Carla como recebedora e salvar sem voltar para
+  Saldos derrubam o teste. **Sem prova:** a sugestão mandar o próprio
+  pagador como recebedor. O formulário descarta o recebedor inválido e
+  cai no primeiro outro morador, que no seed é a Ana, justamente a
+  recebedora certa.
+- Neste ambiente, o Cypress só abre com `env -u ELECTRON_RUN_AS_NODE` (a
+  extensão do VS Code define essa variável), e o print automático de
+  falha trava e esconde o erro; as provas rodaram com
+  `screenshotOnRunFailure=false`.
+- Tempo economizado ou perdido: não medido.
+
 ## 2026-11-15 — Eduardo — TP2 · Integração de repúblicas (T2-10)
 
 Ferramenta: Antigravity (modelo: Gemini 3.8 Flash).
