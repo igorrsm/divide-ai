@@ -2643,3 +2643,31 @@ Ferramenta: Antigravity (modelo: Gemini 3.8 Flash).
 - A cobertura de linhas em `src/republicas` subiu de 85,95% para 100%, e em `src/moradores` subiu de 77,51% para 99,04%.
 - Tempo economizado: ~45 minutos.
 
+## 2026-11-15 — Thalita — TP2: E2E de lançar despesa só para Bruno e Carla (E2E-2)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do projeto.
+
+**Pedido à IA**
+- Fazer o cartão E2E-2: lançar pela tela uma despesa só para Bruno e Carla.
+  Critério de pronto: conferir Bruno R$ 50,01 e Carla R$ 50,00.
+
+**O que a IA produziu**
+- Plano, aprovado pela Thalita antes do código, com a escolha dela entre
+  copiar a função `naTela` do E2E-4 ou levá-la para um arquivo comum.
+- `e2e/apoio.ts` com a `naTela`, agora importada pelo E2E-4 e pelo E2E-2.
+- `e2e/lancar-despesa.cy.ts`: "Pizza" de R$ 100,01 paga pela Ana, que fica
+  fora do rateio, por igual entre Bruno e Carla. Confere o aviso, o rateio
+  com duas linhas, Bruno R$ 50,01, Carla R$ 50,00 e a Ana fora. Volta ao seed
+  antes (`cy.task("voltaAoSeed")`, do E2E-4), porque muda os saldos.
+
+**Revisão humana**
+- A Thalita testou na própria máquina, antes dos commits: `npm run e2e` 3
+  vezes (os 4 arquivos passando, inclusive o E2E-4, que roda logo depois e
+  espera os saldos do seed), o teste rodado 5 vezes seguidas na janela do
+  Cypress, lint, `npm test` (255 testes) e build.
+
+**Observações**
+- Antes do plano, a IA leu o E2E-4 do Igor e reaproveitou a tarefa
+  `voltaAoSeed` que ele criou. Sem ela, o E2E-3 (saldos do seed) quebraria se
+  rodasse depois deste.
+- Tempo economizado ou perdido: não medido.
