@@ -1,14 +1,7 @@
 // E2E-4: registrar o acerto do Bruno pela sugestão de "Como acertar".
 // Parte do seed: Ana +R$ 1.600,00, Bruno −R$ 725,00 e Carla −R$ 875,00.
 
-/**
- * O Intl põe um espaço não separável depois do "R$": o texto esperado vira
- * uma expressão em que cada espaço aceita qualquer espaço.
- */
-function naTela(texto: string): RegExp {
-  const escapado = texto.replace(/[$()+.]/g, "\\$&");
-  return new RegExp(escapado.replace(/ /g, "\\s"));
-}
+import { naTela } from "./apoio";
 
 function saldo(moradorId: number) {
   return cy.get(`[data-cy="saldo-${moradorId}"] [data-cy="saldo-valor"]`).invoke("text");
