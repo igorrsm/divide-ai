@@ -2643,6 +2643,34 @@ Ferramenta: Antigravity (modelo: Gemini 3.8 Flash).
 - A cobertura de linhas em `src/republicas` subiu de 85,95% para 100%, e em `src/moradores` subiu de 77,51% para 99,04%.
 - Tempo economizado: ~45 minutos.
 
+## 2026-11-15 — Thalita — TP2: erros do servidor (T2-17)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do projeto.
+
+**Pedido à IA**
+- Fazer o cartão T2-17: testes de integração para JSON malformado, 404 e 500.
+
+**O que a IA produziu**
+- Plano, aprovado pela Thalita antes do código. Ela escolheu a opção de a
+  rota `/api` inexistente responder 404 em JSON em vez da página HTML do
+  Express (6 linhas no `app.ts`).
+- `src/erros.test.ts`, com 4 testes: JSON malformado (400, sem gravar nada),
+  recurso inexistente (404 em JSON), rota inexistente (404 em JSON) e falha
+  do banco (500 com mensagem genérica, sem vazar o erro, com o erro no log).
+- O 500 vem de uma falha real, sem mock do Prisma (o CLAUDE.md proíbe): o
+  teste renomeia a tabela `Pagamento`, que nenhuma outra aponta, e devolve o
+  nome no `finally`.
+
+**Revisão humana**
+- A Thalita testou na própria máquina, antes dos commits: `npm test` (259
+  testes), `npm run test:coverage` (o `app.ts` foi a 100% de linhas e o total
+  a 99,47%), lint, build e `npm run e2e` (3 arquivos passando).
+
+**Observações**
+- Antes da mudança, o tratamento do erro 500 era o único trecho do `app.ts`
+  sem teste; a cobertura já apontava as linhas 43 a 47.
+- Tempo economizado ou perdido: não medido.
+
 ## 2026-11-15 — Thalita — TP2: E2E de lançar despesa só para Bruno e Carla (E2E-2)
 
 Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do projeto.
