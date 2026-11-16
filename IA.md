@@ -2667,7 +2667,10 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do proj
   Cypress, lint, `npm test` (255 testes) e build.
 
 **Observações**
-- Antes do plano, a IA leu o E2E-4 do Igor e reaproveitou a tarefa
-  `voltaAoSeed` que ele criou. Sem ela, o E2E-3 (saldos do seed) quebraria se
-  rodasse depois deste.
+- Antes do plano, a IA leu o E2E-4 do Lucas e reaproveitou a tarefa
+  `voltaAoSeed` que ele criou. Sem ela, o E2E-4 (que espera os saldos do seed)
+  quebraria se rodasse depois deste.
+- Correção na revisão (Igor, com IA): a primeira versão desta entrada
+  atribuía o E2E-4 e a `voltaAoSeed` ao Igor e citava um E2E-3 que ainda não
+  existe.
 - Tempo economizado ou perdido: não medido.
