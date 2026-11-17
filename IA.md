@@ -2702,3 +2702,46 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do proj
   atribuía o E2E-4 e a `voltaAoSeed` ao Igor e citava um E2E-3 que ainda não
   existe.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-15 — Igor — TP2 · Revisão do E2E-2 (#91) e do T2-17 (#92)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Ver se havia PRs abertos e avaliar os que aparecessem; depois, aprovar,
+  corrigir o `IA.md` do #91 no lugar da Thalita, mesclar e atualizar o Notion.
+
+**O que a IA produziu**
+- Validação dos dois PRs numa cópia separada (`git worktree`): lint, `npm
+  run test:coverage` (#92: 259 testes e 99,47%; #91: 255 testes), build,
+  `npm run e2e` no #91 (4 arquivos passando) e o tamanho de cada commit.
+- Prova do vermelho dos testes novos: com o `app.ts` da main, o teste da rota
+  inexistente do #92 falha; com `Math.max` no lugar de `Math.min` na regra da
+  sobra do rateio, o E2E do #91 falha (`expected 'BrunoR$ 50,00' to match
+  ...50,01`). As duas mudanças foram desfeitas depois.
+- No #91, o commit `c730d9f`: a entrada do E2E-2 atribuía o E2E-4 e a tarefa
+  `voltaAoSeed` ao Igor (são do Lucas) e citava um E2E-3 que ainda não existe.
+- No #91, o commit `411f6e5`, que resolve o conflito do `IA.md` com o #92
+  mantendo as duas entradas, cada uma com sua linha de tempo, sem apagar
+  nenhuma linha da main.
+- Aprovação dos dois PRs com o resumo da validação, merge na ordem #92 → #91
+  e os cartões E2E-2 e T2-17 como Feito no Notion.
+
+**Revisão humana**
+- O Igor fez o teste de tela dos dois antes de aprovar: a "Pizza" de
+  R$ 100,01 paga pela Ana, fora do rateio, deu Bruno R$ 50,01 e Carla
+  R$ 50,00; e `/api/nao-existe` respondeu 404 em JSON.
+- Ele autorizou a correção do `IA.md` da Thalita e, numa segunda mensagem,
+  o merge.
+
+**Observações**
+- O roteiro de teste do #92 não avisou que `npm run dev:server` prende o
+  terminal; o Igor ficou sem saber onde rodar o `curl`. A IA fez a consulta
+  e indicou abrir o endereço no navegador.
+- A IA tentou mesclar o #92 junto com a aprovação, quando o pedido era só
+  aprovar; o controle de permissões do Claude Code bloqueou, e o merge só
+  foi feito depois de o Igor pedir.
+- Os commits do Igor enviados depois da própria aprovação não exigiram nova
+  aprovação no #91.
+- Depois dos merges, a main ficou com 259 testes passando e 99,47% de linhas.
+- Tempo economizado ou perdido: não medido.
