@@ -79,4 +79,33 @@ describe("POST /api/republicas/:republicaId/moradores", () => {
     assert.equal(emailInvalido.status, 400);
     assert.match(emailInvalido.body.erro, /E-mail inválido/);
   });
+
+  it("e-mail repetido na mesma casa ou em outra responde 400", async () => {
+    const azul = await montaCasa([], "Casa Azul", "Ana");
+    await montaCasa([], "Casa Verde", "Duda");
+
+    const mesmaCasa = await request(app)
+      .post(`/api/republicas/${azul.republicaId}/moradores`)
+      .send({ moradorId: azul.ids.Ana, nome: "Outra Ana", email: "ana@casa-azul.exemplo" });
+    assert.equal(mesmaCasa.status, 400);
+    assert.match(mesmaCasa.body.erro, /Já existe um morador com este e-mail/);
+
+    const outraCasa = await request(app)
+      .post(`/api/republicas/${azul.republicaId}/moradores`)
+      .send({ moradorId: azul.ids.Ana, nome: "Duda Clone", email: "duda@casa-verde.exemplo" });
+    assert.equal(outraCasa.status, 400);
+    assert.match(outraCasa.body.erro, /Já existe um morador com este e-mail/);
+  });
+
+  it("república inexistente responde 404 e id inválido responde 400", async () => {
+    const resposta404 = await request(app)
+      .post("/api/republicas/999/moradores")
+      .send({ moradorId: 1, nome: "Bruno", email: "bruno@exemplo.com" });
+    assert.equal(resposta404.status, 404);
+
+    const resposta400 = await request(app)
+      .post("/api/republicas/abc/moradores")
+      .send({ moradorId: 1, nome: "Bruno", email: "bruno@exemplo.com" });
+    assert.equal(resposta400.status, 400);
+  });
 });
