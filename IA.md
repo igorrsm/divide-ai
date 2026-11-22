@@ -2746,6 +2746,46 @@ Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
 - Depois dos merges, a main ficou com 259 testes passando e 99,47% de linhas.
 - Tempo economizado ou perdido: não medido.
 
+## 2026-11-22 — Eduardo — TP2 · Integração de moradores (T2-11)
+
+Ferramenta: Antigravity (modelo: Gemini 2.5 Pro).
+
+**Pedido à IA**
+- Escrever testes de integração para `src/moradores/rotas.test.ts`, cobrindo
+  `POST /api/republicas/:republicaId/moradores` (adicionar morador) e
+  `DELETE /api/republicas/:republicaId/moradores/:alvoId` (marcar saída).
+- Respeitar o limite de 100 linhas por commit, as restrições do enunciado (sem
+  mock do Prisma, sem duplicar os testes do Lucas) e o formato de commits
+  convencionais em português.
+
+**O que a IA produziu**
+- 3 commits em `src/moradores/rotas.test.ts`, totalizando 191 linhas e 13
+  testes: 7 para POST (sucesso com dados normalizados, 403 não-organizador,
+  403 moradorId de outra república, 400 sem moradorId, 400 nome/e-mail
+  inválido, 400 e-mail duplicado, 404/400 rota inválida) e 6 para DELETE
+  (200 com data em AAAA-MM-DD, 403 não-organizador, 400 organizador tenta
+  sair, 400 já saiu, 404 alvo de outra casa/inexistente, 400 id inválido).
+
+**Revisão humana**
+- Eduardo revisou cada teste e confirmou o comportamento esperado.
+- Prova do vermelho #1 (POST): alterado `where: { id, republicaId }` para
+  `where: { id }` em `servico.ts` → teste "moradorId de outra república
+  recebe 403" falhou (201 ≠ 403). Restaurado.
+- Prova do vermelho #2 (DELETE): comentado `if (alvo.organizador)` em
+  `validacao.ts` → teste "organizador não pode marcar a própria saída: 400"
+  falhou (400 esperado, retornou 200). Restaurado.
+- Prova do vermelho #3 (DELETE): substituído `prisma.morador.update` por
+  `findFirst` em `servico.ts` → testes "marca a saída" e "marcar de novo"
+  falharam. Restaurado.
+- Lint e typecheck limpos após todos os commits.
+
+**Observações**
+- O arquivo novo (untracked) não era incluído no glob `src/**/*.test.ts` do
+  `npm test` antes do primeiro commit; os testes foram rodados diretamente
+  com `node --import tsx ... src/moradores/rotas.test.ts` durante o
+  desenvolvimento.
+- O arquivo foi dividido em 3 commits para respeitar o limite de 100 linhas.
+
 ## 2026-11-22 — Eduardo — TP2 · E2E de ver saldos e soma zero (E2E-3)
 
 Ferramenta: Antigravity (modelo: Gemini 2.5 Pro / Gemini 3.8 Flash).
