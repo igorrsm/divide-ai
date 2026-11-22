@@ -2821,3 +2821,49 @@ Ferramenta: Antigravity (modelo: Gemini 2.5 Pro / Gemini 3.8 Flash).
 - No WSL foi necessário instalar dependências do sistema necessárias para a
   execução do Electron do Cypress (`libnspr4`, `libnss3`, etc.).
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-22 — Igor — TP2 · Revisão da T2-11 (#94) e do E2E-3 (#95)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Ver o estado do projeto e dos PRs, avaliar os pendentes, atualizar o Notion
+  e dar um retorno de como o grupo está. Depois do teste de tela, aprovar,
+  mesclar e resolver o conflito do `IA.md`.
+
+**O que a IA produziu**
+- Validação dos dois PRs do Eduardo numa cópia separada (`git worktree`):
+  lint, typecheck, `npm run test:coverage` no #94 (272 testes e 99,57% de
+  linhas), build, `npm run e2e` no #95 (5 arquivos passando) e o tamanho de
+  cada commit.
+- Prova do vermelho do E2E-3 no código: com R$ 1,00 somado ao saldo da Carla
+  em `src/saldos/calculo.ts`, o teste falha (`expected '− R$ 874,00a pagar'
+  to match ...875,00`). A mudança foi desfeita. A prova registrada no #95
+  alterava o valor esperado no teste, e não o código, e por isso não mostrava
+  que o teste pega um erro de cálculo.
+- Ressalvas no texto das aprovações: no #94, falta a linha "Tempo
+  economizado ou perdido" e há dois commits sem acento; no #95, a soma feita
+  pela tela passaria sozinha se o seletor não achasse nenhum valor (sugerido
+  um `should("have.length", 3)`).
+- Merge do #94 e, no #95, o commit `75d476b`, que resolve o conflito do
+  `IA.md` mantendo as duas entradas na ordem dos merges, sem apagar linha da
+  main nem da branch. Depois, aprovação e merge do #95.
+- No Notion: PR e status Feito nos cartões T2-11 e E2E-3, e T2-20 (lacunas
+  de cobertura) como Feito pela medição de 99,57%. A pedido do Igor, T2-22
+  (roteiro de IA) e T2-23 (ensaio) também como Feito.
+
+**Revisão humana**
+- O Igor fez o teste de tela antes de autorizar: os saldos do seed em
+  `/saldos` (Ana +R$ 1.600,00, Bruno −R$ 725,00, Carla −R$ 875,00) e o
+  `npm test` na branch do #94.
+
+**Observações**
+- O workspace do Notion atingiu o limite de blocos do plano grátis: a IA
+  conseguiu mudar as propriedades dos cartões, mas não o conteúdo das
+  páginas. A tabela "Casos importantes" e o histórico de cobertura da página
+  do TP2 ficaram para atualização manual.
+- A IA disse ao Igor que a observação do #94 sobre o arquivo novo ficar fora
+  do glob do `npm test` não procedia; isso foi raciocínio, não foi testado.
+- Depois dos merges, a main ficou com 272 testes, 99,57% de linhas e os 4
+  E2E do enunciado (5 arquivos com o de fumaça) passando.
+- Tempo economizado ou perdido: não medido.
