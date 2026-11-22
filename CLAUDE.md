@@ -55,6 +55,7 @@ Prisma 7: o client vem de `src/generated/prisma/client` (não de `@prisma/client
 
 - Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`, `chore:`).
 - Elemento usado por teste E2E tem atributo `data-cy`; a lista fica em `docs/data-cy.md`.
+- E2E que muda os dados da República Demo começa com `beforeEach(() => cy.task("voltaAoSeed"))` (tarefa em `cypress.config.ts`; o Cypress 16 não tem `cy.exec`), porque o `npm run e2e` só roda o seed uma vez, antes de todos os arquivos.
 - Máximo de 100 linhas por commit; exceções justificadas na mensagem.
 - Nenhum push direto na `main`: toda mudança entra por Pull Request revisado.
 

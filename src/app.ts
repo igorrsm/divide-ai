@@ -23,6 +23,12 @@ app.use("/api", rotasExtrato);
 app.use("/api", rotasMoradores);
 app.use("/api", rotasPagamentos);
 
+// Rota /api que não existe: 404 em JSON, como o resto da API, em vez da
+// página HTML padrão do Express.
+app.use("/api", (_req, res) => {
+  res.status(404).json({ erro: "Rota não encontrada." });
+});
+
 // O Express 5 encaminha rejeição de handler async para cá.
 app.use((erro: unknown, _req: Request, res: Response, _proximo: NextFunction) => {
   if (erro instanceof ErroDeValidacao) {

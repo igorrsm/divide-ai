@@ -2567,30 +2567,184 @@ Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do proj
   `start-server-and-test`; é só o encerramento, não falha de teste.
 - Tempo economizado ou perdido: não medido.
 
-## 2026-11-22 — Eduardo — TP2 · Integração de moradores (T2-11)
+## 2026-11-14 — Lucas — TP2 · Revisão e merge do #88 e o E2E de registrar acerto (E2E-4)
 
-Ferramenta: Antigravity (modelo: Gemini 2.5 Pro).
+Ferramenta: Claude Code (Claude Opus 5.5), na extensão do VS Code.
 
 **Pedido à IA**
-- Escrever testes de integração para src/moradores/rotas.test.ts, cobrindo
-  POST /api/republicas/:republicaId/moradores (adicionar morador) e
-  DELETE /api/republicas/:republicaId/moradores/:alvoId (marcar saída).
-- Respeitar o limite de 100 linhas por commit, as restrições do enunciado (sem
-  mock do Prisma, sem duplicar os testes do Lucas) e o formato de commits
-  convencionais em português.
+- Revisar e aprovar o #88 da Thalita (E2E-1); depois, resolver o conflito
+  dele e mesclar.
+- Fazer o E2E-4: registrar o acerto do Bruno pela sugestão de "Como
+  acertar" e conferir que ele fica quitado e o acerto aparece na lista.
 
 **O que a IA produziu**
-- 3 commits em src/moradores/rotas.test.ts, totalizando 191 linhas e 13
-  testes: 7 para POST (sucesso com dados normalizados, 403 não-organizador,
-  403 moradorId de outra república, 400 sem moradorId, 400 nome/e-mail
-  inválido, 400 e-mail duplicado, 404/400 rota inválida) e 6 para DELETE
-  (200 com data em AAAA-MM-DD, 403 não-organizador, 400 organizador tenta
-  sair, 400 já saiu, 404 alvo de outra casa/inexistente, 400 id inválido).
+- Revisão do #88, rodando o E2E aqui: os dois arquivos verdes, o teste
+  repetido 4 vezes sem recriar o banco e uma prova do vermelho (sem o
+  `recarregar()` do `Moradores.tsx`, a lista fica com 1 morador). Depois,
+  a resolução do conflito no fim do `IA.md` (todas as entradas mantidas,
+  conferidas por contagem de linhas) e o merge com o CI verde.
+- Um plano para o E2E-4, aprovado antes do código.
+- `e2e/registrar-acerto.cy.ts` e a tarefa `voltaAoSeed` no
+  `cypress.config.ts`, que volta o `e2e.db` ao seed com a API no ar.
+- Uma linha no `CLAUDE.md` sobre o `voltaAoSeed`, para o E2E-2 e o E2E-3.
 
 **Revisão humana**
-- Eduardo revisou cada teste e confirmou o comportamento esperado.
-- Prova do vermelho #1 (POST): alterado where: { id, republicaId } para
-  where: { id } em servico.ts → teste 
+- O Lucas aprovou o plano e, depois, a troca do `cy.exec` pelo `cy.task`.
+  Ele não alterou o código gerado; a revisão do código fica para o PR.
+
+**Observações**
+- Suposição furada: o plano previa voltar ao seed com `cy.exec`, que não
+  existe no Cypress 16.2.1. A IA parou e pediu aprovação para usar o
+  `cy.task`, que mexe no `cypress.config.ts`, compartilhado.
+- O `npm run e2e` só roda o seed uma vez, antes de todos os arquivos. Sem o
+  `voltaAoSeed`, o E2E-4 dependeria da ordem dos arquivos e falharia na
+  segunda execução seguida.
+- O `Intl` põe um espaço não separável depois do "R$". O teste compara o
+  texto com uma expressão em que cada espaço aceita qualquer espaço.
+- Prova do vermelho, com o `dev.db` conferido por hash: o formulário
+  ignorando o estado da navegação, o sinal do acerto invertido no saldo,
+  a sugestão mandando a Carla como recebedora e salvar sem voltar para
+  Saldos derrubam o teste. **Sem prova:** a sugestão mandar o próprio
+  pagador como recebedor. O formulário descarta o recebedor inválido e
+  cai no primeiro outro morador, que no seed é a Ana, justamente a
+  recebedora certa.
+- Neste ambiente, o Cypress só abre com `env -u ELECTRON_RUN_AS_NODE` (a
+  extensão do VS Code define essa variável), e o print automático de
+  falha trava e esconde o erro; as provas rodaram com
+  `screenshotOnRunFailure=false`.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-11-15 — Eduardo — TP2 · Integração de repúblicas (T2-10)
+
+Ferramenta: Antigravity (modelo: Gemini 3.8 Flash).
+
+**Pedido à IA**
+- Ler as especificações da tarefa T2-10 e do repositório, propor o plano de testes e divisão em commits de até 100 linhas.
+- Implementar testes de integração para criação de repúblicas (`POST /api/republicas`), busca por id (`GET /api/republicas/:id`) e convite por link (`POST /api/republicas/:republicaId/convites`, `GET /api/convites/:token`, `POST /api/convites/:token`).
+- Executar e comprovar as provas do vermelho.
+
+**O que a IA produziu**
+- Identificou que o repositório local precisava de atualização e instalação do `supertest` no ambiente WSL com Node 24.
+- `src/republicas/rotas.test.ts`: 13 testes de integração cobrindo criação com dados normalizados (201), criação atômica no banco, 8 casos de entrada inválida (400), e-mail já existente (400) com validação de que nada é criado, busca por id (200), república inexistente (404) e id não numérico (400).
+- `src/moradores/convites.test.ts`: 10 testes de integração cobrindo geração de convite por organizador com token UUID (201), bloqueio de morador comum (403), falta de moradorId (400), república inexistente (404), consulta de dados do convite válido (200), consulta de token inexistente (404), uso do convite criando morador na república (201), uso único com recusa 400 em reutilização e em consulta posterior, e-mail duplicado não consumindo o convite, e dados inválidos (400).
+- Divisão em commits atômicos estritamente abaixo do limite de 100 linhas (74, 31, 77 e 89 linhas).
+
+**Revisão humana**
+- O Eduardo aprovou o plano detalhado antes da implementação de qualquer linha de teste.
+- Provas do vermelho executadas e validadas:
+  1. `src/republicas/servico.ts` (linha 49): `organizador: true` alterado para `false` derrubou o teste `cria a república e o organizador em transação, com dados normalizados` (`AssertionError: organizador false !== true`).
+  2. `src/republicas/rotas.ts` (linha 11): remoção da checagem de república inexistente derrubou o teste `república inexistente responde 404` (`AssertionError: 200 !== 404`).
+  3. `src/moradores/validacao.ts` (linha 47): remoção do check de convite já usado derrubou o teste de uso único `uso único: usar o mesmo token de novo responde 400 e consulta posterior dá 400` (`AssertionError: 200 !== 400`).
+- Todas as alterações temporárias foram revertidas e verificadas.
+
+**Observações**
+- No teste de tipo (`npm run typecheck`), a asserção `resposta.body.moradores` em `GET /api/republicas/:id` gerou erro TS2339 porque o tipo retornado pela API não inclui `moradores`. Foi ajustado para `"moradores" in (resposta.body as object)` com `false`, garantindo type safety e sem falsos positivos.
+- Verificação de segurança em camadas descoberta durante a prova do vermelho: `validaConvite` protege requisições em nível de rota/aplicação enquanto `updateMany({ where: { token, usadoEm: null } })` garante proteção atômica contra concorrência no banco. O teste cobre ambos os aspectos.
+- A cobertura de linhas em `src/republicas` subiu de 85,95% para 100%, e em `src/moradores` subiu de 77,51% para 99,04%.
+- Tempo economizado: ~45 minutos.
+
+## 2026-11-15 — Thalita — TP2: erros do servidor (T2-17)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do projeto.
+
+**Pedido à IA**
+- Fazer o cartão T2-17: testes de integração para JSON malformado, 404 e 500.
+
+**O que a IA produziu**
+- Plano, aprovado pela Thalita antes do código. Ela escolheu a opção de a
+  rota `/api` inexistente responder 404 em JSON em vez da página HTML do
+  Express (6 linhas no `app.ts`).
+- `src/erros.test.ts`, com 4 testes: JSON malformado (400, sem gravar nada),
+  recurso inexistente (404 em JSON), rota inexistente (404 em JSON) e falha
+  do banco (500 com mensagem genérica, sem vazar o erro, com o erro no log).
+- O 500 vem de uma falha real, sem mock do Prisma (o CLAUDE.md proíbe): o
+  teste renomeia a tabela `Pagamento`, que nenhuma outra aponta, e devolve o
+  nome no `finally`.
+
+**Revisão humana**
+- A Thalita testou na própria máquina, antes dos commits: `npm test` (259
+  testes), `npm run test:coverage` (o `app.ts` foi a 100% de linhas e o total
+  a 99,47%), lint, build e `npm run e2e` (3 arquivos passando).
+
+**Observações**
+- Antes da mudança, o tratamento do erro 500 era o único trecho do `app.ts`
+  sem teste; a cobertura já apontava as linhas 43 a 47.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-11-15 — Thalita — TP2: E2E de lançar despesa só para Bruno e Carla (E2E-2)
+
+Ferramenta: Claude em modo Cowork (Claude Opus 5.5), com acesso à pasta do projeto.
+
+**Pedido à IA**
+- Fazer o cartão E2E-2: lançar pela tela uma despesa só para Bruno e Carla.
+  Critério de pronto: conferir Bruno R$ 50,01 e Carla R$ 50,00.
+
+**O que a IA produziu**
+- Plano, aprovado pela Thalita antes do código, com a escolha dela entre
+  copiar a função `naTela` do E2E-4 ou levá-la para um arquivo comum.
+- `e2e/apoio.ts` com a `naTela`, agora importada pelo E2E-4 e pelo E2E-2.
+- `e2e/lancar-despesa.cy.ts`: "Pizza" de R$ 100,01 paga pela Ana, que fica
+  fora do rateio, por igual entre Bruno e Carla. Confere o aviso, o rateio
+  com duas linhas, Bruno R$ 50,01, Carla R$ 50,00 e a Ana fora. Volta ao seed
+  antes (`cy.task("voltaAoSeed")`, do E2E-4), porque muda os saldos.
+
+**Revisão humana**
+- A Thalita testou na própria máquina, antes dos commits: `npm run e2e` 3
+  vezes (os 4 arquivos passando, inclusive o E2E-4, que roda logo depois e
+  espera os saldos do seed), o teste rodado 5 vezes seguidas na janela do
+  Cypress, lint, `npm test` (255 testes) e build.
+
+**Observações**
+- Antes do plano, a IA leu o E2E-4 do Lucas e reaproveitou a tarefa
+  `voltaAoSeed` que ele criou. Sem ela, o E2E-4 (que espera os saldos do seed)
+  quebraria se rodasse depois deste.
+- Correção na revisão (Igor, com IA): a primeira versão desta entrada
+  atribuía o E2E-4 e a `voltaAoSeed` ao Igor e citava um E2E-3 que ainda não
+  existe.
+- Tempo economizado ou perdido: não medido.
+
+## 2026-11-15 — Igor — TP2 · Revisão do E2E-2 (#91) e do T2-17 (#92)
+
+Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
+
+**Pedido à IA**
+- Ver se havia PRs abertos e avaliar os que aparecessem; depois, aprovar,
+  corrigir o `IA.md` do #91 no lugar da Thalita, mesclar e atualizar o Notion.
+
+**O que a IA produziu**
+- Validação dos dois PRs numa cópia separada (`git worktree`): lint, `npm
+  run test:coverage` (#92: 259 testes e 99,47%; #91: 255 testes), build,
+  `npm run e2e` no #91 (4 arquivos passando) e o tamanho de cada commit.
+- Prova do vermelho dos testes novos: com o `app.ts` da main, o teste da rota
+  inexistente do #92 falha; com `Math.max` no lugar de `Math.min` na regra da
+  sobra do rateio, o E2E do #91 falha (`expected 'BrunoR$ 50,00' to match
+  ...50,01`). As duas mudanças foram desfeitas depois.
+- No #91, o commit `c730d9f`: a entrada do E2E-2 atribuía o E2E-4 e a tarefa
+  `voltaAoSeed` ao Igor (são do Lucas) e citava um E2E-3 que ainda não existe.
+- No #91, o commit `411f6e5`, que resolve o conflito do `IA.md` com o #92
+  mantendo as duas entradas, cada uma com sua linha de tempo, sem apagar
+  nenhuma linha da main.
+- Aprovação dos dois PRs com o resumo da validação, merge na ordem #92 → #91
+  e os cartões E2E-2 e T2-17 como Feito no Notion.
+
+**Revisão humana**
+- O Igor fez o teste de tela dos dois antes de aprovar: a "Pizza" de
+  R$ 100,01 paga pela Ana, fora do rateio, deu Bruno R$ 50,01 e Carla
+  R$ 50,00; e `/api/nao-existe` respondeu 404 em JSON.
+- Ele autorizou a correção do `IA.md` da Thalita e, numa segunda mensagem,
+  o merge.
+
+**Observações**
+- O roteiro de teste do #92 não avisou que `npm run dev:server` prende o
+  terminal; o Igor ficou sem saber onde rodar o `curl`. A IA fez a consulta
+  e indicou abrir o endereço no navegador.
+- A IA tentou mesclar o #92 junto com a aprovação, quando o pedido era só
+  aprovar; o controle de permissões do Claude Code bloqueou, e o merge só
+  foi feito depois de o Igor pedir.
+- Os commits do Igor enviados depois da própria aprovação não exigiram nova
+  aprovação no #91.
+- Depois dos merges, a main ficou com 259 testes passando e 99,47% de linhas.
+- Tempo economizado ou perdido: não medido.
 
 ## 2026-11-22 — Eduardo — TP2 · Integração de moradores (T2-11)
 
