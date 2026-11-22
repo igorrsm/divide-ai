@@ -2745,3 +2745,39 @@ Ferramenta: Claude Code (Claude Opus 5.5), no terminal.
   aprovação no #91.
 - Depois dos merges, a main ficou com 259 testes passando e 99,47% de linhas.
 - Tempo economizado ou perdido: não medido.
+
+## 2026-11-22 — Eduardo — TP2 · E2E de ver saldos e soma zero (E2E-3)
+
+Ferramenta: Antigravity (modelo: Gemini 2.5 Pro / Gemini 3.8 Flash).
+
+**Pedido à IA**
+- Criar o teste ponta a ponta `e2e/saldos.cy.ts` (E2E-3) cobrindo a exibição dos
+  saldos e a validação de soma zero da República Demo após o seed.
+- Seguir o padrão de isolamento com `cy.task("voltaAoSeed")` no `beforeEach`,
+  utilizar os seletores `data-cy` definidos no projeto e validar os saldos tanto
+  visualmente quanto pela soma dos valores da tela e da API.
+- Executar prova do vermelho, garantir aprovação em 5 execuções consecutivas e
+  manter limites de commits convencionais em português com menos de 100 linhas.
+
+**O que a IA produziu**
+- Instalação das dependências ausentes do Cypress no ambiente Linux/WSL.
+- Arquivo `e2e/saldos.cy.ts` (48 linhas):
+  - Navega da tela inicial até `/saldos` pelo menu `[data-cy="menu-saldos"]`.
+  - Valida os saldos individuais e situações: Ana (`+ R$ 1.600,00` a receber),
+    Bruno (`− R$ 725,00` a pagar) e Carla (`− R$ 875,00` a pagar).
+  - Valida a soma zero calculando o total a partir dos valores textuais exibidos
+    na tela convertidos para centavos.
+  - Valida a soma zero consultando diretamente o endpoint `GET /api/republicas/1/saldos`.
+
+**Revisão humana**
+- Eduardo revisou o plano e autorizou a execução.
+- Prova do vermelho: alterada a expectativa do saldo da Ana de `+ R$ 1.600,00`
+  para `+ R$ 1.500,00` → o Cypress falhou acusando `AssertionError` de valor
+  incompatível. Restaurado o valor correto.
+- O teste passou 5 vezes seguidas sem falhas ou flakiness.
+- Lint e typecheck limpos sem avisos.
+
+**Observações**
+- No WSL foi necessário instalar dependências do sistema necessárias para a
+  execução do Electron do Cypress (`libnspr4`, `libnss3`, etc.).
+- Tempo economizado ou perdido: não medido.
